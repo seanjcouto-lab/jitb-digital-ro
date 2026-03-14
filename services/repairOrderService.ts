@@ -1,0 +1,620 @@
+import { 
+  Part, 
+  InventoryAlert, 
+  RepairOrder, 
+  RORequest, 
+  PartStatus, 
+  ROStatus, 
+  Technician, 
+  PaymentStatus, 
+  CollectionsStatus,
+  VesselHistory,
+  Directive,
+  ClipboardEntry
+} from '../types';
+import { RepairOrderCreateInput } from '../types/RepairOrderCreateInput';
+import { vesselService } from './vesselService';
+import { inventoryService } from './inventoryService';
+import { SERVICE_PACKAGES } from '../constants';
+import { shopContextService } from './shopContextService';
+import { domainEventService } from './domainEventService';
+
+export const repairOrderService = {
+  createPartRequest: (repairOrder: RepairOrder, partPayload: Part): RepairOrder => {
+    const newRequest: RORequest = {
+      id: `req-${Date.now()}`,
+      roId: repairOrder.id,
+      type: 'PART',
+      payload: partPayload,
+      status: 'PENDING',
+      requestedBy: 'TECHNICIAN',
+      timestamp: Date.now()
+    };
+
+    const updatedRequests = [...(repairOrder.requests || []), newRequest];
+    
+    // Check if part already exists in RO.parts
+    const existingPartIndex = repairOrder.parts.findIndex(p => p.partNumber === partPayload.partNumber);
+    let updatedParts = [...repairOrder.parts];
+    
+    if (existingPartIndex >= 0) {
+      updatedParts[existingPartIndex] = { ...updatedParts[existingPartIndex], status: PartStatus.APPROVAL_PENDING };
+    } else {
+      updatedParts.push({ ...partPayload, status: PartStatus.APPROVAL_PENDING });
+    }
+
+    return { ...repairOrder, requests: updatedRequests, parts: updatedParts };
+  },
+
+  approvePartRequest: async (
+    masterInventory: Part[],
+    repairOrder: RepairOrder,
+    requestId: string,
+    decision: 'FILL_FROM_STOCK' | 'SPECIAL_ORDER' | 'REJECT'
+  ): Promise<{ updatedRO: RepairOrder, updatedInventory?: Part[], alertToAdd?: Omit<InventoryAlert, 'id' | 'timestamp'> }> => {
+    // 1) Find the request by requestId.
+    const request = (repairOrder.requests || []).find(req => req.id === requestId);
+    
+    // 1) Early return if not found OR request.type !== 'PART' OR request.status !== 'PENDING'
+    if (!request || request.type !== 'PART' || request.status !== 'PENDING') {
+      return { updatedRO: repairOrder };
+    }
+
+    const partPayload = request.payload as Part;
+    let actualDecision = decision;
+    let updatedInventory: Part[] | undefined;
+    let alertToAdd: Omit<InventoryAlert, 'id' | 'timestamp'> | undefined;
+
+    // 3) On decision === 'FILL_FROM_STOCK': Check current on-hand
+    if (decision === 'FILL_FROM_STOCK') {
+      const invPart = masterInventory.find(p => p.partNumber === partPayload.partNumber);
+      
+      // If quantityOnHand <= 0: Treat as SPECIAL_ORDER instead
+      if (!invPart || invPart.quantityOnHand <= 0) {
+        actualDecision = 'SPECIAL_ORDER';
+      }
+    }
+
+    // 2) Update the request in updatedRequests: Set status and decision
+    const updatedRequests = (repairOrder.requests || []).map(req => {
+      if (req.id === requestId) {
+        return { 
+          ...req, 
+          status: actualDecision === 'REJECT' ? 'REJECTED' : 'APPROVED',
+          decision: actualDecision
+        } as RORequest;
+      }
+      return req;
+    });
+
+    // Update parts in RO
+    let updatedParts = [...repairOrder.parts];
+    const partIndex = updatedParts.findIndex(p => p.partNumber === partPayload.partNumber);
+
+    if (actualDecision === 'FILL_FROM_STOCK') {
+      if (partIndex >= 0) {
+        updatedParts[partIndex] = { ...updatedParts[partIndex], status: PartStatus.IN_BOX };
+      }
+      
+      // 4) Only if quantityOnHand > 0: proceed with inventory decrement
+      const invResult = await inventoryService.adjustInventory(
+        masterInventory,
+        partPayload.partNumber,
+        -1,
+        'Fulfillment from stock',
+        repairOrder.id,
+        repairOrder.shopId
+      );
+      
+      if (invResult) {
+        updatedInventory = invResult.updatedInventory;
+        alertToAdd = invResult.alertToAdd;
+      }
+    } else if (actualDecision === 'SPECIAL_ORDER') {
+      if (partIndex >= 0) {
+        updatedParts[partIndex] = { ...updatedParts[partIndex], status: PartStatus.SPECIAL_ORDER };
+      }
+    } else if (actualDecision === 'REJECT') {
+      if (partIndex >= 0) {
+        updatedParts[partIndex] = { ...updatedParts[partIndex], status: PartStatus.RETURNED };
+      }
+    }
+
+    return {
+      updatedRO: { ...repairOrder, requests: updatedRequests, parts: updatedParts },
+      updatedInventory,
+      alertToAdd
+    };
+  },
+
+  createRepairOrder: (
+    input: RepairOrderCreateInput,
+    masterInventory: Part[]
+  ): RepairOrder => {
+    let packageParts: Part[] = [];
+    input.selectedPackages.forEach(pkgName => {
+        const pkg = SERVICE_PACKAGES[pkgName as keyof typeof SERVICE_PACKAGES];
+        if (pkg) {
+            const partsFromPkg = pkg.parts
+              .map(p => {
+                const invPart = masterInventory.find(m => m.partNumber === p.partNumber);
+                if (!invPart) {
+                  console.warn(`[createRepairOrder] Part ${p.partNumber} not found in inventory — skipped.`);
+                  return null;
+                }
+                return { ...invPart, status: PartStatus.REQUIRED };
+              })
+              .filter((p): p is NonNullable<typeof p> => p !== null);
+            packageParts.push(...partsFromPkg);
+        }
+    });
+    
+    const finalManuallyAddedParts = input.manualParts.map(p => {
+        const invPart = masterInventory.find(m => m.partNumber === p.partNumber);
+        return { ...(invPart || p), status: PartStatus.REQUIRED } as Part;
+    });
+    const allParts = [...packageParts, ...finalManuallyAddedParts];
+    const uniqueParts = Array.from(new Map(allParts.map(p => [p.partNumber, p])).values());
+
+    const directiveTitle = input.selectedPackages.length > 0 ? `PERFORM ${input.selectedPackages.join(', ')}` : 'PERFORM DIAGNOSTICS & REQUESTED WORK';
+    const standardDirectives = [ { id: 'd1', title: 'HAUL VESSEL INTO THE BAY', isCompleted: false, isApproved: true }, { id: 'd2', title: directiveTitle, isCompleted: false, requiredParts: uniqueParts.map(p => p.partNumber), isApproved: true } ];
+    const manualDirectivesObjects = input.manualDirectives.map((title, index) => ({ id: `manual-${index}-${Date.now()}`, title: title.toUpperCase(), isCompleted: false, isApproved: true }));
+    const finalDirectives = [ ...standardDirectives, ...manualDirectivesObjects, { id: 'd3', title: 'SEA TRIAL & WATER TEST', isCompleted: false, isApproved: true } ];
+
+    let status = ROStatus.STAGED;
+    let authorizationType = input.authorization?.type ?? null;
+    let authorizationData = input.authorization?.data ?? null;
+    let authorizationTimestamp = input.authorization?.timestamp ?? null;
+
+    if (authorizationType) {
+        status = ROStatus.AUTHORIZED;
+        if (!authorizationTimestamp) authorizationTimestamp = Date.now();
+    }
+
+    const newRO: RepairOrder = {
+      id: `RO-${Date.now()}`,
+      customerName: input.customerName,
+      customerAddress: input.customerAddress,
+      vesselHIN: input.vesselHIN,
+      engineSerial: input.engineSerial,
+      customerNotes: input.customerNotes || null,
+      customerEmails: input.customerEmails.filter((e: string) => e),
+      customerPhones: input.customerPhones.filter((p: string) => p),
+      vesselName: input.vesselName,
+      status, 
+      parts: uniqueParts, 
+      directives: finalDirectives, 
+      workSessions: [], 
+      requests: [],
+      laborDescription: null,
+      authorizationType, 
+      authorizationData, 
+      authorizationTimestamp,
+      invoiceTotal: null,
+      paymentStatus: null,
+      payments: null,
+      dateInvoiced: null,
+      datePaid: null,
+      collectionsStatus: input.collectionsStatus ?? CollectionsStatus.NONE,
+      boatMake: input.boatMake || null,
+      boatModel: input.boatModel || null,
+      boatYear: input.boatYear || null,
+      boatLength: input.boatLength || null,
+      engineMake: input.engineMake || null,
+      engineModel: input.engineModel || null,
+      engineYear: input.engineYear || null,
+      engineHorsepower: input.engineHorsepower || null,
+      technicianId: null,
+      technicianName: null,
+      shopId: input.shopId,
+    };
+    
+    domainEventService.publish('repair-order:created', newRO);
+    return newRO;
+  },
+
+  holdJob: (ro: RepairOrder, reason?: string): RepairOrder => {
+    const updatedSessions = ro.workSessions.map((session, index) => 
+        index === ro.workSessions.length - 1 && !session.endTime ? { ...session, endTime: Date.now() } : session
+    );
+    
+    let updatedNotes = ro.customerNotes;
+    if (reason) {
+        const haltNote = `**TECH HOLD NOTE [${new Date().toLocaleString()}]:** ${reason}`;
+        updatedNotes = ro.customerNotes
+          ? `${haltNote}\n-----------------\n${ro.customerNotes}`
+          : haltNote;
+    }
+
+    const updatedRO = { ...ro, status: ROStatus.HOLD, workSessions: updatedSessions, customerNotes: updatedNotes };
+    domainEventService.publish('repair-order:status-updated', updatedRO);
+    return updatedRO;
+  },
+
+  reactivateJob: (ro: RepairOrder): RepairOrder => {
+    const updatedRO = { ...ro, status: ROStatus.READY_FOR_TECH };
+    domainEventService.publish('repair-order:status-updated', updatedRO);
+    return updatedRO;
+  },
+
+  finalizeInvoice: async (ro: RepairOrder, hourlyRate: number): Promise<RepairOrder> => {
+    const totalMilliseconds = ro.workSessions.reduce((acc, session) => {
+      if (session.endTime) { return acc + (session.endTime - session.startTime); }
+      return acc;
+    }, 0);
+    const totalHours = totalMilliseconds / (1000 * 60 * 60);
+    const laborTotal = totalHours * hourlyRate;
+    const partsTotal = ro.parts.reduce((acc, part) => acc + (part.msrp || 0), 0);
+    const grandTotal = laborTotal + partsTotal;
+
+    const dateInvoiced = Date.now();
+    const updatedRO: RepairOrder = { 
+      ...ro, 
+      status: ROStatus.COMPLETED,
+      invoiceTotal: grandTotal,
+      dateInvoiced,
+      paymentStatus: PaymentStatus.UNPAID,
+      payments: [],
+      collectionsStatus: CollectionsStatus.NONE,
+    };
+
+    // Update Vessel DNA
+    const vessel = await vesselService.getVesselByHIN(ro.vesselHIN);
+    const partsUsed = ro.parts
+      .filter(p => p.status === PartStatus.USED)
+      .map(p => ({ partNumber: p.partNumber, description: p.description }));
+
+    const newPastROEntry = {
+      id: ro.id,
+      date: new Date(dateInvoiced).toLocaleDateString(),
+      summary: ro.laborDescription || 'No summary provided.',
+      partsUsed: partsUsed
+    };
+
+    if (vessel) {
+      await vesselService.addPastRO(ro.vesselHIN, newPastROEntry);
+    } else {
+      const newVesselDNA: VesselHistory = {
+        vesselHIN: ro.vesselHIN,
+        customerName: ro.customerName,
+        customerPhones: ro.customerPhones,
+        customerEmails: ro.customerEmails,
+        customerAddress: ro.customerAddress,
+        customerNotes: ro.customerNotes,
+        status: 'COMPLETE',
+        unresolvedNotes: '',
+        boatMake: ro.boatMake || '',
+        boatModel: ro.boatModel || '',
+        boatYear: ro.boatYear || '',
+        boatLength: ro.boatLength || '',
+        engineMake: ro.engineMake || '',
+        engineModel: ro.engineModel || '',
+        engineYear: ro.engineYear || '',
+        engineHorsepower: ro.engineHorsepower || '',
+        engineSerial: ro.engineSerial,
+        pastROs: [newPastROEntry],
+      };
+      await vesselService.createVessel(newVesselDNA);
+    }
+
+    domainEventService.publish('repair-order:completed', updatedRO);
+    return updatedRO;
+  },
+
+  finalizeAuthorization: (ro: RepairOrder, type: 'digital' | 'verbal', data: string): RepairOrder => {
+    const updatedRO: RepairOrder = {
+        ...ro,
+        status: ROStatus.AUTHORIZED,
+        authorizationType: type,
+        authorizationData: data,
+        authorizationTimestamp: Date.now(),
+    };
+    domainEventService.publish('repair-order:authorized', updatedRO);
+    return updatedRO;
+  },
+
+  assignTechnician: (ro: RepairOrder, tech: Technician): RepairOrder => {
+    const updatedRO: RepairOrder = {
+        ...ro,
+        status: ROStatus.READY_FOR_TECH,
+        technicianId: tech.id,
+        technicianName: tech.name,
+    };
+    domainEventService.publish('repair-order:status-updated', updatedRO);
+    return updatedRO;
+  },
+
+  processReviewRequest: (ro: RepairOrder, request: RORequest, decision: 'APPROVED' | 'REJECTED'): RepairOrder => {
+    let updatedRO = { ...ro };
+    const updatedRequests = (updatedRO.requests || []).map(r =>
+      r.id === request.id ? { ...r, status: decision } : r
+    );
+    updatedRO.requests = updatedRequests;
+
+    if (decision === 'APPROVED') {
+      if (request.type === 'DIRECTIVE') {
+        updatedRO.directives.push({ id: `d-tech-${Date.now()}`, title: (request.payload as { title: string }).title, isCompleted: false, isApproved: true });
+      } else if (request.type === 'PART') {
+        const newPart = { ...(request.payload as Part), status: PartStatus.REQUIRED };
+        updatedRO.parts.push(newPart);
+
+        // If the job is NOT active, it's safe to move it to PARTS_PENDING.
+        // If it IS active, we leave it active so the clock keeps running, per new requirement.
+        if (updatedRO.status !== ROStatus.ACTIVE) {
+          updatedRO.status = ROStatus.PARTS_PENDING;
+          domainEventService.publish('repair-order:status-updated', updatedRO);
+        }
+      }
+    }
+    return updatedRO;
+  },
+
+  confirmDeferral: async (ro: RepairOrder, summary: string): Promise<RepairOrder> => {
+    await vesselService.flagUnresolvedIssues(ro.vesselHIN, summary);
+
+    const deferredNote = `**JOB FINALIZED WITH DEFERRED ITEMS [${new Date().toLocaleString()}]:** ${summary}`;
+    const updatedLaborDescription = ro.laborDescription 
+        ? `${ro.laborDescription}\n-----------------\n${deferredNote}`
+        : deferredNote;
+
+    const updatedRO: RepairOrder = {
+        ...ro,
+        status: ROStatus.PENDING_INVOICE,
+        laborDescription: updatedLaborDescription,
+    };
+    domainEventService.publish('repair-order:status-updated', updatedRO);
+    return updatedRO;
+  },
+
+  completeJob: async (ro: RepairOrder, laborNote: string): Promise<RepairOrder> => {
+    const unusedParts = ro.parts.filter(p => p.status === PartStatus.IN_BOX);
+    if (unusedParts.length > 0) {
+      const clipboardSubtractions: ClipboardEntry[] = unusedParts.map(part => ({
+        partNumber: part.partNumber,
+        description: part.description,
+        quantity: -1,
+        timestamp: Date.now(),
+        roId: ro.id,
+      }));
+      await inventoryService.bulkAddToClipboard(clipboardSubtractions);
+    }
+
+    const finalWorkSessions = ro.workSessions.map(session =>
+      !session.endTime ? { ...session, endTime: Date.now() } : session
+    );
+    
+    const updatedRO: RepairOrder = {
+      ...ro,
+      status: ROStatus.PENDING_INVOICE,
+      workSessions: finalWorkSessions,
+      laborDescription: laborNote
+    };
+    domainEventService.publish('repair-order:status-updated', updatedRO);
+    return updatedRO;
+  },
+
+  addPartToRO: async (ro: RepairOrder, partData: Part, masterInventory: Part[]): Promise<RepairOrder | null> => {
+    const partFromInventory = masterInventory.find(p => p.partNumber === partData.partNumber);
+    if (!partFromInventory) return null;
+
+    await inventoryService.addToClipboard({
+      partNumber: partData.partNumber,
+      description: partData.description,
+      quantity: 1,
+      timestamp: Date.now(),
+      roId: ro.id,
+    });
+
+    const updatedParts = [...ro.parts, { ...partFromInventory, status: PartStatus.REQUIRED }];
+    return { ...ro, parts: updatedParts };
+  },
+
+  removePartFromRO: async (
+    ro: RepairOrder, 
+    partIndex: number, 
+    masterInventory: Part[]
+  ): Promise<{ updatedRO: RepairOrder, updatedInventory?: Part[], alertToAdd?: Omit<InventoryAlert, 'id' | 'timestamp'> }> => {
+    const part = ro.parts[partIndex];
+    let updatedInventory: Part[] | undefined;
+    let alertToAdd: Omit<InventoryAlert, 'id' | 'timestamp'> | undefined;
+
+    if (part.status === PartStatus.IN_BOX && !part.isCustom) {
+        const invResult = await inventoryService.adjustInventory(
+            masterInventory,
+            part.partNumber,
+            1,
+            'Removed from RO',
+            ro.id,
+            ro.shopId
+        );
+        if (invResult) {
+            updatedInventory = invResult.updatedInventory;
+            alertToAdd = invResult.alertToAdd;
+        }
+    }
+    const updatedParts = ro.parts.filter((_, idx) => idx !== partIndex);
+    return { updatedRO: { ...ro, parts: updatedParts }, updatedInventory, alertToAdd };
+  },
+
+  updatePartStatus: async (
+    ro: RepairOrder, 
+    partIndex: number, 
+    status: PartStatus, 
+    masterInventory: Part[]
+  ): Promise<{ updatedRO: RepairOrder, updatedInventory?: Part[], alertToAdd?: Omit<InventoryAlert, 'id' | 'timestamp'> }> => {
+    const originalStatus = ro.parts[partIndex].status;
+    const updatedParts = [...ro.parts];
+    const part = updatedParts[partIndex];
+    updatedParts[partIndex] = { ...part, status };
+
+    let finalRO = {...ro, parts: updatedParts};
+    let updatedInventory: Part[] | undefined;
+    let alertToAdd: Omit<InventoryAlert, 'id' | 'timestamp'> | undefined;
+
+    // Auto-advance status if it was waiting on parts and now everything is in box
+    if (finalRO.status === ROStatus.PARTS_PENDING) {
+        const areAllPartsInBox = finalRO.parts.every(p => p.status === PartStatus.IN_BOX || p.status === PartStatus.USED);
+        if (areAllPartsInBox) {
+            finalRO.status = ROStatus.PARTS_READY;
+            domainEventService.publish('repair-order:status-updated', finalRO);
+        }
+    }
+
+    if (status === PartStatus.IN_BOX && originalStatus !== PartStatus.IN_BOX) {
+        if (!part.isCustom) {
+            const invResult = await inventoryService.adjustInventory(masterInventory, part.partNumber, -1, 'Added to box', ro.id, ro.shopId);
+            if (invResult) {
+                updatedInventory = invResult.updatedInventory;
+                alertToAdd = invResult.alertToAdd;
+            }
+        }
+    }
+    else if (status === PartStatus.RETURNED && originalStatus !== PartStatus.RETURNED) {
+        if (!part.isCustom) {
+            const invResult = await inventoryService.adjustInventory(masterInventory, part.partNumber, 1, 'Returned to stock', ro.id, ro.shopId);
+            if (invResult) {
+                updatedInventory = invResult.updatedInventory;
+                alertToAdd = invResult.alertToAdd;
+            }
+        }
+    }
+    else if (originalStatus === PartStatus.IN_BOX && status === PartStatus.REQUIRED) {
+        // This is the "Return to Stock" button in ROCard logic
+        if (!part.isCustom) {
+            const invResult = await inventoryService.adjustInventory(masterInventory, part.partNumber, 1, 'Returned to stock', ro.id, ro.shopId);
+            if (invResult) {
+                updatedInventory = invResult.updatedInventory;
+                alertToAdd = invResult.alertToAdd;
+            }
+        }
+    }
+
+    return { updatedRO: finalRO, updatedInventory, alertToAdd };
+  },
+
+  confirmMissingPart: (
+    ro: RepairOrder, 
+    partIndex: number, 
+    missingReason: string, 
+    missingReasonNotes: string
+  ): { updatedRO: RepairOrder, alert: Omit<InventoryAlert, 'id' | 'timestamp'> } => {
+    const updatedParts = [...ro.parts];
+    const part = updatedParts[partIndex];
+
+    updatedParts[partIndex] = { 
+        ...part, 
+        status: PartStatus.MISSING,
+        missingReason: missingReason,
+        missingReasonNotes: missingReasonNotes,
+    };
+    const finalRO = { ...ro, parts: updatedParts };
+    
+    const alert = {
+      partNumber: part.partNumber,
+      message: `Part marked MISSING by Parts Dept. Reason: ${missingReason}.`,
+      roId: ro.id,
+      reason: 'Discrepancy'
+    };
+
+    return { updatedRO: finalRO, alert };
+  },
+
+  returnPartToStock: async (
+    ro: RepairOrder, 
+    partIndex: number, 
+    masterInventory: Part[]
+  ): Promise<{ updatedRO: RepairOrder, updatedInventory?: Part[], alertToAdd?: Omit<InventoryAlert, 'id' | 'timestamp'> } | null> => {
+    const updatedParts = [...ro.parts];
+    const part = updatedParts[partIndex];
+    if (part.status !== PartStatus.IN_BOX) return null;
+
+    updatedParts[partIndex] = { ...part, status: PartStatus.RETURNED };
+
+    let updatedInventory: Part[] | undefined;
+    let alertToAdd: Omit<InventoryAlert, 'id' | 'timestamp'> | undefined;
+
+    if (!part.isCustom) {
+        const invResult = await inventoryService.adjustInventory(masterInventory, part.partNumber, 1, 'Returned unused from RO', ro.id, ro.shopId);
+        if (invResult) {
+            updatedInventory = invResult.updatedInventory;
+            alertToAdd = invResult.alertToAdd;
+        }
+    }
+
+    return { updatedRO: { ...ro, parts: updatedParts }, updatedInventory, alertToAdd };
+  },
+
+  confirmPartNotUsed: (ro: RepairOrder, partIndex: number, reason: string, notes: string): RepairOrder => {
+    const updatedParts = [...ro.parts];
+    const part = updatedParts[partIndex];
+
+    updatedParts[partIndex] = {
+        ...part,
+        status: PartStatus.NOT_USED,
+        notUsedReason: reason,
+        notUsedNotes: notes,
+        notUsedTimestamp: Date.now()
+    };
+
+    return { ...ro, parts: updatedParts };
+  },
+
+  calculateElapsedTime: (repairOrder: RepairOrder | undefined): number => {
+    if (!repairOrder || !repairOrder.workSessions.length) return 0;
+
+    let totalMs = 0;
+    repairOrder.workSessions.forEach((session, index) => {
+      const isLastSession = index === repairOrder.workSessions.length - 1;
+      if (isLastSession && !session.endTime && repairOrder.status === ROStatus.ACTIVE) {
+        totalMs += Date.now() - session.startTime;
+      } else if (session.endTime) {
+        totalMs += session.endTime - session.startTime;
+      }
+    });
+    return Math.floor(totalMs / 1000);
+  },
+
+  addEvidenceToDirective: (
+    repairOrder: RepairOrder,
+    directiveId: string,
+    evidence: { type: 'photo' | 'video' | 'audio', url: string }
+  ): RepairOrder => {
+    const updatedDirectives = repairOrder.directives.map(d => {
+      if (d.id === directiveId) {
+        return { ...d, evidence: [...(d.evidence || []), evidence] };
+      }
+      return d;
+    });
+    return { ...repairOrder, directives: updatedDirectives };
+  },
+
+  completeDirective: (repairOrder: RepairOrder, directive: Directive): RepairOrder => {
+    const updatedDirectives = repairOrder.directives.map(d =>
+      d.id === directive.id ? { ...d, isCompleted: true, completionTimestamp: Date.now() } : d
+    );
+
+    let newStatus = repairOrder.status;
+    let newWorkSessions = [...repairOrder.workSessions];
+
+    // Starts the clock on the first directive
+    if (directive.id === 'd1') {
+      const lastSession = newWorkSessions[newWorkSessions.length - 1];
+      if (!lastSession || lastSession.endTime) {
+        newWorkSessions.push({ startTime: Date.now() });
+        newStatus = ROStatus.ACTIVE;
+      }
+    }
+
+    return { ...repairOrder, directives: updatedDirectives, status: newStatus, workSessions: newWorkSessions };
+  },
+
+  submitRequest: (repairOrder: RepairOrder, request: Omit<RORequest, 'id' | 'timestamp'>): RepairOrder => {
+    const newRequest: RORequest = { ...request, id: `req-${Date.now()}`, timestamp: Date.now() };
+    const updatedRequests = [...(repairOrder.requests || []), newRequest];
+    return { ...repairOrder, requests: updatedRequests };
+  },
+
+  technicianFinalizeJob: async (repairOrder: RepairOrder, laborNote: string): Promise<RepairOrder> => {
+    return repairOrderService.completeJob(repairOrder, laborNote);
+  }
+};
