@@ -167,7 +167,8 @@ export const repairOrderService = {
     let authorizationTimestamp = input.authorization?.timestamp ?? null;
 
     if (authorizationType) {
-        status = ROStatus.AUTHORIZED;
+        const hasParts = uniqueParts.length > 0;
+        status = hasParts ? ROStatus.AUTHORIZED : ROStatus.READY_FOR_TECH;
         if (!authorizationTimestamp) authorizationTimestamp = Date.now();
     }
 
@@ -597,7 +598,7 @@ export const repairOrderService = {
     let newWorkSessions = [...repairOrder.workSessions];
 
     // Starts the clock on the first directive
-    if (directive.id === 'd1') {
+    if (repairOrder.directives[0]?.id === directive.id) {
       const lastSession = newWorkSessions[newWorkSessions.length - 1];
       if (!lastSession || lastSession.endTime) {
         newWorkSessions.push({ startTime: Date.now() });
