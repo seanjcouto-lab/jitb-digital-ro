@@ -50,8 +50,8 @@ const ProfileOnboardingForm: React.FC<ProfileOnboardingFormProps> = ({ initialDa
     };
     
     const handleSubmit = () => {
-        if (!profileData.customerName || !profileData.engineSerial) {
-          alert("Required: Customer Name and Engine Serial Number");
+        if (!profileData.customerName) {
+          alert("Required: Customer Name");
           return;
         }
         onProfileComplete(profileData);
@@ -140,3 +140,4 @@ const ProfileOnboardingForm: React.FC<ProfileOnboardingFormProps> = ({ initialDa
 };
 
 export default ProfileOnboardingForm;
+
