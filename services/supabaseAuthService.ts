@@ -58,4 +58,18 @@ export const supabaseAuthService = {
     }
     return { user: appUser };
   },
+
+  async resetPassword(email: string): Promise<{ status: 'ok' } | { status: 'error'; message: string }> {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin,
+    });
+    if (error) return { status: 'error', message: error.message };
+    return { status: 'ok' };
+  },
+
+  async updatePassword(password: string): Promise<{ status: 'ok' } | { status: 'error'; message: string }> {
+    const { error } = await supabase.auth.updateUser({ password });
+    if (error) return { status: 'error', message: error.message };
+    return { status: 'ok' };
+  },
 };

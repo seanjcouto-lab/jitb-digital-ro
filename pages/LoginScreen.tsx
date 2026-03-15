@@ -12,6 +12,11 @@ const LoginScreen: React.FC<Props> = ({ onLogin }) => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const [showReset, setShowReset] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetMessage, setResetMessage] = useState('');
+  const [resetLoading, setResetLoading] = useState(false);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -27,6 +32,18 @@ const LoginScreen: React.FC<Props> = ({ onLogin }) => {
       setError('Authenticated, but no shop is assigned to this account. Contact your administrator.');
     } else {
       setError(result.message);
+    }
+  };
+
+  const handleResetPassword = async () => {
+    if (!resetEmail) return;
+    setResetLoading(true);
+    const result = await supabaseAuthService.resetPassword(resetEmail);
+    setResetLoading(false);
+    if (result.status === 'ok') {
+      setResetMessage('Reset email sent. Check your inbox.');
+    } else {
+      setResetMessage(result.message);
     }
   };
 
@@ -66,6 +83,58 @@ const LoginScreen: React.FC<Props> = ({ onLogin }) => {
           >
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
+          
+          <div className="mt-4 text-center">
+            {!showReset ? (
+              <button type="button" onClick={() => setShowReset(true)} className="text-xs text-slate-500 hover:text-slate-300 transition-colors">
+                Forgot Password?
+              </button>
+            ) : (
+              <div className="space-y-3">
+                <input
+                  type="email"
+                  value={resetEmail}
+                  onChange={e => setResetEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:border-white/30 outline-none"
+                />
+                {resetMessage && <p className="text-xs text-slate-400">{resetMessage}</p>}
+                <button type="button" onClick={handleResetPassword} disabled={resetLoading} className="w-full py-2 bg-slate-700 hover:bg-slate-600 text-white text-sm font-bold rounded-lg disabled:opacity-50 transition-colors">
+                  {resetLoading ? 'Sending...' : 'Send Reset Email'}
+                </button>
+                <button type="button" onClick={() => { setShowReset(false); setResetMessage(''); }} className="text-xs text-slate-500 hover:text-slate-300 transition-colors">
+                  Back to Sign In
+                </button>
+              </div>
+            )}
+          </div>
+
+          <div className="mt-8 pt-6 border-t border-white/5">
+            <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-4 text-center">Development Access</p>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => onLogin({ id: 'dev-admin', name: 'Danny', role: 'ADMIN' as any, privileges: ['DEVELOPER' as any], shopId: '00000000-0000-0000-0000-000000000001' })}
+                className="py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-lg transition-colors border border-white/5"
+              >
+                Danny (Admin)
+              </button>
+              <button
+                type="button"
+                onClick={() => onLogin({ id: 'dev-sm', name: 'Danny', role: 'SERVICE_MANAGER' as any, privileges: [], shopId: '00000000-0000-0000-0000-000000000001' })}
+                className="py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-lg transition-colors border border-white/5"
+              >
+                Danny (SM)
+              </button>
+              <button
+                type="button"
+                onClick={() => onLogin({ id: 'dev-tech', name: 'Pierre', role: 'TECHNICIAN' as any, privileges: [], shopId: '00000000-0000-0000-0000-000000000001', techId: 'tech-1' })}
+                className="py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-lg transition-colors border border-white/5"
+              >
+                Pierre (Tech)
+              </button>
+            </div>
+          </div>
         </form>
       </div>
     </div>

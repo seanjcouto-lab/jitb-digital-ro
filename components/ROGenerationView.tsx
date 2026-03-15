@@ -142,6 +142,7 @@ const ROGenerationView: React.FC<ROGenerationViewProps> = ({ profileData, onROGe
   const [signatureForCreate, setSignatureForCreate] = useState<string | null>(null);
   const [isVerbalCertified, setIsVerbalCertified] = useState(false);
   const [showCreateSignatureModal, setShowCreateSignatureModal] = useState(false);
+  const [micError, setMicError] = useState(false);
   
   const [evidenceModalMode, setEvidenceModalMode] = useState<EvidenceModalMode | null>(null);
   const [capturedMediaUrl, setCapturedMediaUrl] = useState<string | null>(null);
@@ -249,7 +250,7 @@ const ROGenerationView: React.FC<ROGenerationViewProps> = ({ profileData, onROGe
         setIsRecording(true);
     } catch (err) {
         console.error("Mic access error:", err);
-        alert("Microphone access denied. Please check browser permissions.");
+        setMicError(true);
         handleCloseEvidenceModal();
     }
   };
@@ -331,7 +332,14 @@ const ROGenerationView: React.FC<ROGenerationViewProps> = ({ profileData, onROGe
                 {manuallyAddedDirectives.map((dir, index) => (<div key={index} className="flex justify-between items-center bg-slate-900/70 p-3 rounded-lg border border-white/5"><p className="text-sm font-medium text-slate-200">{dir}</p><button onClick={() => handleRemoveManualDirective(index)} className="p-2 bg-slate-800/50 rounded-lg text-slate-500 hover:bg-red-500/20 hover:text-red-400 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clipRule="evenodd" /></svg></button></div>))}
               </div>
               <div className="flex gap-2 mt-4">
-                <input value={manualDirective} onFocus={handleInputFocus} onChange={e => setManualDirective(e.target.value)} placeholder="Add custom directive..." className="flex-grow h-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:border-neon-steel outline-none transition-colors"/>
+                <input 
+                  value={manualDirective} 
+                  onFocus={handleInputFocus} 
+                  onChange={e => setManualDirective(e.target.value)} 
+                  onKeyDown={(e) => e.key === 'Enter' && handleAddManualDirective()}
+                  placeholder="Add custom directive..." 
+                  className="flex-grow h-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:border-neon-steel outline-none transition-colors"
+                />
                 <button onClick={handleAddManualDirective} disabled={!manualDirective.trim()} className="px-6 py-3 bg-slate-800 border border-white/10 text-slate-300 hover:border-neon-steel hover:text-white transition-all rounded-lg font-black text-[10px] uppercase tracking-widest disabled:opacity-50">Add</button>
               </div>
             </div>
@@ -341,7 +349,15 @@ const ROGenerationView: React.FC<ROGenerationViewProps> = ({ profileData, onROGe
                 {manuallyAddedParts.map(part => (<div key={part.partNumber} className="flex justify-between items-center bg-slate-900/70 p-3 rounded-lg border border-white/5"><div><p className="text-sm font-bold text-slate-200">{part.description}</p><p className="text-xs font-mono text-slate-500">{part.partNumber}</p></div><button onClick={() => handleRemoveManualPart(part.partNumber)} className="p-2 bg-slate-800/50 rounded-lg text-slate-500 hover:bg-red-500/20 hover:text-red-400 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clipRule="evenodd" /></svg></button></div>))}
               </div>
               <div className="flex gap-2 mt-4">
-                <div className="relative flex-grow"><input value={manualPartQuery} onFocus={handleInputFocus} onChange={(e) => setManualPartQuery(e.target.value)} placeholder="Search parts or type to add..." className="w-full h-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:border-neon-steel outline-none transition-colors"/>
+                <div className="relative flex-grow">
+                  <input 
+                    value={manualPartQuery} 
+                    onFocus={handleInputFocus} 
+                    onChange={(e) => setManualPartQuery(e.target.value)} 
+                    onKeyDown={(e) => e.key === 'Enter' && handleManualPartAddButtonClick()}
+                    placeholder="Search parts or type to add..." 
+                    className="w-full h-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:border-neon-steel outline-none transition-colors"
+                  />
                   {manualPartResults.length > 0 && (<div className="absolute w-full bg-slate-800 rounded-lg mt-1 border border-white/10 z-10 shadow-lg">{manualPartResults.map((part) => (<div key={part.partNumber} onClick={() => handleAddManualPart(part)} className="p-3 hover:bg-slate-700/50 cursor-pointer text-sm">{part.description} <span className="text-xs text-slate-400">({part.partNumber})</span></div>))}</div>)}
                 </div>
                 <button onClick={handleManualPartAddButtonClick} disabled={!manualPartQuery.trim()} className="px-6 py-3 bg-slate-800 border border-white/10 text-slate-300 hover:border-neon-steel hover:text-white transition-all rounded-lg font-black text-[10px] uppercase tracking-widest disabled:opacity-50">Add</button>
@@ -397,6 +413,7 @@ const ROGenerationView: React.FC<ROGenerationViewProps> = ({ profileData, onROGe
                     <button onClick={isRecording ? stopRecording : startRecording} className={`px-6 py-3 rounded-lg font-bold text-white transition-all text-sm uppercase tracking-wider ${isRecording ? 'bg-red-600' : 'bg-slate-800 hover:bg-slate-700'}`}>
                         {isRecording ? 'Stop Recording' : 'Start Recording'}
                     </button>
+                    {micError && <p className="text-red-400 text-xs font-bold">Microphone access denied. Please check browser permissions.</p>}
                 </div>
               )}
               {capturedMediaUrl && (

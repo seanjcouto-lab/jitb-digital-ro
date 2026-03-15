@@ -31,6 +31,11 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, updateRO, 
   const [isHaltModalOpen, setIsHaltModalOpen] = useState(false);
   const [haltReason, setHaltReason] = useState('');
 
+  // State for Missing Part modal
+  const [missingPartIndex, setMissingPartIndex] = useState<number | null>(null);
+  const [missingReason, setMissingReason] = useState('Discrepancy');
+  const [missingNotes, setMissingNotes] = useState('');
+
   const photoInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
 
@@ -226,6 +231,15 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, updateRO, 
     setHaltReason('');
   };
 
+  const handleConfirmMissing = () => {
+    if (!repairOrder || missingPartIndex === null) return;
+    const updatedRO = TechnicianService.reportMissingPart(repairOrder, missingPartIndex, missingReason, missingNotes);
+    updateRO(updatedRO);
+    setMissingPartIndex(null);
+    setMissingReason('Discrepancy');
+    setMissingNotes('');
+  };
+
   return (
     <>
       <input type="file" accept="image/*" ref={photoInputRef} className="hidden" onChange={(e) => handleFileChange(e, 'photo')} />
@@ -313,7 +327,12 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, updateRO, 
                                 <div><p className="font-bold text-sm text-slate-200">{part.description}</p><p className="text-[10px] text-slate-500 font-mono">{part.partNumber} • BIN: {part.binLocation}</p></div>
                                 <div className="flex items-center gap-4">
                                     <span className={`text-[9px] font-black uppercase px-3 py-1 rounded-full border ${colorClass}`}>{part.status?.replace('_', ' ')}</span>
-                                    {part.status === PartStatus.IN_BOX && (<button onClick={() => handlePartStatusUpdate(index, PartStatus.USED)} className="px-4 py-1.5 text-[10px] font-black bg-slate-800 border border-white/10 rounded-lg hover:border-neon-seafoam hover:text-white transition-all">MARK USED</button>)}
+                                    {part.status === PartStatus.IN_BOX && (
+                                      <div className="flex gap-2">
+                                        <button onClick={() => handlePartStatusUpdate(index, PartStatus.USED)} className="px-4 py-1.5 text-[10px] font-black bg-slate-800 border border-white/10 rounded-lg hover:border-neon-seafoam hover:text-white transition-all">MARK USED</button>
+                                        <button onClick={() => setMissingPartIndex(index)} className="px-4 py-1.5 text-[10px] font-black bg-red-500/10 text-red-500 border border-red-500/20 rounded-lg hover:bg-red-500/20 transition-all">MISSING</button>
+                                      </div>
+                                    )}
                                     {part.status === PartStatus.USED && (<button onClick={() => handlePartStatusUpdate(index, PartStatus.IN_BOX)} className="px-4 py-1.5 text-[10px] font-black bg-neon-steel text-white rounded-lg transition-all">UNDO</button>)}
                                 </div>
                             </div>
@@ -343,6 +362,45 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, updateRO, 
           </div>
         </div>
       </div>
+
+      {missingPartIndex !== null && (
+        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
+          <div className="glass p-8 rounded-2xl w-full max-w-lg border border-red-500 shadow-2xl shadow-red-500/20">
+            <h3 className="text-lg font-black uppercase tracking-widest text-red-400 mb-4">Report Missing Part</h3>
+            <p className="text-sm text-slate-300 mb-6">You are reporting that <span className="text-white font-bold">{repairOrder.parts[missingPartIndex].description}</span> is missing from the bay. This will notify the Parts Manager.</p>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-2">Reason</label>
+                <select 
+                  value={missingReason} 
+                  onChange={e => setMissingReason(e.target.value)}
+                  className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:border-red-500 outline-none"
+                >
+                  <option value="Discrepancy">Inventory Discrepancy</option>
+                  <option value="Damaged">Received Damaged</option>
+                  <option value="Wrong Part">Wrong Part in Box</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-2">Additional Notes</label>
+                <textarea 
+                  value={missingNotes} 
+                  onChange={e => setMissingNotes(e.target.value)}
+                  placeholder="Provide more details..."
+                  className="w-full h-24 bg-slate-900 border border-white/10 rounded-lg p-4 text-white text-sm focus:border-red-500 outline-none transition-colors"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center mt-8">
+              <button onClick={() => setMissingPartIndex(null)} className="text-xs text-slate-500 hover:text-white">Cancel</button>
+              <button onClick={handleConfirmMissing} className="px-8 py-3 bg-red-500 text-white font-black rounded-lg hover:bg-red-600 transition-all uppercase tracking-widest text-xs">Report Missing</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {isHaltModalOpen && (
         <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">

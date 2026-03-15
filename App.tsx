@@ -20,7 +20,9 @@ import BillingPage from './pages/BillingPage';
 import InventoryPage from './pages/InventoryPage';
 import MetricsPage from './pages/MetricsPage';
 import LoginScreen from './pages/LoginScreen';
+import UpdatePasswordScreen from './pages/UpdatePasswordScreen';
 import CommsLink from './components/CommsLink';
+import { supabase } from './supabaseClient';
 
 const AccessDenied: React.FC<{ role: UserRole }> = ({ role }) => (
   <div className="flex flex-col items-center justify-center min-h-[60vh] animate-in fade-in zoom-in duration-500">
@@ -48,6 +50,7 @@ const App: React.FC = () => {
   const [currentTechnicianId, setCurrentTechnicianId] = useState<string | null>(null);
   const [isCommsLinkOpen, setIsCommsLinkOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRecovering, setIsRecovering] = useState(false);
 
   const initDb = async (user: LoggedInUser | null) => {
     if (!user) {
@@ -75,6 +78,16 @@ const App: React.FC = () => {
       setIsLoading(false);
     };
     restoreAndInit();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        setIsRecovering(true);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const handleLogin = async (user: LoggedInUser) => {
@@ -137,6 +150,11 @@ const App: React.FC = () => {
     setRepairOrders(prev => [...prev, roWithShop]);
   };
 
+  const deleteRO = async (roId: string) => {
+    await roStore.delete(roId);
+    setRepairOrders(prev => prev.filter(ro => ro.id !== roId));
+  };
+
   const handleExportData = () => {
     const data = { repairOrders, masterInventory, config, exportedAt: new Date().toISOString() };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -196,6 +214,10 @@ const App: React.FC = () => {
     );
   }
 
+  if (isRecovering) {
+    return <UpdatePasswordScreen onComplete={() => setIsRecovering(false)} />;
+  }
+
   if (!loggedInUser) {
     return <LoginScreen onLogin={handleLogin} />;
   }
@@ -217,7 +239,7 @@ const App: React.FC = () => {
       return <AccessDenied role={activeRole} />;
     }
     switch (activeRole) {
-      case UserRole.SERVICE_MANAGER: return <ServiceManagerPage addRO={addRO} repairOrders={repairOrders} updateRO={updateRO} hourlyRate={config.hourlyRate} masterInventory={masterInventory} />;
+      case UserRole.SERVICE_MANAGER: return <ServiceManagerPage addRO={addRO} repairOrders={repairOrders} updateRO={updateRO} deleteRO={deleteRO} hourlyRate={config.hourlyRate} masterInventory={masterInventory} />;
       case UserRole.PARTS_MANAGER: return <PartsManagerPage repairOrders={repairOrders.filter(ro => ro.status !== ROStatus.COMPLETED)} updateRO={updateRO} masterInventory={masterInventory} addInventoryAlert={addInventoryAlert} setMasterInventory={setMasterInventory} setInventoryAlerts={setInventoryAlerts} shopId={shopContextService.getActiveShopId()} />;
       case UserRole.INVENTORY_MANAGER: return <InventoryPage inventory={masterInventory} setInventory={setMasterInventory} alerts={inventoryAlerts} />;
       case UserRole.TECHNICIAN: return renderTechnicianView();

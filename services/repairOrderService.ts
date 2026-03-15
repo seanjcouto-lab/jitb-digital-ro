@@ -617,5 +617,32 @@ export const repairOrderService = {
 
   technicianFinalizeJob: async (repairOrder: RepairOrder, laborNote: string): Promise<RepairOrder> => {
     return repairOrderService.completeJob(repairOrder, laborNote);
+  },
+
+  deleteRepairOrder: (roId: string, allROs: RepairOrder[]): RepairOrder[] => {
+    const updatedROs = allROs.filter(ro => ro.id !== roId);
+    domainEventService.publish('repair-order:deleted', { id: roId });
+    return updatedROs;
+  },
+
+  addDirectiveToRO: (ro: RepairOrder, title: string): RepairOrder => {
+    const newDirective: Directive = {
+      id: `manual-${Date.now()}`,
+      title: title.toUpperCase(),
+      isCompleted: false,
+      isApproved: true
+    };
+    return { ...ro, directives: [...ro.directives, newDirective] };
+  },
+
+  removeDirectiveFromRO: (ro: RepairOrder, directiveId: string): RepairOrder => {
+    // Prevent removing standard directives if needed, but for now allow all
+    const updatedDirectives = ro.directives.filter(d => d.id !== directiveId);
+    return { ...ro, directives: updatedDirectives };
+  },
+
+  addManualPartToRO: (ro: RepairOrder, part: Part): RepairOrder => {
+    const newPart = { ...part, status: PartStatus.REQUIRED };
+    return { ...ro, parts: [...ro.parts, newPart] };
   }
 };

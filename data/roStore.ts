@@ -219,4 +219,14 @@ export const roStore = {
     syncROToSupabase(ro).catch(err => console.warn('Supabase sync failed (put):', err));
     return ro;
   },
+
+  delete: async (id: string) => {
+    await db.repairOrders.delete(id);
+    // Also delete from Supabase
+    supabase.from('repair_orders').delete().eq('id', id)
+      .then(({ error }) => {
+        if (error) console.warn('Supabase delete failed:', error.message);
+        else console.log('Supabase delete success for RO:', id);
+      });
+  },
 };

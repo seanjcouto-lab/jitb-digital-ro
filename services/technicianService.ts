@@ -98,5 +98,12 @@ export const TechnicianService = {
     const updatedRO = repairOrderService.holdJob(repairOrder, haltReason);
     domainEventService.publish('technician:labor-ended', { roId: repairOrder.id, technicianId: repairOrder.technicianId, reason: 'halted' });
     return updatedRO;
+  },
+
+  reportMissingPart: (ro: RepairOrder, partIndex: number, reason: string, notes: string): RepairOrder => {
+    const { updatedRO, alert } = repairOrderService.confirmMissingPart(ro, partIndex, reason, notes);
+    // In a real app, we'd save the alert to a store. For now, it's handled by the service returning it.
+    // The UI will call updateRO with the updatedRO.
+    return updatedRO;
   }
 };

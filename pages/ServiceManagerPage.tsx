@@ -16,6 +16,7 @@ interface ServiceManagerPageProps {
   addRO: (ro: RepairOrder) => void;
   repairOrders: RepairOrder[];
   updateRO: (ro: RepairOrder) => void;
+  deleteRO: (roId: string) => void;
   hourlyRate: number;
   masterInventory: Part[];
 }
@@ -37,29 +38,106 @@ const StatusPill = ({ count, label, colorClass, onClick, isActive }: { count: nu
   </div>
 );
 
-const RODetail = ({ ro }: { ro: RepairOrder }) => (
+const RODetail = ({ 
+  ro, 
+  canEdit = false, 
+  onRemoveDirective, 
+  onRemovePart, 
+  onAddDirective, 
+  onAddPart 
+}: { 
+  ro: RepairOrder, 
+  canEdit?: boolean,
+  onRemoveDirective?: (roId: string, directiveId: string) => void,
+  onRemovePart?: (roId: string, partIndex: number) => void,
+  onAddDirective?: (roId: string, title: string) => void,
+  onAddPart?: (roId: string, part: Part) => void
+}) => {
+  const [newDirective, setNewDirective] = useState('');
+  const [newPartDescription, setNewPartDescription] = useState('');
+  const [newPartNumber, setNewPartNumber] = useState('');
+
+  const handleAddDirective = () => {
+    if (newDirective.trim() && onAddDirective) {
+      onAddDirective(ro.id, newDirective.trim());
+      setNewDirective('');
+    }
+  };
+
+  const handleAddPart = () => {
+    if (newPartDescription.trim() && newPartNumber.trim() && onAddPart) {
+      onAddPart(ro.id, {
+        partNumber: newPartNumber.trim(),
+        description: newPartDescription.trim(),
+        category: 'MANUAL',
+        binLocation: 'N/A',
+        msrp: 0,
+        dealerPrice: 0,
+        cost: 0,
+        quantityOnHand: 0,
+        reorderPoint: 0,
+        supersedesPart: null,
+        isCustom: true,
+        status: PartStatus.REQUIRED,
+        shopId: ro.shopId
+      });
+      setNewPartDescription('');
+      setNewPartNumber('');
+    }
+  };
+
+  return (
     <div className="mt-4 pt-4 border-t border-white/10 animate-in fade-in duration-300 space-y-4 text-xs">
       <div>
-        <h5 className="font-bold text-slate-400 uppercase tracking-wider text-[10px] mb-2">Directives</h5>
+        <h5 className="font-bold text-slate-400 uppercase tracking-wider text-[10px] mb-2 flex justify-between items-center">
+          Directives
+        </h5>
         <ul className="list-disc list-inside text-slate-300 pl-2 space-y-1">
-          {ro.directives.map(d => <li key={d.id}>{d.title}</li>)}
+          {ro.directives.map(d => (
+            <li key={d.id} className="group/item flex justify-between items-center">
+              <span>{d.title}</span>
+              {canEdit && onRemoveDirective && (
+                <button 
+                  onClick={(e) => { e.stopPropagation(); onRemoveDirective(ro.id, d.id); }}
+                  className="opacity-0 group-hover/item:opacity-100 text-red-400 hover:text-red-300 transition-all p-1"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.697a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </button>
+              )}
+            </li>
+          ))}
         </ul>
+        {canEdit && (
+          <div className="mt-2 flex gap-2 pl-2">
+            <input 
+              type="text" 
+              placeholder="Add directive..." 
+              value={newDirective}
+              onChange={(e) => setNewDirective(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleAddDirective()}
+              className="flex-1 bg-slate-900 border border-white/10 rounded px-2 py-1 text-[10px] outline-none focus:border-neon-seafoam"
+            />
+            <button onClick={handleAddDirective} className="px-2 py-1 bg-slate-800 rounded text-neon-seafoam border border-white/10 hover:bg-slate-700">+</button>
+          </div>
+        )}
       </div>
       
-      {ro.parts.length > 0 && (
-        <div>
-          <h5 className="font-bold text-slate-400 uppercase tracking-wider text-[10px] mb-2">Parts Manifest</h5>
-          <div className="space-y-1 pl-2">
-            {ro.parts.map(p => {
-              const isMissing = p.status === PartStatus.MISSING || p.status === PartStatus.SPECIAL_ORDER;
-              const isInBox = p.status === PartStatus.IN_BOX || p.status === PartStatus.USED;
-              const isReturned = p.status === PartStatus.RETURNED;
-              
-              return (
-                <div key={p.partNumber} className="flex items-center justify-between py-1 border-b border-white/5 last:border-0">
-                  <span className={`text-slate-300 ${isReturned ? 'line-through' : ''}`}>
-                    {p.description} <span className="text-slate-500 font-mono text-[9px]">({p.partNumber})</span>
-                  </span>
+      <div>
+        <h5 className="font-bold text-slate-400 uppercase tracking-wider text-[10px] mb-2">Parts Manifest</h5>
+        <div className="space-y-1 pl-2">
+          {ro.parts.map((p, idx) => {
+            const isMissing = p.status === PartStatus.MISSING || p.status === PartStatus.SPECIAL_ORDER;
+            const isInBox = p.status === PartStatus.IN_BOX || p.status === PartStatus.USED;
+            const isReturned = p.status === PartStatus.RETURNED;
+            
+            return (
+              <div key={`${p.partNumber}-${idx}`} className="group/item flex items-center justify-between py-1 border-b border-white/5 last:border-0">
+                <span className={`text-slate-300 ${isReturned ? 'line-through' : ''}`}>
+                  {p.description} <span className="text-slate-500 font-mono text-[9px]">({p.partNumber})</span>
+                </span>
+                <div className="flex items-center gap-2">
                   <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-md ${
                     isMissing ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 
                     isInBox ? 'bg-neon-seafoam/10 text-neon-seafoam border border-neon-seafoam/20' :
@@ -68,12 +146,44 @@ const RODetail = ({ ro }: { ro: RepairOrder }) => (
                   }`}>
                     {p.status?.replace('_', ' ') || 'REQUIRED'}
                   </span>
+                  {canEdit && onRemovePart && (
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); onRemovePart(ro.id, idx); }}
+                      className="opacity-0 group-hover/item:opacity-100 text-red-400 hover:text-red-300 transition-all p-1"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.697a1 1 0 010-1.414z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                  )}
                 </div>
-              );
-            })}
-          </div>
+              </div>
+            );
+          })}
         </div>
-      )}
+        {canEdit && (
+          <div className="mt-2 space-y-2 pl-2">
+            <div className="flex gap-2">
+              <input 
+                type="text" 
+                placeholder="Part Description..." 
+                value={newPartDescription}
+                onChange={(e) => setNewPartDescription(e.target.value)}
+                className="flex-[2] bg-slate-900 border border-white/10 rounded px-2 py-1 text-[10px] outline-none focus:border-neon-seafoam"
+              />
+              <input 
+                type="text" 
+                placeholder="Part #" 
+                value={newPartNumber}
+                onChange={(e) => setNewPartNumber(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleAddPart()}
+                className="flex-1 bg-slate-900 border border-white/10 rounded px-2 py-1 text-[10px] outline-none focus:border-neon-seafoam"
+              />
+              <button onClick={handleAddPart} className="px-2 py-1 bg-slate-800 rounded text-neon-seafoam border border-white/10 hover:bg-slate-700">+</button>
+            </div>
+          </div>
+        )}
+      </div>
 
       {ro.customerNotes && (
         <div>
@@ -82,7 +192,8 @@ const RODetail = ({ ro }: { ro: RepairOrder }) => (
         </div>
       )}
     </div>
-);
+  );
+};
 
 const initialProfileState = {
   customerName: '',
@@ -201,7 +312,7 @@ const SignatureCanvas = ({ onSave, onClear }: { onSave: (dataUrl: string) => voi
 };
 
 const ServiceManagerPage: React.FC<ServiceManagerPageProps> = ({ 
-  addRO, repairOrders, updateRO, hourlyRate, masterInventory
+  addRO, repairOrders, updateRO, deleteRO, hourlyRate, masterInventory
 }) => {
   const [viewMode, setViewMode] = useState<ViewMode>('SEARCH');
   const [activeProfile, setActiveProfile] = useState(initialProfileState);
@@ -216,6 +327,8 @@ const ServiceManagerPage: React.FC<ServiceManagerPageProps> = ({
   const [authorizingRO, setAuthorizingRO] = useState<RepairOrder | null>(null);
   const [deferralRO, setDeferralRO] = useState<RepairOrder | null>(null);
   const [deferralSummary, setDeferralSummary] = useState('');
+  const [deletingRO, setDeletingRO] = useState<RepairOrder | null>(null);
+  const [showDeferralError, setShowDeferralError] = useState(false);
 
   // Dashboard Filtering State
   const [filterStatusGroup, setFilterStatusGroup] = useState<keyof typeof STATUS_GROUPS | null>(null);
@@ -318,7 +431,7 @@ const ServiceManagerPage: React.FC<ServiceManagerPageProps> = ({
   
   const handleConfirmDeferral = async () => {
     if (!deferralRO || !deferralSummary.trim()) {
-        alert("Please provide a summary for the Vessel DNA record.");
+        setShowDeferralError(true);
         return;
     }
     
@@ -327,6 +440,45 @@ const ServiceManagerPage: React.FC<ServiceManagerPageProps> = ({
 
     setDeferralRO(null);
     setDeferralSummary('');
+  };
+
+  const handleRemoveDirective = (roId: string, directiveId: string) => {
+    const ro = repairOrders.find(r => r.id === roId);
+    if (ro) {
+      const updatedRO = repairOrderService.removeDirectiveFromRO(ro, directiveId);
+      updateRO(updatedRO);
+    }
+  };
+
+  const handleRemovePart = async (roId: string, partIndex: number) => {
+    const ro = repairOrders.find(r => r.id === roId);
+    if (ro) {
+      const { updatedRO } = await repairOrderService.removePartFromRO(ro, partIndex, masterInventory);
+      updateRO(updatedRO);
+    }
+  };
+
+  const handleAddDirective = (roId: string, title: string) => {
+    const ro = repairOrders.find(r => r.id === roId);
+    if (ro) {
+      const updatedRO = repairOrderService.addDirectiveToRO(ro, title);
+      updateRO(updatedRO);
+    }
+  };
+
+  const handleAddPart = (roId: string, part: Part) => {
+    const ro = repairOrders.find(r => r.id === roId);
+    if (ro) {
+      const updatedRO = repairOrderService.addManualPartToRO(ro, part);
+      updateRO(updatedRO);
+    }
+  };
+
+  const handleDeleteRO = (roId: string) => {
+    const ro = repairOrders.find(r => r.id === roId);
+    if (ro) {
+      setDeletingRO(ro);
+    }
   };
 
   const pendingRequests = reviewRequestRO?.requests?.filter(r => r.status === 'PENDING') || [];
@@ -407,14 +559,51 @@ const ServiceManagerPage: React.FC<ServiceManagerPageProps> = ({
             
             {(!filterStatusGroup || filterStatusGroup === 'STAGED') && (
             <div className="glass rounded-2xl p-6 border-white/5">
-              <h2 className="text-lg font-bold mb-4 neon-steel uppercase tracking-tighter">Staged Queue</h2>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-bold neon-steel uppercase tracking-tighter">Staged Queue</h2>
+                <span className="text-[10px] font-bold text-slate-500 bg-white/5 px-2 py-0.5 rounded-full">{filteredROs.filter(ro => ro.status === ROStatus.STAGED).length}</span>
+              </div>
               <div className="space-y-4">
                 {filteredROs.filter(ro => ro.status === ROStatus.STAGED).map(ro => (
                   <div key={ro.id} onClick={() => setExpandedROId(expandedROId === ro.id ? null : ro.id)} className="p-4 rounded-xl border border-white/5 bg-white/5 flex flex-col gap-3 group hover:border-neon-seafoam transition-all cursor-pointer">
-                    <div><h4 className="font-bold text-slate-200 text-sm">{ro.customerName}</h4><p className="text-[9px] text-slate-500 font-bold uppercase">{ro.vesselName}</p></div>
-                    <div className="flex justify-between items-center"><div className="bg-slate-800 text-slate-500 text-[8px] px-2 py-0.5 rounded font-black">STAGED</div></div>
-                    {expandedROId !== ro.id && <button onClick={(e) => { e.stopPropagation(); handleAuthorize(ro); }} className="w-full px-4 py-2 rounded-lg bg-slate-800 text-[10px] font-black border border-white/10 hover:bg-neon-seafoam hover:text-slate-900 transition-all uppercase tracking-widest">AUTHORIZE GATE</button>}
-                    {expandedROId === ro.id && <RODetail ro={ro} />}
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="font-bold text-slate-200 text-sm">{ro.customerName}</h4>
+                        <p className="text-[9px] text-slate-500 font-bold uppercase">{ro.vesselName}</p>
+                      </div>
+                      <div className="bg-slate-800 text-slate-500 text-[8px] px-2 py-0.5 rounded font-black uppercase">STAGED</div>
+                    </div>
+                    
+                    {expandedROId !== ro.id && (
+                      <button onClick={(e) => { e.stopPropagation(); handleAuthorize(ro); }} className="w-full px-4 py-2 rounded-lg bg-slate-800 text-[10px] font-black border border-white/10 hover:bg-neon-seafoam hover:text-slate-900 transition-all uppercase tracking-widest">AUTHORIZE GATE</button>
+                    )}
+                    
+                    {expandedROId === ro.id && (
+                      <>
+                        <RODetail 
+                          ro={ro} 
+                          canEdit={true}
+                          onRemoveDirective={handleRemoveDirective}
+                          onRemovePart={handleRemovePart}
+                          onAddDirective={handleAddDirective}
+                          onAddPart={handleAddPart}
+                        />
+                        <div className="flex gap-2 mt-2">
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); handleAuthorize(ro); }} 
+                            className="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black border border-neon-seafoam/20 hover:scale-105 transition-all uppercase tracking-widest"
+                          >
+                            AUTHORIZE
+                          </button>
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); handleDeleteRO(ro.id); }} 
+                            className="px-4 py-2 rounded-lg bg-red-500/10 text-red-500 text-[10px] font-black border border-red-500/20 hover:bg-red-500/20 transition-all uppercase tracking-widest"
+                          >
+                            REMOVE
+                          </button>
+                        </div>
+                      </>
+                    )}
                   </div>
                 ))}
                 {filteredROs.filter(ro => ro.status === ROStatus.STAGED).length === 0 && <p className="text-slate-600 italic text-sm text-center py-4 font-medium">Queue empty.</p>}
@@ -547,6 +736,29 @@ const ServiceManagerPage: React.FC<ServiceManagerPageProps> = ({
         </div>
       )}
       {invoicingRO && <InvoiceModal ro={invoicingRO} hourlyRate={hourlyRate} onClose={() => setInvoicingRO(null)} onFinalize={handleFinalizeInvoice} />}
+      
+      {deletingRO && (
+        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">
+          <div className="glass p-8 rounded-2xl w-full max-w-md border border-red-500 shadow-2xl shadow-red-500/20">
+            <h3 className="text-lg font-black uppercase tracking-widest text-red-400 mb-4">Confirm Removal</h3>
+            <p className="text-sm text-slate-300 mb-6">Are you sure you want to permanently remove the Repair Order for <span className="font-bold text-white">{deletingRO.customerName}</span>? This action cannot be undone.</p>
+            <div className="flex justify-between items-center gap-4">
+              <button onClick={() => setDeletingRO(null)} className="flex-1 px-6 py-3 bg-slate-800 text-slate-300 font-bold rounded-lg hover:bg-slate-700">Cancel</button>
+              <button onClick={() => { deleteRO(deletingRO.id); setDeletingRO(null); }} className="flex-1 px-6 py-3 bg-red-500 text-white font-bold rounded-lg hover:bg-red-600">Remove Permanently</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showDeferralError && (
+        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">
+          <div className="glass p-8 rounded-2xl w-full max-w-sm border border-orange-500">
+            <h3 className="text-lg font-black uppercase tracking-widest text-orange-400 mb-4">Missing Summary</h3>
+            <p className="text-sm text-slate-300 mb-6">Please provide a summary for the Vessel DNA record before finalizing the deferral.</p>
+            <button onClick={() => setShowDeferralError(false)} className="w-full px-6 py-3 bg-orange-500 text-white font-bold rounded-lg">Acknowledge</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
