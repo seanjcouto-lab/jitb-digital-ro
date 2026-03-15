@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import SectionHeader from './SectionHeader';
 
@@ -116,7 +117,11 @@ const ProfileOnboardingForm: React.FC<ProfileOnboardingFormProps> = ({ initialDa
                      </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div><label htmlFor="engineHp" className="block text-xs text-slate-400 uppercase font-bold mb-2">Horsepower</label><input id="engineHp" type="number" value={profileData.engineHorsepower} onFocus={handleInputFocus} onChange={e => setProfileData({...profileData, engineHorsepower: e.target.value})} className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-white text-base" /></div>
-                        <div><label htmlFor="engineSerial" className="block text-xs text-slate-400 uppercase font-bold mb-2">Engine S/N</label><input id="engineSerial" value={profileData.engineSerial} onFocus={handleInputFocus} onChange={e => setProfileData({...profileData, engineSerial: e.target.value})} className="w-full bg-slate-900 border-2 border-neon-steel/30 rounded-lg px-4 py-3 text-white text-base font-mono uppercase focus:border-neon-steel outline-none shadow-[0_0_20px_rgba(56,189,248,0.15)]" /></div>
+                        <div>
+                          <label htmlFor="engineSerial" className="block text-xs text-slate-400 uppercase font-bold mb-2">Engine S/N</label>
+                          <input id="engineSerial" value={profileData.engineSerial} onFocus={handleInputFocus} onChange={e => setProfileData({...profileData, engineSerial: e.target.value})} className={`w-full bg-slate-900 rounded-lg px-4 py-3 text-white text-base font-mono uppercase outline-none shadow-[0_0_20px_rgba(56,189,248,0.15)] border-2 ${!profileData.engineSerial ? 'border-red-500 animate-pulse' : 'border-neon-steel/30 focus:border-neon-steel'}`} />
+                          {!profileData.engineSerial && <p className="text-xs text-red-400 mt-1 font-bold">Serial number recommended if available.</p>}
+                        </div>
                      </div>
                   </div>
                   <div className="space-y-4 pt-2">
@@ -140,4 +145,3 @@ const ProfileOnboardingForm: React.FC<ProfileOnboardingFormProps> = ({ initialDa
 };
 
 export default ProfileOnboardingForm;
-
