@@ -279,7 +279,7 @@ const ROCard: React.FC<ROCardProps> = ({
     const statusInfo = statusMap[ro.status] || { pillClass: 'bg-slate-700 text-slate-300', text: ro.status, borderClass: 'border-white/5' };
 
     return (
-        <div className={`glass rounded-2xl p-6 overflow-hidden border transition-all ${statusInfo.borderClass}`}>
+       <div className={`glass rounded-2xl p-6 border transition-all ${statusInfo.borderClass}`}>
             <div onClick={() => setExpandedROId(expandedROId === ro.id ? null : ro.id)} className="flex justify-between items-start mb-6 border-b border-white/5 pb-4 cursor-pointer">
               <div>
                 <h3 className="text-lg font-bold text-white">{ro.vesselName}</h3>
@@ -298,7 +298,7 @@ const ROCard: React.FC<ROCardProps> = ({
                       <div className="space-y-4">
                         <SectionHeader title="Required Parts Manifest" />
                         {ro.parts.length === 0 && <p className="text-slate-600 text-xs italic">No parts required.</p>}
-                        <div className="space-y-3 max-h-96 overflow-y-auto pr-2">
+                        <div className="space-y-3 pr-2">
                           {ro.parts.map((part, index) => {
                             const invPart = masterInventory.find(p => p.partNumber === part.partNumber);
                             return (

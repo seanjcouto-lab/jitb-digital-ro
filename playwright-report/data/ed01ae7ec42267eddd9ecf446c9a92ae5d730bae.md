@@ -1,0 +1,90 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - img "Logo" [ref=e6]
+      - heading "STATELINE BOATWORKS" [level=1] [ref=e7]
+    - generic [ref=e12]: SYSTEM IDLE // SERVICE MANAGER
+    - generic [ref=e14]:
+      - generic [ref=e15]:
+        - text: Danny
+        - generic [ref=e16]: Technician
+      - button "Logout" [ref=e17] [cursor=pointer]:
+        - img [ref=e18]
+      - button "Comms Link" [ref=e20] [cursor=pointer]:
+        - img [ref=e21]
+  - main [ref=e23]:
+    - generic [ref=e24]:
+      - generic [ref=e26]:
+        - heading "The Dock" [level=2] [ref=e27]
+        - paragraph [ref=e28]: Service Manager Command Console
+      - generic [ref=e29]:
+        - generic [ref=e30] [cursor=pointer]:
+          - generic [ref=e31]: "4"
+          - generic [ref=e32]: Staged
+        - generic [ref=e33] [cursor=pointer]:
+          - generic [ref=e34]: "8"
+          - generic [ref=e35]: Parts Dept
+        - generic [ref=e36] [cursor=pointer]:
+          - generic [ref=e37]: "2"
+          - generic [ref=e38]: Ready/Active
+        - generic [ref=e39] [cursor=pointer]:
+          - generic [ref=e40]: "0"
+          - generic [ref=e41]: Hold
+        - generic [ref=e42] [cursor=pointer]:
+          - generic [ref=e43]: "0"
+          - generic [ref=e44]: Billing
+      - generic [ref=e45]:
+        - generic [ref=e47]:
+          - generic [ref=e48]:
+            - generic:
+              - img
+            - generic [ref=e49]:
+              - generic [ref=e51]: "Neural Link: Identity Scan Engine"
+              - generic [ref=e52]:
+                - 'textbox "Neural Link: Identity Scan Engine" [ref=e53]':
+                  - /placeholder: Search by Name, HIN, or Serial...
+                  - text: Test Customer 1773517353216
+                - img [ref=e55]
+            - generic [ref=e58]:
+              - img [ref=e60]
+              - paragraph [ref=e62]: "Identity Protocol Failure: No Match Found"
+              - generic [ref=e63]:
+                - button "Initialize Profile" [ref=e64] [cursor=pointer]
+                - button "Load Mock Profile" [ref=e65] [cursor=pointer]
+          - generic [ref=e70]:
+            - button "Clear Filters" [ref=e71] [cursor=pointer]
+            - combobox [ref=e73]:
+              - option "All Technicians" [selected]
+              - option "Pierre"
+              - option "Johnny"
+              - option "Isaiah"
+              - option "Danny"
+              - option "Sean"
+        - generic [ref=e74]:
+          - generic [ref=e75]:
+            - heading "Staged Queue" [level=2] [ref=e76]
+            - paragraph [ref=e78]: Queue empty.
+          - generic [ref=e79]:
+            - heading "Awaiting Parts" [level=2] [ref=e80]
+            - generic [ref=e82] [cursor=pointer]:
+              - generic [ref=e83]:
+                - heading "Test Customer 1773517353216" [level=4] [ref=e84]
+                - paragraph
+              - generic [ref=e86]: AUTHORIZED
+          - generic [ref=e87]:
+            - heading "Deployment Deck" [level=2] [ref=e88]
+            - paragraph [ref=e90]: Deck clear.
+          - generic [ref=e91]:
+            - heading "On Hold" [level=2] [ref=e92]
+            - paragraph [ref=e94]: None.
+          - generic [ref=e95]:
+            - heading "Billing & Archive" [level=2] [ref=e96]
+            - generic [ref=e97]:
+              - paragraph [ref=e98]: Billing queue clear.
+              - generic [ref=e99]:
+                - heading "Recently Archived" [level=3] [ref=e100]
+                - paragraph [ref=e102]: Archive empty.
+```

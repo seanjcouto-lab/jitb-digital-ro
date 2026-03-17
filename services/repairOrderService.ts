@@ -528,7 +528,7 @@ export const repairOrderService = {
     if (finalRO.status === ROStatus.PARTS_PENDING) {
         const areAllPartsInBox = finalRO.parts.every(p => p.status === PartStatus.IN_BOX || p.status === PartStatus.USED);
         if (areAllPartsInBox) {
-            finalRO.status = ROStatus.PARTS_READY;
+            finalRO.status = ROStatus.READY_FOR_TECH;
             domainEventService.publish('repair-order:status-updated', finalRO);
         }
     }

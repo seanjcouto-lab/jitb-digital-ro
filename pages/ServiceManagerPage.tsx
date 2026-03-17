@@ -780,7 +780,7 @@ const handleROGenerated = (newRO: RepairOrder) => {
                     onClick={() => setExpandedROId(expandedROId === ro.id ? null : ro.id)}
                     isExpanded={expandedROId === ro.id}
                     actions={
-                      <button onClick={(e) => { e.stopPropagation(); handleAuthorize(ro); }} className="w-full px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">AUTHORIZE</button>
+                     <button onClick={(e) => { e.stopPropagation(); handleSendToBay(ro); }} className="w-full px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>
                     }
                   >
                     <RODetail 
@@ -794,10 +794,10 @@ const handleROGenerated = (newRO: RepairOrder) => {
                     />
                     <div className="flex gap-2 mt-2">
                      <button 
-  onClick={(e) => { e.stopPropagation(); handleAuthorize(ro); }} 
+  onClick={(e) => { e.stopPropagation(); handleSendToBay(ro); }}
   className="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black border border-neon-seafoam/20 hover:scale-105 transition-all uppercase tracking-widest"
 >
-  AUTHORIZE
+  ASSIGN TECH
 </button>
                       <button 
                         onClick={(e) => { e.stopPropagation(); handleDeleteRO(ro.id); }} 
