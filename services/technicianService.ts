@@ -5,6 +5,12 @@ import { shopContextService } from './shopContextService';
 import { domainEventService } from './domainEventService';
 
 export const TechnicianService = {
+  startJob: (ro: RepairOrder): RepairOrder => {
+    const updatedRO = repairOrderService.startJob(ro);
+    domainEventService.publish('technician:labor-started', { roId: ro.id, technicianId: ro.technicianId });
+    return updatedRO;
+  },
+
   calculateElapsedTime: (repairOrder: RepairOrder | undefined): number => {
     return repairOrderService.calculateElapsedTime(repairOrder);
   },
@@ -105,5 +111,9 @@ export const TechnicianService = {
     // In a real app, we'd save the alert to a store. For now, it's handled by the service returning it.
     // The UI will call updateRO with the updatedRO.
     return updatedRO;
+  },
+
+  reportNotUsed: (ro: RepairOrder, partIndex: number, reason: string, notes: string): RepairOrder => {
+    return repairOrderService.confirmPartNotUsed(ro, partIndex, reason, notes);
   }
 };

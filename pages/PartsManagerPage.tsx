@@ -258,12 +258,14 @@ interface ROCardProps {
     handleAddPackage: (ro: RepairOrder, pkg: any) => Promise<void>;
     handleAddButtonClick: (ro: RepairOrder) => Promise<void>;
     handleInputFocus: (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+    handleUpdatePartDetails: (ro: RepairOrder, partIndex: number, updates: Partial<Part>) => void;
 }
 
 const ROCard: React.FC<ROCardProps> = ({ 
     ro, masterInventory, expandedROId, setExpandedROId, 
     handleUpdatePartStatus, handleRemovePart, handleFulfillmentComplete,
-    partSearchQueries, setPartSearchQueries, getOracleResults, handleAddPart, handleAddPackage, handleAddButtonClick, handleInputFocus
+    partSearchQueries, setPartSearchQueries, getOracleResults, handleAddPart, handleAddPackage, handleAddButtonClick, handleInputFocus,
+    handleUpdatePartDetails
 }) => {
     const isFulfillable = ro.parts.length > 0 && ro.parts.every(p => p.status && p.status !== PartStatus.REQUIRED && p.status !== PartStatus.APPROVAL_PENDING);
     const oracleResults = getOracleResults(partSearchQueries[ro.id] || '', ro.parts);
@@ -321,6 +323,34 @@ const ROCard: React.FC<ROCardProps> = ({
                                   {part.status?.replace('_', ' ') || 'REQUIRED'}
                                 </div>
                               </div>
+                                <div className="grid grid-cols-2 gap-4 mb-2">
+                                    <div>
+                                        <label className="block text-[8px] text-slate-500 uppercase font-bold mb-1">Dealer Cost</label>
+                                        <div className="relative">
+                                            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-slate-500">$</span>
+                                            <input 
+                                                type="number" 
+                                                value={part.dealerPrice || ''} 
+                                                onChange={e => handleUpdatePartDetails(ro, index, { dealerPrice: parseFloat(e.target.value) || 0 })}
+                                                className="w-full bg-slate-800 border border-white/5 rounded px-5 py-1 text-[10px] font-mono text-white outline-none focus:border-neon-steel"
+                                                placeholder="0.00"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-[8px] text-slate-500 uppercase font-bold mb-1">Retail (MSRP)</label>
+                                        <div className="relative">
+                                            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-slate-500">$</span>
+                                            <input 
+                                                type="number" 
+                                                value={part.msrp || ''} 
+                                                onChange={e => handleUpdatePartDetails(ro, index, { msrp: parseFloat(e.target.value) || 0 })}
+                                                className="w-full bg-slate-800 border border-white/5 rounded px-5 py-1 text-[10px] font-mono text-white outline-none focus:border-neon-steel"
+                                                placeholder="0.00"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
                                 <div className="flex justify-between items-center">
                                     <div className="flex gap-2">
                                         {(part.status === PartStatus.REQUIRED || !part.status) && (
@@ -394,7 +424,7 @@ interface ReturnsROCardProps {
 }
 
 const ReturnsROCard: React.FC<ReturnsROCardProps> = ({ ro, onReturnPart, onMarkNotUsed }) => {
-    const unusedParts = ro.parts.map((p, i) => ({...p, originalIndex: i})).filter(p => p.status === PartStatus.IN_BOX);
+    const unusedParts = ro.parts.map((p, i) => ({...p, originalIndex: i})).filter(p => p.status === PartStatus.NOT_USED);
 
     return (
         <div className="glass rounded-2xl p-6 border-white/5">
@@ -413,6 +443,9 @@ const ReturnsROCard: React.FC<ReturnsROCardProps> = ({ ro, onReturnPart, onMarkN
                             <div>
                                 <p className="text-sm font-medium text-slate-200">{part.description}</p>
                                 <p className="text-xs font-mono text-slate-500">{part.partNumber}</p>
+                                {part.notUsedReason && (
+                                    <p className="text-[10px] text-orange-400 italic mt-1">Reason: {part.notUsedReason}</p>
+                                )}
                             </div>
                         </div>
                         <div className="flex gap-2">
@@ -421,12 +454,6 @@ const ReturnsROCard: React.FC<ReturnsROCardProps> = ({ ro, onReturnPart, onMarkN
                                 className="flex-1 px-4 py-2 rounded-md bg-blue-500/20 text-blue-400 text-[10px] font-bold uppercase hover:bg-blue-500/30 transition-colors"
                             >
                                 Return to Stock
-                            </button>
-                            <button 
-                                onClick={() => onMarkNotUsed(ro.id, part.originalIndex)}
-                                className="flex-1 px-4 py-2 rounded-md bg-slate-700/50 text-slate-300 text-[10px] font-bold uppercase hover:bg-slate-600/50 transition-colors"
-                            >
-                                Mark Not Used
                             </button>
                         </div>
                     </div>
@@ -479,8 +506,7 @@ const PartsManagerPage: React.FC<PartsManagerPageProps> = ({
 
   const returnsQueue = useMemo(() => 
     repairOrders.filter(ro => 
-        (ro.status === ROStatus.PENDING_INVOICE || ro.status === ROStatus.COMPLETED) && 
-        ro.parts.some(p => p.status === PartStatus.IN_BOX)
+        ro.parts.some(p => p.status === PartStatus.NOT_USED)
     ), [repairOrders]);
 
 
@@ -598,6 +624,20 @@ const PartsManagerPage: React.FC<PartsManagerPageProps> = ({
     }
   };
 
+  const handleFulfillRequest = async (ro: RepairOrder, requestId: string) => {
+    const result = await PartsManagerService.fulfillRequest(ro, requestId, masterInventory);
+    if (result) {
+      updateRO(result.updatedRO);
+      if (result.updatedInventory) setMasterInventory(result.updatedInventory);
+      if (result.alertToAdd) addInventoryAlert(result.alertToAdd);
+    }
+  };
+
+  const handleFlagRequest = (ro: RepairOrder, requestId: string, status: 'MISSING' | 'SPECIAL_ORDER') => {
+    const updatedRO = PartsManagerService.flagRequest(ro, requestId, status);
+    updateRO(updatedRO);
+  };
+
   const handleFulfillmentComplete = (ro: RepairOrder) => {
     const { updatedRO, soParts } = PartsManagerService.checkFulfillmentComplete(ro);
     
@@ -638,6 +678,11 @@ const PartsManagerPage: React.FC<PartsManagerPageProps> = ({
     setNotUsedPartInfo({ ro, partIndex });
   };
 
+  const handleUpdatePartDetails = (ro: RepairOrder, partIndex: number, updates: Partial<Part>) => {
+    const updatedRO = PartsManagerService.updatePartDetails(ro, partIndex, updates);
+    updateRO(updatedRO);
+  };
+
   const handleConfirmNotUsed = (reason: string, notes: string) => {
     if (!notUsedPartInfo) return;
     const { ro, partIndex } = notUsedPartInfo;
@@ -661,7 +706,8 @@ const PartsManagerPage: React.FC<PartsManagerPageProps> = ({
   const cardProps = {
       masterInventory, expandedROId, setExpandedROId,
       handleUpdatePartStatus, handleRemovePart, handleFulfillmentComplete,
-      partSearchQueries, setPartSearchQueries, getOracleResults, handleAddPart, handleAddPackage, handleAddButtonClick, handleInputFocus
+      partSearchQueries, setPartSearchQueries, getOracleResults, handleAddPart, handleAddPackage, handleAddButtonClick, handleInputFocus,
+      handleUpdatePartDetails
   };
 
   return (
@@ -669,7 +715,7 @@ const PartsManagerPage: React.FC<PartsManagerPageProps> = ({
       <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
         {requestsQueue.length > 0 && (
           <div className="mb-12">
-            <h2 className="text-2xl font-bold text-orange-400 uppercase tracking-tighter mb-4">Pending Part Requests <span className="text-slate-500 text-lg">({requestsQueue.length})</span></h2>
+            <h2 className="text-2xl font-bold text-purple-400 uppercase tracking-tighter mb-4">Technician Part Requests <span className="text-slate-500 text-lg">({requestsQueue.length})</span></h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {requestsQueue.map(ro => (
                 <div key={ro.id} className="glass p-4 rounded-2xl border-white/5 space-y-4">
@@ -682,6 +728,9 @@ const PartsManagerPage: React.FC<PartsManagerPageProps> = ({
                   <div className="space-y-2">
                     {ro.requests?.filter(req => req.status === 'PENDING' && req.type === 'PART').map(req => {
                       const part = req.payload as Part;
+                      const invPart = masterInventory.find(p => p.partNumber === part.partNumber);
+                      const isAvailable = invPart && invPart.quantityOnHand > 0;
+                      
                       return (
                         <div key={req.id} className="bg-white/5 p-3 rounded-xl border border-white/5">
                           <div className="flex justify-between items-center mb-2">
@@ -689,28 +738,41 @@ const PartsManagerPage: React.FC<PartsManagerPageProps> = ({
                               <p className="text-xs font-bold text-white">{part.description}</p>
                               <p className="text-[10px] text-slate-500">{part.partNumber}</p>
                             </div>
-                            <span className="text-[10px] bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded-full font-bold uppercase">Pending</span>
+                            <div className="text-right">
+                              <span className={`text-[10px] font-bold uppercase ${isAvailable ? 'text-emerald-400' : 'text-red-400'}`}>
+                                {isAvailable ? `In Stock: ${invPart.quantityOnHand}` : 'Out of Stock'}
+                              </span>
+                            </div>
                           </div>
+                          
                           <div className="flex gap-2">
-                            <button 
-                              onClick={() => handleApproveRequest(ro, req.id, 'FILL_FROM_STOCK')}
-                              className="flex-1 py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 text-[10px] font-bold rounded-lg transition-colors uppercase"
-                            >
-                              Fill Stock
-                            </button>
-                            <button 
-                              onClick={() => handleApproveRequest(ro, req.id, 'SPECIAL_ORDER')}
-                              className="flex-1 py-1.5 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 text-[10px] font-bold rounded-lg transition-colors uppercase"
-                            >
-                              S.O.
-                            </button>
-                            <button 
-                              onClick={() => handleApproveRequest(ro, req.id, 'REJECT')}
-                              className="flex-1 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-400 text-[10px] font-bold rounded-lg transition-colors uppercase"
-                            >
-                              Reject
-                            </button>
+                            {isAvailable ? (
+                              <button 
+                                onClick={() => handleFulfillRequest(ro, req.id)}
+                                className="flex-1 py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 text-[10px] font-bold rounded-lg transition-colors uppercase"
+                              >
+                                Add to Box
+                              </button>
+                            ) : (
+                              <>
+                                <button 
+                                  onClick={() => handleFlagRequest(ro, req.id, 'MISSING')}
+                                  className={`flex-1 py-1.5 text-[10px] font-bold rounded-lg transition-colors uppercase border ${req.pmReview === 'MISSING' ? 'bg-red-500 text-white border-red-500' : 'bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500/20'}`}
+                                >
+                                  {req.pmReview === 'MISSING' ? 'Flagged Missing' : 'Missing'}
+                                </button>
+                                <button 
+                                  onClick={() => handleFlagRequest(ro, req.id, 'SPECIAL_ORDER')}
+                                  className={`flex-1 py-1.5 text-[10px] font-bold rounded-lg transition-colors uppercase border ${req.pmReview === 'SPECIAL_ORDER' ? 'bg-blue-500 text-white border-blue-500' : 'bg-blue-500/10 text-blue-400 border-blue-500/20 hover:bg-blue-500/20'}`}
+                                >
+                                  {req.pmReview === 'SPECIAL_ORDER' ? 'Flagged S.O.' : 'S.O.'}
+                                </button>
+                              </>
+                            )}
                           </div>
+                          {req.pmReview && !isAvailable && (
+                            <p className="mt-2 text-[9px] text-slate-500 italic">Waiting for SM approval for {req.pmReview}.</p>
+                          )}
                         </div>
                       );
                     })}

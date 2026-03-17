@@ -36,6 +36,11 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, updateRO, 
   const [missingReason, setMissingReason] = useState('Discrepancy');
   const [missingNotes, setMissingNotes] = useState('');
 
+  // State for Not Used modal
+  const [notUsedPartIndex, setNotUsedPartIndex] = useState<number | null>(null);
+  const [notUsedReason, setNotUsedReason] = useState('Not Needed');
+  const [notUsedNotes, setNotUsedNotes] = useState('');
+
   const photoInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
 
@@ -240,6 +245,21 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, updateRO, 
     setMissingNotes('');
   };
 
+  const handleConfirmNotUsed = () => {
+    if (!repairOrder || notUsedPartIndex === null) return;
+    const updatedRO = TechnicianService.reportNotUsed(repairOrder, notUsedPartIndex, notUsedReason, notUsedNotes);
+    updateRO(updatedRO);
+    setNotUsedPartIndex(null);
+    setNotUsedReason('Not Needed');
+    setNotUsedNotes('');
+  };
+
+  const handleStartJob = () => {
+    if (!repairOrder) return;
+    const updatedRO = TechnicianService.startJob(repairOrder);
+    updateRO(updatedRO);
+  };
+
   return (
     <>
       <input type="file" accept="image/*" ref={photoInputRef} className="hidden" onChange={(e) => handleFileChange(e, 'photo')} />
@@ -251,12 +271,22 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, updateRO, 
             <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Active Bay Deck</h2>
             <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Order: {repairOrder.id} • {repairOrder.customerName} • {repairOrder.vesselName}</p>
           </div>
-          {repairOrder.status === ROStatus.ACTIVE && (
-            <div className="text-right">
-              <span className="text-[10px] font-black text-slate-500 uppercase block">Active Labor Clock</span>
-              <span className="text-3xl font-mono neon-seafoam font-bold">{formatTime(elapsedTime)}</span>
-            </div>
-          )}
+          <div className="flex items-center gap-6">
+            {repairOrder.status !== ROStatus.ACTIVE && (
+              <button 
+                onClick={handleStartJob}
+                className="px-6 py-3 bg-neon-seafoam text-slate-900 font-black rounded-xl hover:scale-105 transition-all uppercase tracking-widest text-xs shadow-lg shadow-neon-seafoam/20"
+              >
+                Start Job Clock
+              </button>
+            )}
+            {repairOrder.status === ROStatus.ACTIVE && (
+              <div className="text-right">
+                <span className="text-[10px] font-black text-slate-500 uppercase block">Active Labor Clock</span>
+                <span className="text-3xl font-mono neon-seafoam font-bold">{formatTime(elapsedTime)}</span>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -268,7 +298,7 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, updateRO, 
                 const missingPartsForThisTask = partsForDirective.filter(p => p.status !== PartStatus.IN_BOX && p.status !== PartStatus.USED);
                 const hasMissingParts = missingPartsForThisTask.length > 0;
                 
-                const isWorkflowLocked = repairOrder.status !== ROStatus.ACTIVE && idx > 0;
+                const isWorkflowLocked = repairOrder.status !== ROStatus.ACTIVE;
                 const partsLock = hasMissingParts && directive.requiredParts && directive.requiredParts.length > 0;
                 
                 return (
@@ -330,6 +360,7 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, updateRO, 
                                     {part.status === PartStatus.IN_BOX && (
                                       <div className="flex gap-2">
                                         <button onClick={() => handlePartStatusUpdate(index, PartStatus.USED)} className="px-4 py-1.5 text-[10px] font-black bg-slate-800 border border-white/10 rounded-lg hover:border-neon-seafoam hover:text-white transition-all">MARK USED</button>
+                                        <button onClick={() => setNotUsedPartIndex(index)} className="px-4 py-1.5 text-[10px] font-black bg-slate-800 border border-white/10 rounded-lg hover:border-orange-400 hover:text-white transition-all">NOT USED</button>
                                         <button onClick={() => setMissingPartIndex(index)} className="px-4 py-1.5 text-[10px] font-black bg-red-500/10 text-red-500 border border-red-500/20 rounded-lg hover:bg-red-500/20 transition-all">MISSING</button>
                                       </div>
                                     )}
@@ -397,6 +428,45 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, updateRO, 
             <div className="flex justify-between items-center mt-8">
               <button onClick={() => setMissingPartIndex(null)} className="text-xs text-slate-500 hover:text-white">Cancel</button>
               <button onClick={handleConfirmMissing} className="px-8 py-3 bg-red-500 text-white font-black rounded-lg hover:bg-red-600 transition-all uppercase tracking-widest text-xs">Report Missing</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {notUsedPartIndex !== null && (
+        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
+          <div className="glass p-8 rounded-2xl w-full max-w-lg border border-orange-500 shadow-2xl shadow-orange-500/20">
+            <h3 className="text-lg font-black uppercase tracking-widest text-orange-400 mb-4">Mark Part as Not Used</h3>
+            <p className="text-sm text-slate-300 mb-6">You are reporting that <span className="text-white font-bold">{repairOrder.parts[notUsedPartIndex].description}</span> was not used for this job. It will be returned to the Parts Manager for stock reconciliation.</p>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-2">Reason</label>
+                <select 
+                  value={notUsedReason} 
+                  onChange={e => setNotUsedReason(e.target.value)}
+                  className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:border-orange-500 outline-none"
+                >
+                  <option value="Not Needed">Not Needed for Repair</option>
+                  <option value="Customer Declined">Customer Declined Item</option>
+                  <option value="Wrong Part">Wrong Part Ordered</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-2">Additional Notes</label>
+                <textarea 
+                  value={notUsedNotes} 
+                  onChange={e => setNotUsedNotes(e.target.value)}
+                  placeholder="Provide more details..."
+                  className="w-full h-24 bg-slate-900 border border-white/10 rounded-lg p-4 text-white text-sm focus:border-orange-500 outline-none transition-colors"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center mt-8">
+              <button onClick={() => setNotUsedPartIndex(null)} className="text-xs text-slate-500 hover:text-white">Cancel</button>
+              <button onClick={handleConfirmNotUsed} className="px-8 py-3 bg-orange-500 text-white font-black rounded-lg hover:bg-orange-600 transition-all uppercase tracking-widest text-xs">Confirm Not Used</button>
             </div>
           </div>
         </div>

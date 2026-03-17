@@ -46,6 +46,56 @@ export const repairOrderService = {
     return { ...repairOrder, requests: updatedRequests, parts: updatedParts };
   },
 
+  fulfillPartRequest: async (
+    ro: RepairOrder,
+    requestId: string,
+    masterInventory: Part[]
+  ): Promise<{ updatedRO: RepairOrder, updatedInventory?: Part[], alertToAdd?: Omit<InventoryAlert, 'id' | 'timestamp'> } | null> => {
+    const request = ro.requests?.find(r => r.id === requestId);
+    if (!request || request.type !== 'PART' || request.status !== 'PENDING') return null;
+
+    const partPayload = request.payload as Part;
+    const invPart = masterInventory.find(p => p.partNumber === partPayload.partNumber);
+    
+    if (!invPart || invPart.quantityOnHand <= 0) {
+      // Cannot fulfill from stock if not available
+      return null;
+    }
+
+    const updatedRequests = ro.requests!.map(r => 
+      r.id === requestId ? { ...r, status: 'APPROVED' as const, decision: 'FILL_FROM_STOCK' as const } : r
+    );
+
+    const newPart: Part = { ...partPayload, status: PartStatus.IN_BOX };
+    const updatedParts = [...ro.parts, newPart];
+
+    const invResult = await inventoryService.adjustInventory(
+      masterInventory,
+      partPayload.partNumber,
+      -1,
+      'Fulfillment from stock (Tech Request)',
+      ro.id,
+      ro.shopId
+    );
+
+    return {
+      updatedRO: { ...ro, requests: updatedRequests, parts: updatedParts },
+      updatedInventory: invResult?.updatedInventory,
+      alertToAdd: invResult?.alertToAdd
+    };
+  },
+
+  flagPartRequestForApproval: (
+    ro: RepairOrder,
+    requestId: string,
+    pmStatus: 'MISSING' | 'SPECIAL_ORDER'
+  ): RepairOrder => {
+    const updatedRequests = (ro.requests || []).map(r => 
+      r.id === requestId ? { ...r, pmReview: pmStatus } : r
+    );
+    return { ...ro, requests: updatedRequests };
+  },
+
   approvePartRequest: async (
     masterInventory: Part[],
     repairOrder: RepairOrder,
@@ -161,14 +211,13 @@ export const repairOrderService = {
     const manualDirectivesObjects = input.manualDirectives.map((title, index) => ({ id: `manual-${index}-${Date.now()}`, title: title.toUpperCase(), isCompleted: false, isApproved: true }));
     const finalDirectives = [ ...standardDirectives, ...manualDirectivesObjects, { id: 'd3', title: 'SEA TRIAL & WATER TEST', isCompleted: false, isApproved: true } ];
 
-    let status = ROStatus.STAGED;
+    const hasParts = uniqueParts.length > 0;
+    let status = hasParts ? ROStatus.PARTS_PENDING : ROStatus.READY_FOR_TECH;
     let authorizationType = input.authorization?.type ?? null;
     let authorizationData = input.authorization?.data ?? null;
     let authorizationTimestamp = input.authorization?.timestamp ?? null;
 
     if (authorizationType) {
-        const hasParts = uniqueParts.length > 0;
-        status = hasParts ? ROStatus.AUTHORIZED : ROStatus.READY_FOR_TECH;
         if (!authorizationTimestamp) authorizationTimestamp = Date.now();
     }
 
@@ -233,7 +282,14 @@ export const repairOrderService = {
   },
 
   reactivateJob: (ro: RepairOrder): RepairOrder => {
-    const updatedRO = { ...ro, status: ROStatus.READY_FOR_TECH };
+    const hasPendingParts = ro.parts.some(p => 
+      p.status === PartStatus.MISSING || 
+      p.status === PartStatus.SPECIAL_ORDER || 
+      p.status === PartStatus.APPROVAL_PENDING
+    );
+    
+    const status = hasPendingParts ? ROStatus.PARTS_PENDING : ROStatus.READY_FOR_TECH;
+    const updatedRO = { ...ro, status };
     domainEventService.publish('repair-order:status-updated', updatedRO);
     return updatedRO;
   },
@@ -303,9 +359,11 @@ export const repairOrderService = {
   },
 
   finalizeAuthorization: (ro: RepairOrder, type: 'digital' | 'verbal', data: string): RepairOrder => {
+    const hasParts = ro.parts.length > 0;
+    const status = hasParts ? ROStatus.PARTS_PENDING : ROStatus.READY_FOR_TECH;
     const updatedRO: RepairOrder = {
         ...ro,
-        status: ROStatus.AUTHORIZED,
+        status,
         authorizationType: type,
         authorizationData: data,
         authorizationTimestamp: Date.now(),
@@ -336,7 +394,8 @@ export const repairOrderService = {
       if (request.type === 'DIRECTIVE') {
         updatedRO.directives.push({ id: `d-tech-${Date.now()}`, title: (request.payload as { title: string }).title, isCompleted: false, isApproved: true });
       } else if (request.type === 'PART') {
-        const newPart = { ...(request.payload as Part), status: PartStatus.REQUIRED };
+        const pmStatus = request.pmReview as PartStatus | undefined;
+        const newPart = { ...(request.payload as Part), status: pmStatus || PartStatus.REQUIRED };
         updatedRO.parts.push(newPart);
 
         // If the job is NOT active, it's safe to move it to PARTS_PENDING.
@@ -363,6 +422,19 @@ export const repairOrderService = {
         status: ROStatus.PENDING_INVOICE,
         laborDescription: updatedLaborDescription,
     };
+    domainEventService.publish('repair-order:status-updated', updatedRO);
+    return updatedRO;
+  },
+
+  startJob: (ro: RepairOrder): RepairOrder => {
+    const updatedSessions = [...ro.workSessions];
+    const lastSession = updatedSessions[updatedSessions.length - 1];
+    
+    if (!lastSession || lastSession.endTime) {
+      updatedSessions.push({ startTime: Date.now() });
+    }
+    
+    const updatedRO = { ...ro, status: ROStatus.ACTIVE, workSessions: updatedSessions };
     domainEventService.publish('repair-order:status-updated', updatedRO);
     return updatedRO;
   },
@@ -527,7 +599,7 @@ export const repairOrderService = {
   ): Promise<{ updatedRO: RepairOrder, updatedInventory?: Part[], alertToAdd?: Omit<InventoryAlert, 'id' | 'timestamp'> } | null> => {
     const updatedParts = [...ro.parts];
     const part = updatedParts[partIndex];
-    if (part.status !== PartStatus.IN_BOX) return null;
+    if (part.status !== PartStatus.IN_BOX && part.status !== PartStatus.NOT_USED) return null;
 
     updatedParts[partIndex] = { ...part, status: PartStatus.RETURNED };
 
@@ -644,5 +716,11 @@ export const repairOrderService = {
   addManualPartToRO: (ro: RepairOrder, part: Part): RepairOrder => {
     const newPart = { ...part, status: PartStatus.REQUIRED };
     return { ...ro, parts: [...ro.parts, newPart] };
+  },
+
+  updatePartDetails: (ro: RepairOrder, partIndex: number, updates: Partial<Part>): RepairOrder => {
+    const updatedParts = [...ro.parts];
+    updatedParts[partIndex] = { ...updatedParts[partIndex], ...updates };
+    return { ...ro, parts: updatedParts };
   }
 };

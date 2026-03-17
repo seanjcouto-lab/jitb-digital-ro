@@ -30,9 +30,11 @@ export enum ROStatus {
   PARTS_READY = 'PARTS_READY',
   READY_FOR_TECH = 'READY_FOR_TECH',
   ACTIVE = 'ACTIVE',
+  PARTS_REVIEWED = 'PARTS_REVIEWED',
   HOLD = 'HOLD',
   PENDING_INVOICE = 'PENDING_INVOICE',
-  COMPLETED = 'COMPLETED'
+  COMPLETED = 'COMPLETED',
+  ARCHIVED = 'ARCHIVED'
 }
 
 export enum PartStatus {
@@ -44,7 +46,8 @@ export enum PartStatus {
   // For tech requests
   APPROVAL_PENDING = 'APPROVAL_PENDING',
   RETURNED = 'RETURNED',
-  NOT_USED = 'NOT_USED'
+  NOT_USED = 'NOT_USED',
+  REQUESTED = 'REQUESTED'
 }
 
 export enum PaymentStatus {
@@ -117,6 +120,7 @@ export interface RORequest {
   requestedBy: 'TECHNICIAN';
   timestamp: number;
   decision?: 'FILL_FROM_STOCK' | 'SPECIAL_ORDER' | 'REJECT';
+  pmReview?: 'MISSING' | 'SPECIAL_ORDER';
 }
 
 export interface Technician {

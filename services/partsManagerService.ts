@@ -86,6 +86,22 @@ export const PartsManagerService = {
     return await repairOrderService.approvePartRequest(masterInventory, ro, requestId, decision);
   },
 
+  fulfillRequest: async (
+    ro: RepairOrder,
+    requestId: string,
+    masterInventory: Part[]
+  ) => {
+    return await repairOrderService.fulfillPartRequest(ro, requestId, masterInventory);
+  },
+
+  flagRequest: (
+    ro: RepairOrder,
+    requestId: string,
+    status: 'MISSING' | 'SPECIAL_ORDER'
+  ) => {
+    return repairOrderService.flagPartRequestForApproval(ro, requestId, status);
+  },
+
   updatePartStatus: async (
     ro: RepairOrder, 
     partIndex: number, 
@@ -119,15 +135,14 @@ export const PartsManagerService = {
     if (soParts.length > 0) {
         return { updatedRO: ro, soParts };
     } else {
-        const hasMissingParts = ro.parts.some(p => p.status === PartStatus.MISSING);
-        const newStatus = hasMissingParts ? ROStatus.PARTS_PENDING : ROStatus.PARTS_READY;
-        return { updatedRO: { ...ro, status: newStatus }, soParts: [] };
+        // When PM clicks FULFILL: The job always returns to SM.
+        return { updatedRO: { ...ro, status: ROStatus.PARTS_REVIEWED }, soParts: [] };
     }
   },
 
   finalizeSpecialOrders: (ro: RepairOrder): RepairOrder => {
-    // JOBS with S/O parts always go to PARTS_PENDING until received
-    return { ...ro, status: ROStatus.PARTS_PENDING };
+    // JOBS with S/O parts also return to SM for review
+    return { ...ro, status: ROStatus.PARTS_REVIEWED };
   },
 
   returnPartToStock: async (
@@ -152,5 +167,9 @@ export const PartsManagerService = {
   
   fetchMasterInventory: async (): Promise<Part[]> => {
       return await inventoryService.fetchMasterInventory();
+  },
+
+  updatePartDetails: (ro: RepairOrder, partIndex: number, updates: Partial<Part>): RepairOrder => {
+    return repairOrderService.updatePartDetails(ro, partIndex, updates);
   }
 };

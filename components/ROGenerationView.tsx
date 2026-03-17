@@ -382,7 +382,7 @@ const ROGenerationView: React.FC<ROGenerationViewProps> = ({ profileData, onROGe
               <label htmlFor="verbalAuth" className={`py-4 rounded-xl font-bold text-sm transition-all border-2 flex items-center justify-center gap-3 cursor-pointer ${isVerbalCertified ? 'bg-neon-seafoam/20 border-neon-seafoam text-neon-seafoam' : 'bg-slate-800 border-slate-700 text-slate-300 hover:border-slate-500'}`}><input id="verbalAuth" type="checkbox" checked={isVerbalCertified} onChange={(e) => handleVerbalCertifyToggle(e.target.checked)} className="h-5 w-5 bg-slate-900 border-slate-600 text-neon-seafoam focus:ring-neon-seafoam" />I Certify Verbal Authorization</label>
             </div>
           </div>
-          <button onClick={handleGenerateRO} className="w-full bg-neon-seafoam text-slate-900 font-black py-4 rounded-xl shadow-[0_0_30px_rgba(45,212,191,0.3)] hover:scale-[1.02] active:scale-95 transition-all uppercase tracking-widest text-sm">{isAuthorizedOnCreate ? 'Generate & Authorize RO' : 'Generate & Stage RO'}</button>
+          <button onClick={handleGenerateRO} className="w-full bg-neon-seafoam text-slate-900 font-black py-4 rounded-xl shadow-[0_0_30px_rgba(45,212,191,0.3)] hover:scale-[1.02] active:scale-95 transition-all uppercase tracking-widest text-sm">Authorize & Stage Job</button>
         </div>
 
         {showCreateSignatureModal && (

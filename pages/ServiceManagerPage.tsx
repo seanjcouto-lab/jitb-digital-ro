@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Plus, X, Search } from 'lucide-react';
 import { RepairOrder, ROStatus, PartStatus, VesselHistory, Part, RORequest, Technician, PaymentStatus, CollectionsStatus } from '../types';
 import { TECHNICIANS } from '../constants';
 import { MOCK_NEW_CUSTOMER } from '../seedData';
@@ -24,11 +25,13 @@ interface ServiceManagerPageProps {
 type ViewMode = 'SEARCH' | 'PROFILE_CREATE' | 'RO_CREATE';
 
 const STATUS_GROUPS = {
-  STAGED: [ROStatus.STAGED],
-  PARTS: [ROStatus.AUTHORIZED],
-  ACTIVE: [ROStatus.PARTS_READY, ROStatus.PARTS_PENDING, ROStatus.READY_FOR_TECH, ROStatus.ACTIVE],
+  STAGED: [ROStatus.READY_FOR_TECH, ROStatus.PARTS_READY],
+  PARTS: [ROStatus.PARTS_PENDING],
+  ACTIVE: [ROStatus.ACTIVE, ROStatus.READY_FOR_TECH, ROStatus.PARTS_READY, ROStatus.PARTS_PENDING],
+  ACTIVE_ONLY: [ROStatus.ACTIVE],
   HOLD: [ROStatus.HOLD],
-  BILLING: [ROStatus.PENDING_INVOICE, ROStatus.COMPLETED],
+  BILLING: [ROStatus.PENDING_INVOICE],
+  ARCHIVE: [ROStatus.COMPLETED, ROStatus.ARCHIVED],
 };
 
 const StatusPill = ({ count, label, colorClass, onClick, isActive }: { count: number, label: string, colorClass: string, onClick?: () => void, isActive?: boolean }) => (
@@ -38,9 +41,116 @@ const StatusPill = ({ count, label, colorClass, onClick, isActive }: { count: nu
   </div>
 );
 
+const getRelativeTime = (timestamp: number) => {
+  const now = Date.now();
+  const diffInMs = now - timestamp;
+  const diffInMins = Math.floor(diffInMs / (1000 * 60));
+  const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+  const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+  if (diffInMins < 1) return 'Just now';
+  if (diffInMins < 60) return `${diffInMins}m ago`;
+  if (diffInHours < 24) return `${diffInHours}h ago`;
+  return `${diffInDays}d ago`;
+};
+
+interface ROCardProps {
+  ro: RepairOrder;
+  onClick: () => void;
+  isExpanded: boolean;
+  children?: React.ReactNode;
+  actions?: React.ReactNode;
+}
+
+const ROCard: React.FC<ROCardProps> = ({ 
+  ro, 
+  onClick, 
+  isExpanded, 
+  children, 
+  actions 
+}) => {
+  const createdAt = parseInt(ro.id.split('-')[1]) || Date.now();
+  const pendingPartsCount = ro.parts.filter(p => 
+    p.status === PartStatus.MISSING || 
+    p.status === PartStatus.SPECIAL_ORDER || 
+    p.status === PartStatus.APPROVAL_PENDING
+  ).length;
+  const hasPartRequest = ro.requests?.some(r => r.type === 'PART' && r.status === 'PENDING');
+  const hasAttn = ro.requests?.some(r => r.status === 'PENDING');
+
+  return (
+    <div 
+      onClick={onClick} 
+      className={`relative p-4 rounded-xl border bg-white/5 flex flex-col gap-3 group transition-all cursor-pointer ${
+        ro.status === ROStatus.ACTIVE ? 'border-green-500/50 shadow-[0_0_10px_rgba(34,197,94,0.1)]' : 
+        ro.status === ROStatus.HOLD ? 'border-red-500/30 bg-red-500/5' :
+        'border-white/5 hover:border-white/20'
+      }`}
+    >
+      {/* Row 1: RO number, Vessel, Customer */}
+      <div className="flex justify-between items-start">
+        <div className="flex flex-col">
+          <div className="flex items-center gap-2">
+            <span className="text-[9px] font-mono text-slate-500">{ro.id}</span>
+            <h4 className="font-bold text-slate-200 text-sm">{ro.customerName}</h4>
+          </div>
+          <p className="text-[9px] text-slate-400 font-bold uppercase tracking-tight">{ro.vesselName}</p>
+        </div>
+      </div>
+
+      {/* Row 2: Status, Technician assignment */}
+      <div className="flex justify-between items-center">
+        <div className={`text-[8px] px-2 py-0.5 rounded font-black uppercase ${
+          ro.status === ROStatus.ACTIVE ? 'bg-green-500/10 text-green-400' : 
+          ro.status === ROStatus.HOLD ? 'bg-red-500/10 text-red-400' :
+          ro.status === ROStatus.PARTS_PENDING ? 'bg-amber-500/10 text-amber-500' :
+          ro.status === ROStatus.PENDING_INVOICE ? 'bg-purple-500/10 text-purple-400' :
+          'bg-slate-800 text-slate-500'
+        }`}>
+          {ro.status.replace('_', ' ')}
+        </div>
+        {ro.technicianName && (
+          <p className="text-[9px] text-teal-400 font-bold uppercase">TECH: {ro.technicianName.split(' ')[0]}</p>
+        )}
+      </div>
+
+      {/* Row 3: Opened time (relative age) */}
+      <div className="text-[9px] text-slate-500 font-medium">
+        Opened {getRelativeTime(createdAt)}
+      </div>
+
+      {/* Row 4: Work summary */}
+      <div className="flex gap-4 text-[9px] text-slate-400 font-bold uppercase tracking-wider">
+        <span>{ro.directives.length} Directives</span>
+        {pendingPartsCount > 0 && <span className="text-amber-500">{pendingPartsCount} Parts Pending</span>}
+      </div>
+
+      {/* Row 5: Alert badges */}
+      {(hasPartRequest || hasAttn || ro.status === ROStatus.HOLD) && (
+        <div className="flex flex-wrap gap-1 mt-1">
+          {hasPartRequest && <span className="px-2 py-0.5 bg-red-500 text-white text-[8px] font-black rounded animate-pulse">PART REQUEST</span>}
+          {hasAttn && <span className="px-2 py-0.5 bg-red-500 text-white text-[8px] font-black rounded-full animate-pulse">ATTN</span>}
+          {ro.status === ROStatus.HOLD && <span className="px-2 py-0.5 bg-red-500/20 text-red-400 text-[8px] font-black rounded border border-red-500/30">HOLD</span>}
+        </div>
+      )}
+
+      {/* Actions (if not expanded) */}
+      {!isExpanded && actions && (
+        <div className="mt-2">
+          {actions}
+        </div>
+      )}
+
+      {/* Expanded Content */}
+      {isExpanded && children}
+    </div>
+  );
+};
+
 const RODetail = ({ 
   ro, 
   canEdit = false, 
+  masterInventory = [],
   onRemoveDirective, 
   onRemovePart, 
   onAddDirective, 
@@ -48,14 +158,16 @@ const RODetail = ({
 }: { 
   ro: RepairOrder, 
   canEdit?: boolean,
+  masterInventory?: Part[],
   onRemoveDirective?: (roId: string, directiveId: string) => void,
   onRemovePart?: (roId: string, partIndex: number) => void,
   onAddDirective?: (roId: string, title: string) => void,
   onAddPart?: (roId: string, part: Part) => void
 }) => {
   const [newDirective, setNewDirective] = useState('');
-  const [newPartDescription, setNewPartDescription] = useState('');
-  const [newPartNumber, setNewPartNumber] = useState('');
+  const [partSearchQuery, setPartSearchQuery] = useState('');
+  const [partSearchResults, setPartSearchResults] = useState<Part[]>([]);
+  const [showPartResults, setShowPartResults] = useState(false);
 
   const handleAddDirective = () => {
     if (newDirective.trim() && onAddDirective) {
@@ -64,11 +176,35 @@ const RODetail = ({
     }
   };
 
-  const handleAddPart = () => {
-    if (newPartDescription.trim() && newPartNumber.trim() && onAddPart) {
+  const handlePartSearch = (query: string) => {
+    setPartSearchQuery(query);
+    if (query.length > 1) {
+      const results = masterInventory.filter(p => 
+        p.partNumber.toLowerCase().includes(query.toLowerCase()) || 
+        p.description.toLowerCase().includes(query.toLowerCase())
+      );
+      setPartSearchResults(results);
+      setShowPartResults(true);
+    } else {
+      setPartSearchResults([]);
+      setShowPartResults(false);
+    }
+  };
+
+  const handleSelectPart = (part: Part) => {
+    if (onAddPart) {
+      onAddPart(ro.id, { ...part, status: PartStatus.REQUIRED });
+      setPartSearchQuery('');
+      setPartSearchResults([]);
+      setShowPartResults(false);
+    }
+  };
+
+  const handleAddCustomPart = () => {
+    if (partSearchQuery.trim() && onAddPart) {
       onAddPart(ro.id, {
-        partNumber: newPartNumber.trim(),
-        description: newPartDescription.trim(),
+        partNumber: 'CUSTOM-' + Math.random().toString(36).substr(2, 5).toUpperCase(),
+        description: partSearchQuery.trim(),
         category: 'MANUAL',
         binLocation: 'N/A',
         msrp: 0,
@@ -81,8 +217,9 @@ const RODetail = ({
         status: PartStatus.REQUIRED,
         shopId: ro.shopId
       });
-      setNewPartDescription('');
-      setNewPartNumber('');
+      setPartSearchQuery('');
+      setPartSearchResults([]);
+      setShowPartResults(false);
     }
   };
 
@@ -101,9 +238,7 @@ const RODetail = ({
                   onClick={(e) => { e.stopPropagation(); onRemoveDirective(ro.id, d.id); }}
                   className="opacity-0 group-hover/item:opacity-100 text-red-400 hover:text-red-300 transition-all p-1"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.697a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
+                  <X className="h-3 w-3" />
                 </button>
               )}
             </li>
@@ -111,15 +246,22 @@ const RODetail = ({
         </ul>
         {canEdit && (
           <div className="mt-2 flex gap-2 pl-2">
-            <input 
-              type="text" 
-              placeholder="Add directive..." 
-              value={newDirective}
-              onChange={(e) => setNewDirective(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleAddDirective()}
-              className="flex-1 bg-slate-900 border border-white/10 rounded px-2 py-1 text-[10px] outline-none focus:border-neon-seafoam"
-            />
-            <button onClick={handleAddDirective} className="px-2 py-1 bg-slate-800 rounded text-neon-seafoam border border-white/10 hover:bg-slate-700">+</button>
+            <div className="relative flex-1">
+              <input 
+                type="text" 
+                placeholder="Add directive..." 
+                value={newDirective}
+                onChange={(e) => setNewDirective(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleAddDirective()}
+                className="w-full bg-slate-900 border border-white/10 rounded px-2 py-1.5 text-[10px] outline-none focus:border-neon-seafoam transition-colors"
+              />
+            </div>
+            <button 
+              onClick={handleAddDirective} 
+              className="px-3 py-1.5 bg-slate-800 rounded text-neon-seafoam border border-white/10 hover:bg-slate-700 transition-colors flex items-center justify-center"
+            >
+              <Plus className="h-3 w-3" />
+            </button>
           </div>
         )}
       </div>
@@ -151,9 +293,7 @@ const RODetail = ({
                       onClick={(e) => { e.stopPropagation(); onRemovePart(ro.id, idx); }}
                       className="opacity-0 group-hover/item:opacity-100 text-red-400 hover:text-red-300 transition-all p-1"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.697a1 1 0 010-1.414z" clipRule="evenodd" />
-                      </svg>
+                      <X className="h-3 w-3" />
                     </button>
                   )}
                 </div>
@@ -162,25 +302,43 @@ const RODetail = ({
           })}
         </div>
         {canEdit && (
-          <div className="mt-2 space-y-2 pl-2">
-            <div className="flex gap-2">
+          <div className="mt-2 flex gap-2 pl-2 relative">
+            <div className="relative flex-1">
+              <div className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none">
+                <Search className="h-3 w-3" />
+              </div>
               <input 
                 type="text" 
-                placeholder="Part Description..." 
-                value={newPartDescription}
-                onChange={(e) => setNewPartDescription(e.target.value)}
-                className="flex-[2] bg-slate-900 border border-white/10 rounded px-2 py-1 text-[10px] outline-none focus:border-neon-seafoam"
+                placeholder="Search or add part..." 
+                value={partSearchQuery}
+                onChange={(e) => handlePartSearch(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleAddCustomPart()}
+                className="w-full bg-slate-900 border border-white/10 rounded pl-7 pr-2 py-1.5 text-[10px] outline-none focus:border-neon-seafoam transition-colors"
               />
-              <input 
-                type="text" 
-                placeholder="Part #" 
-                value={newPartNumber}
-                onChange={(e) => setNewPartNumber(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleAddPart()}
-                className="flex-1 bg-slate-900 border border-white/10 rounded px-2 py-1 text-[10px] outline-none focus:border-neon-seafoam"
-              />
-              <button onClick={handleAddPart} className="px-2 py-1 bg-slate-800 rounded text-neon-seafoam border border-white/10 hover:bg-slate-700">+</button>
+              {showPartResults && (
+                <div className="absolute bottom-full mb-1 left-0 right-0 bg-slate-800 border border-white/10 rounded shadow-xl z-50 max-h-40 overflow-y-auto">
+                  {partSearchResults.map(p => (
+                    <div 
+                      key={p.partNumber}
+                      onClick={() => handleSelectPart(p)}
+                      className="p-2 hover:bg-slate-700 cursor-pointer border-b border-white/5 last:border-0"
+                    >
+                      <div className="font-bold text-slate-200">{p.description}</div>
+                      <div className="text-[8px] text-slate-500 font-mono">{p.partNumber}</div>
+                    </div>
+                  ))}
+                  {partSearchResults.length === 0 && (
+                    <div className="p-2 text-slate-500 italic text-[10px]">No matches. Press Enter to add as custom.</div>
+                  )}
+                </div>
+              )}
             </div>
+            <button 
+              onClick={handleAddCustomPart} 
+              className="px-3 py-1.5 bg-slate-800 rounded text-neon-seafoam border border-white/10 hover:bg-slate-700 transition-colors flex items-center justify-center"
+            >
+              <Plus className="h-3 w-3" />
+            </button>
           </div>
         )}
       </div>
@@ -351,11 +509,65 @@ const ServiceManagerPage: React.FC<ServiceManagerPageProps> = ({
   const roGenerationRef = useRef<HTMLDivElement>(null);
 
   // Filter Logic
-  const getFilteredROs = () => {
-    return ServiceManagerService.filterRepairOrders(repairOrders, filterStatusGroup, filterTechId, searchQuery, STATUS_GROUPS);
+  const getQueueROs = (group: keyof typeof STATUS_GROUPS) => {
+    let filtered = repairOrders.filter(ro => {
+      const isInStatusGroup = STATUS_GROUPS[group].includes(ro.status);
+      
+      if (group === 'STAGED') {
+        return isInStatusGroup && !ro.technicianId;
+      }
+      
+      if (group === 'ACTIVE') {
+        return isInStatusGroup && !!ro.technicianId;
+      }
+      
+      if (group === 'ACTIVE_ONLY') {
+        return isInStatusGroup;
+      }
+
+      return isInStatusGroup;
+    });
+
+    // Apply search query if present
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      filtered = filtered.filter(ro => 
+        ro.customerName.toLowerCase().includes(q) || 
+        ro.vesselName.toLowerCase().includes(q) || 
+        ro.id.toLowerCase().includes(q)
+      );
+    }
+
+    // Apply tech filter if present
+    if (filterTechId !== 'ALL') {
+      filtered = filtered.filter(ro => ro.technicianId === filterTechId);
+    }
+
+    if (group === 'ACTIVE') {
+      // Sort: ACTIVE jobs to the top
+      return [...filtered].sort((a, b) => {
+        if (a.status === ROStatus.ACTIVE && b.status !== ROStatus.ACTIVE) return -1;
+        if (a.status !== ROStatus.ACTIVE && b.status === ROStatus.ACTIVE) return 1;
+        return 0;
+      });
+    }
+
+    if (group === 'STAGED') {
+      return [...filtered].sort((a, b) => b.id.localeCompare(a.id));
+    }
+
+    return filtered;
   };
 
-  const filteredROs = getFilteredROs();
+  const stats = {
+    staged: getQueueROs('STAGED').length,
+    parts: getQueueROs('PARTS').length,
+    deployment: getQueueROs('ACTIVE').length,
+    activeOnly: getQueueROs('ACTIVE_ONLY').length,
+    hold: getQueueROs('HOLD').length,
+    billing: getQueueROs('BILLING').length,
+    archive: getQueueROs('ARCHIVE').length,
+  };
 
   useEffect(() => {
     if (viewMode === 'RO_CREATE' && roGenerationRef.current) {
@@ -381,11 +593,14 @@ const ServiceManagerPage: React.FC<ServiceManagerPageProps> = ({
     setViewMode('RO_CREATE');
   };
   
-  const handleROGenerated = (newRO: RepairOrder) => {
-    addRO(newRO);
-    setActiveProfile(initialProfileState);
-    setViewMode('SEARCH');
-  }
+const handleROGenerated = (newRO: RepairOrder) => {
+  addRO(newRO);
+  setActiveProfile(initialProfileState);
+  setSearchQuery('');
+  setFilterStatusGroup(null);
+  setFilterTechId('ALL');
+  setViewMode('SEARCH');
+};
 
   const handleAuthorize = (ro: RepairOrder) => { 
     setSignatureForAuth(null);
@@ -488,14 +703,6 @@ const ServiceManagerPage: React.FC<ServiceManagerPageProps> = ({
     setViewMode('SEARCH');
   };
 
-  const stats = {
-    staged: repairOrders.filter(ro => ro.status === ROStatus.STAGED).length,
-    parts: repairOrders.filter(ro => ro.status === ROStatus.AUTHORIZED).length,
-    readyAndActive: repairOrders.filter(ro => [ROStatus.PARTS_READY, ROStatus.PARTS_PENDING, ROStatus.READY_FOR_TECH, ROStatus.ACTIVE].includes(ro.status)).length,
-    hold: repairOrders.filter(ro => ro.status === ROStatus.HOLD).length,
-    billing: repairOrders.filter(ro => ro.status === ROStatus.PENDING_INVOICE).length,
-  };
-
   const toggleStatusFilter = (group: keyof typeof STATUS_GROUPS) => {
     setFilterStatusGroup(prev => prev === group ? null : group);
   };
@@ -509,11 +716,13 @@ const ServiceManagerPage: React.FC<ServiceManagerPageProps> = ({
 
         {/* Status Cards */}
         <div className="flex flex-wrap gap-2 w-full">
-            <StatusPill count={stats.staged} label="Staged" colorClass="text-slate-300" onClick={() => toggleStatusFilter('STAGED')} isActive={filterStatusGroup === 'STAGED'} />
-            <StatusPill count={stats.parts} label="Parts Dept" colorClass="text-yellow-400" onClick={() => toggleStatusFilter('PARTS')} isActive={filterStatusGroup === 'PARTS'} />
-            <StatusPill count={stats.readyAndActive} label="Ready/Active" colorClass="text-neon-seafoam" onClick={() => toggleStatusFilter('ACTIVE')} isActive={filterStatusGroup === 'ACTIVE'} />
-            <StatusPill count={stats.hold} label="Hold" colorClass="text-neon-crimson" onClick={() => toggleStatusFilter('HOLD')} isActive={filterStatusGroup === 'HOLD'} />
-            <StatusPill count={stats.billing} label="Billing" colorClass="text-neon-steel" onClick={() => toggleStatusFilter('BILLING')} isActive={filterStatusGroup === 'BILLING'} />
+            <StatusPill count={stats.staged} label="Staged" colorClass="text-blue-400" onClick={() => toggleStatusFilter('STAGED')} isActive={filterStatusGroup === 'STAGED'} />
+            <StatusPill count={stats.parts} label="Parts Dept" colorClass="text-amber-400" onClick={() => toggleStatusFilter('PARTS')} isActive={filterStatusGroup === 'PARTS'} />
+            <StatusPill count={stats.deployment} label="Deployment Deck" colorClass="text-teal-400" onClick={() => toggleStatusFilter('ACTIVE')} isActive={filterStatusGroup === 'ACTIVE'} />
+            <StatusPill count={stats.activeOnly} label="Active" colorClass="text-green-400" onClick={() => toggleStatusFilter('ACTIVE_ONLY')} isActive={filterStatusGroup === 'ACTIVE_ONLY'} />
+            <StatusPill count={stats.hold} label="Hold" colorClass="text-red-400" onClick={() => toggleStatusFilter('HOLD')} isActive={filterStatusGroup === 'HOLD'} />
+            <StatusPill count={stats.billing} label="Billing" colorClass="text-purple-400" onClick={() => toggleStatusFilter('BILLING')} isActive={filterStatusGroup === 'BILLING'} />
+            <StatusPill count={stats.archive} label="Archive" colorClass="text-slate-500" onClick={() => toggleStatusFilter('ARCHIVE')} isActive={filterStatusGroup === 'ARCHIVE'} />
         </div>
 
         <div className="space-y-8">
@@ -561,68 +770,103 @@ const ServiceManagerPage: React.FC<ServiceManagerPageProps> = ({
             <div className="glass rounded-2xl p-6 border-white/5">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg font-bold neon-steel uppercase tracking-tighter">Staged Queue</h2>
-                <span className="text-[10px] font-bold text-slate-500 bg-white/5 px-2 py-0.5 rounded-full">{filteredROs.filter(ro => ro.status === ROStatus.STAGED).length}</span>
+                <span className="text-[10px] font-bold text-slate-500 bg-white/5 px-2 py-0.5 rounded-full">{getQueueROs('STAGED').length}</span>
               </div>
               <div className="space-y-4">
-                {filteredROs.filter(ro => ro.status === ROStatus.STAGED).map(ro => (
-                  <div key={ro.id} onClick={() => setExpandedROId(expandedROId === ro.id ? null : ro.id)} className="p-4 rounded-xl border border-white/5 bg-white/5 flex flex-col gap-3 group hover:border-neon-seafoam transition-all cursor-pointer">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h4 className="font-bold text-slate-200 text-sm">{ro.customerName}</h4>
-                        <p className="text-[9px] text-slate-500 font-bold uppercase">{ro.vesselName}</p>
-                      </div>
-                      <div className="bg-slate-800 text-slate-500 text-[8px] px-2 py-0.5 rounded font-black uppercase">STAGED</div>
+                {getQueueROs('STAGED').map(ro => (
+                  <ROCard 
+                    key={ro.id} 
+                    ro={ro} 
+                    onClick={() => setExpandedROId(expandedROId === ro.id ? null : ro.id)}
+                    isExpanded={expandedROId === ro.id}
+                    actions={
+                      <button onClick={(e) => { e.stopPropagation(); handleAuthorize(ro); }} className="w-full px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">AUTHORIZE</button>
+                    }
+                  >
+                    <RODetail 
+                      ro={ro} 
+                      canEdit={true}
+                      masterInventory={masterInventory}
+                      onRemoveDirective={handleRemoveDirective}
+                      onRemovePart={handleRemovePart}
+                      onAddDirective={handleAddDirective}
+                      onAddPart={handleAddPart}
+                    />
+                    <div className="flex gap-2 mt-2">
+                     <button 
+  onClick={(e) => { e.stopPropagation(); handleAuthorize(ro); }} 
+  className="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black border border-neon-seafoam/20 hover:scale-105 transition-all uppercase tracking-widest"
+>
+  AUTHORIZE
+</button>
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); handleDeleteRO(ro.id); }} 
+                        className="px-4 py-2 rounded-lg bg-red-500/10 text-red-500 text-[10px] font-black border border-red-500/20 hover:bg-red-500/20 transition-all uppercase tracking-widest"
+                      >
+                        REMOVE
+                      </button>
                     </div>
-                    
-                    {expandedROId !== ro.id && (
-                      <button onClick={(e) => { e.stopPropagation(); handleAuthorize(ro); }} className="w-full px-4 py-2 rounded-lg bg-slate-800 text-[10px] font-black border border-white/10 hover:bg-neon-seafoam hover:text-slate-900 transition-all uppercase tracking-widest">AUTHORIZE GATE</button>
-                    )}
-                    
-                    {expandedROId === ro.id && (
-                      <>
-                        <RODetail 
-                          ro={ro} 
-                          canEdit={true}
-                          onRemoveDirective={handleRemoveDirective}
-                          onRemovePart={handleRemovePart}
-                          onAddDirective={handleAddDirective}
-                          onAddPart={handleAddPart}
-                        />
-                        <div className="flex gap-2 mt-2">
-                          <button 
-                            onClick={(e) => { e.stopPropagation(); handleAuthorize(ro); }} 
-                            className="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black border border-neon-seafoam/20 hover:scale-105 transition-all uppercase tracking-widest"
-                          >
-                            AUTHORIZE
-                          </button>
-                          <button 
-                            onClick={(e) => { e.stopPropagation(); handleDeleteRO(ro.id); }} 
-                            className="px-4 py-2 rounded-lg bg-red-500/10 text-red-500 text-[10px] font-black border border-red-500/20 hover:bg-red-500/20 transition-all uppercase tracking-widest"
-                          >
-                            REMOVE
-                          </button>
-                        </div>
-                      </>
-                    )}
-                  </div>
+                  </ROCard>
                 ))}
-                {filteredROs.filter(ro => ro.status === ROStatus.STAGED).length === 0 && <p className="text-slate-600 italic text-sm text-center py-4 font-medium">Queue empty.</p>}
+                {getQueueROs('STAGED').length === 0 && <p className="text-slate-600 italic text-sm text-center py-4 font-medium">Queue empty.</p>}
               </div>
             </div>
             )}
 
             {(!filterStatusGroup || filterStatusGroup === 'PARTS') && (
             <div className="glass rounded-2xl p-6 border-white/5">
-              <h2 className="text-lg font-bold mb-4 text-yellow-400 uppercase tracking-tighter">Awaiting Parts</h2>
+              <h2 className="text-lg font-bold mb-4 text-yellow-400 uppercase tracking-tighter">Parts Dept</h2>
               <div className="space-y-4">
-                {filteredROs.filter(ro => ro.status === ROStatus.AUTHORIZED).map(ro => (
-                  <div key={ro.id} onClick={() => setExpandedROId(expandedROId === ro.id ? null : ro.id)} className="p-4 rounded-xl border border-yellow-500/30 bg-yellow-500/5 flex flex-col gap-3 cursor-pointer">
-                    <div><h4 className="font-bold text-slate-200 text-sm">{ro.customerName}</h4><p className="text-[9px] text-slate-500 font-bold uppercase">{ro.vesselName}</p></div>
-                    <div className="flex justify-between items-center"><div className="bg-yellow-500/10 text-yellow-400 text-[8px] px-2 py-0.5 rounded font-black">{ro.status.replace('_', ' ')}</div></div>
-                    {expandedROId === ro.id && <RODetail ro={ro} />}
-                  </div>
-                ))}
-                {filteredROs.filter(ro => ro.status === ROStatus.AUTHORIZED).length === 0 && <p className="text-slate-600 italic text-sm text-center py-4 font-medium">Queue empty.</p>}
+                {getQueueROs('PARTS').map(ro => {
+                  const hasMissingOrSO = ro.parts.some(p => p.status === PartStatus.MISSING || p.status === PartStatus.SPECIAL_ORDER);
+
+                  return (
+                    <ROCard 
+                      key={ro.id} 
+                      ro={ro} 
+                      onClick={() => setExpandedROId(expandedROId === ro.id ? null : ro.id)}
+                      isExpanded={expandedROId === ro.id}
+                      actions={
+                        ro.status === ROStatus.PARTS_REVIEWED && (
+                          <div className="space-y-2">
+                            {hasMissingOrSO ? (
+                              <div className="flex gap-2">
+                                <button 
+                                  onClick={(e) => { 
+                                    e.stopPropagation(); 
+                                    const hasMissing = ro.parts.some(p => p.status === PartStatus.MISSING);
+                                    const hasSO = ro.parts.some(p => p.status === PartStatus.SPECIAL_ORDER);
+                                    const newStatus = (hasMissing || hasSO) ? ROStatus.PARTS_PENDING : ROStatus.PARTS_READY;
+                                    updateRO({ ...ro, status: newStatus });
+                                  }} 
+                                  className="flex-1 px-3 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all"
+                                >
+                                  Continue Job
+                                </button>
+                                <button 
+                                  onClick={(e) => { e.stopPropagation(); handleHoldJob(ro); }} 
+                                  className="flex-1 px-3 py-2 rounded-lg bg-red-500/20 text-red-400 text-[10px] font-black border border-red-500/30 uppercase tracking-widest hover:bg-red-500/30 transition-all"
+                                >
+                                  Hold Job
+                                </button>
+                              </div>
+                            ) : (
+                              <button 
+                                onClick={(e) => { e.stopPropagation(); handleSendToBay(ro); }} 
+                                className="w-full px-3 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all"
+                              >
+                                Assign Technician
+                              </button>
+                            )}
+                          </div>
+                        )
+                      }
+                    >
+                      <RODetail ro={ro} masterInventory={masterInventory} />
+                    </ROCard>
+                  );
+                })}
+                {getQueueROs('PARTS').length === 0 && <p className="text-slate-600 italic text-sm text-center py-4 font-medium">Queue empty.</p>}
               </div>
             </div>
             )}
@@ -631,30 +875,31 @@ const ServiceManagerPage: React.FC<ServiceManagerPageProps> = ({
             <div className="glass rounded-2xl p-6 border-white/5">
               <h2 className="text-lg font-bold mb-4 neon-seafoam uppercase tracking-tighter">Deployment Deck</h2>
               <div className="space-y-4">
-                {filteredROs.filter(ro => [ROStatus.PARTS_READY, ROStatus.PARTS_PENDING, ROStatus.READY_FOR_TECH, ROStatus.ACTIVE].includes(ro.status)).map(ro => { 
+                {getQueueROs('ACTIVE').map(ro => { 
                   const hasPendingRequests = ro.requests?.some(r => r.status === 'PENDING'); 
+                  
                   return (
-                    <div key={ro.id} onClick={() => setExpandedROId(expandedROId === ro.id ? null : ro.id)} className={`relative p-4 rounded-xl border bg-white/5 flex flex-col gap-3 group transition-all cursor-pointer ${ro.status === ROStatus.ACTIVE ? 'border-neon-seafoam shadow-[0_0_10px_rgba(45,212,191,0.2)]' : 'border-white/5 hover:border-neon-seafoam'}`}>
-                      {hasPendingRequests && ( <div className="absolute -top-2 -right-2 px-2 py-0.5 bg-red-500 text-white text-[8px] font-black uppercase rounded-full animate-pulse">ATTN</div> )}
-                      <div><h4 className="font-bold text-slate-200 text-sm">{ro.customerName}</h4><p className="text-[9px] text-slate-500 font-bold uppercase">{ro.vesselName}</p></div>
-                      <div className="flex justify-between items-center">
-                        <div className={`text-[8px] px-2 py-0.5 rounded font-black ${ro.status === ROStatus.ACTIVE ? 'bg-neon-seafoam/10 text-neon-seafoam' : ro.status === ROStatus.PARTS_PENDING ? 'bg-yellow-500/10 text-yellow-500' : 'bg-slate-800 text-slate-500'}`}>{ro.status.replace('_', ' ')}</div>
-                        {ro.technicianName && <p className="text-[9px] text-neon-steel font-bold uppercase">TECH: {ro.technicianName.split(' ')[0]}</p>}
-                      </div>
-                      {expandedROId !== ro.id && ro.status === ROStatus.ACTIVE && (
-                        <div className="flex gap-2">
-                          <button onClick={(e) => { e.stopPropagation(); handleHoldJob(ro); }} className="w-full px-4 py-2 rounded-lg bg-orange-500/20 text-orange-400 text-[10px] font-black border border-orange-500/30 hover:bg-orange-500/30 transition-all uppercase tracking-widest">HOLD</button>
-                          {hasPendingRequests && <button onClick={(e) => { e.stopPropagation(); setReviewRequestRO(ro); }} className="w-full px-4 py-2 rounded-lg bg-red-500/20 text-red-400 text-[10px] font-black border border-red-500/30 hover:bg-red-500/30 transition-all uppercase tracking-widest">REVIEW</button>}
-                        </div>
-                      )}
-                      {expandedROId !== ro.id && [ROStatus.PARTS_READY, ROStatus.READY_FOR_TECH, ROStatus.PARTS_PENDING].includes(ro.status) && (
-                        <button onClick={(e) => { e.stopPropagation(); handleSendToBay(ro); }} className="w-full px-4 py-2 rounded-lg bg-slate-800 text-[10px] font-black border border-white/10 hover:bg-neon-seafoam hover:text-slate-900 transition-all uppercase tracking-widest">ASSIGN TECH</button>
-                      )}
-                      {expandedROId === ro.id && <RODetail ro={ro} />}
-                    </div>
+                    <ROCard 
+                      key={ro.id} 
+                      ro={ro} 
+                      onClick={() => setExpandedROId(expandedROId === ro.id ? null : ro.id)}
+                      isExpanded={expandedROId === ro.id}
+                      actions={
+                        ro.status === ROStatus.ACTIVE ? (
+                          <div className="flex gap-2">
+                            <button onClick={(e) => { e.stopPropagation(); handleHoldJob(ro); }} className="w-full px-4 py-2 rounded-lg bg-orange-500/20 text-orange-400 text-[10px] font-black border border-orange-500/30 hover:bg-orange-500/30 transition-all uppercase tracking-widest">HOLD</button>
+                            {hasPendingRequests && <button onClick={(e) => { e.stopPropagation(); setReviewRequestRO(ro); }} className="w-full px-4 py-2 rounded-lg bg-red-500/20 text-red-400 text-[10px] font-black border border-red-500/30 hover:bg-red-500/30 transition-all uppercase tracking-widest">REVIEW</button>}
+                          </div>
+                        ) : [ROStatus.PARTS_READY, ROStatus.READY_FOR_TECH, ROStatus.PARTS_PENDING].includes(ro.status) ? (
+                          <button onClick={(e) => { e.stopPropagation(); handleSendToBay(ro); }} className="w-full px-4 py-2 rounded-lg bg-slate-800 text-[10px] font-black border border-white/10 hover:bg-neon-seafoam hover:text-slate-900 transition-all uppercase tracking-widest">ASSIGN TECH</button>
+                        ) : null
+                      }
+                    >
+                      <RODetail ro={ro} masterInventory={masterInventory} />
+                    </ROCard>
                   );
                 })}
-                {filteredROs.filter(ro => [ROStatus.PARTS_READY, ROStatus.PARTS_PENDING, ROStatus.READY_FOR_TECH, ROStatus.ACTIVE].includes(ro.status)).length === 0 && <p className="text-slate-600 italic text-sm text-center py-4 font-medium">Deck clear.</p>}
+                {getQueueROs('ACTIVE').length === 0 && <p className="text-slate-600 italic text-sm text-center py-4 font-medium">Deck clear.</p>}
               </div>
             </div>
             )}
@@ -663,45 +908,69 @@ const ServiceManagerPage: React.FC<ServiceManagerPageProps> = ({
             <div className="glass rounded-2xl p-6 border-white/5">
               <h2 className="text-lg font-bold mb-4 neon-crimson uppercase tracking-tighter">On Hold</h2>
               <div className="space-y-4">
-                {filteredROs.filter(ro => ro.status === ROStatus.HOLD).map(ro => (
-                  <div key={ro.id} onClick={() => setExpandedROId(expandedROId === ro.id ? null : ro.id)} className="p-4 rounded-xl border border-red-500/30 bg-red-500/5 flex flex-col gap-3 cursor-pointer">
-                    <div><h4 className="font-bold text-slate-200 text-sm">{ro.customerName}</h4><p className="text-[9px] text-slate-500 font-bold uppercase">{ro.vesselName}</p></div>
-                    <div className="flex justify-between items-center"><div className="bg-red-500/10 text-red-400 text-[8px] px-2 py-0.5 rounded font-black">HOLD</div></div>
-                    {expandedROId !== ro.id && <div className="flex gap-2"><button onClick={(e) => { e.stopPropagation(); handleReactivateJob(ro); }} className="flex-1 px-4 py-2 rounded-lg bg-slate-800 text-[10px] font-black border border-white/10 hover:bg-neon-seafoam hover:text-slate-900 transition-all uppercase tracking-widest">Resume</button><button onClick={(e) => { e.stopPropagation(); setDeferralRO(ro); }} className="flex-1 px-4 py-2 rounded-lg bg-slate-800 text-[10px] font-black border border-white/10 hover:bg-slate-700 hover:text-white transition-all uppercase tracking-widest">Finalize...</button></div>}
-                    {expandedROId === ro.id && <RODetail ro={ro} />}
-                  </div>
+                {getQueueROs('HOLD').map(ro => (
+                  <ROCard 
+                    key={ro.id} 
+                    ro={ro} 
+                    onClick={() => setExpandedROId(expandedROId === ro.id ? null : ro.id)}
+                    isExpanded={expandedROId === ro.id}
+                    actions={
+                      <div className="flex gap-2">
+                        <button onClick={(e) => { e.stopPropagation(); handleReactivateJob(ro); }} className="flex-1 px-4 py-2 rounded-lg bg-slate-800 text-[10px] font-black border border-white/10 hover:bg-neon-seafoam hover:text-slate-900 transition-all uppercase tracking-widest">Resume</button>
+                        <button onClick={(e) => { e.stopPropagation(); setDeferralRO(ro); }} className="flex-1 px-4 py-2 rounded-lg bg-slate-800 text-[10px] font-black border border-white/10 hover:bg-slate-700 hover:text-white transition-all uppercase tracking-widest">Finalize...</button>
+                      </div>
+                    }
+                  >
+                    <RODetail ro={ro} masterInventory={masterInventory} />
+                  </ROCard>
                 ))}
-                {filteredROs.filter(ro => ro.status === ROStatus.HOLD).length === 0 && <p className="text-slate-600 italic text-sm text-center py-4 font-medium">None.</p>}
+                {getQueueROs('HOLD').length === 0 && <p className="text-slate-600 italic text-sm text-center py-4 font-medium">None.</p>}
               </div>
             </div>
             )}
 
             {(!filterStatusGroup || filterStatusGroup === 'BILLING') && (
             <div className="glass rounded-2xl p-6 border-white/5">
-              <h2 className="text-lg font-bold mb-4 neon-steel uppercase tracking-tighter">Billing &amp; Archive</h2>
+              <h2 className="text-lg font-bold mb-4 neon-steel uppercase tracking-tighter">Billing Queue</h2>
               <div className="space-y-4">
-                {filteredROs.filter(ro => ro.status === ROStatus.PENDING_INVOICE).map(ro => (
-                  <div key={ro.id} onClick={() => setExpandedROId(expandedROId === ro.id ? null : ro.id)} className="p-4 rounded-xl border border-white/5 bg-white/5 flex flex-col gap-3 group hover:border-neon-seafoam transition-all cursor-pointer">
-                    <div><h4 className="font-bold text-slate-200 text-sm">{ro.customerName}</h4><p className="text-[9px] text-slate-500 font-bold uppercase">{ro.vesselName}</p></div>
-                    {expandedROId !== ro.id && <button onClick={(e) => { e.stopPropagation(); setInvoicingRO(ro); }} className="w-full px-4 py-2 rounded-lg bg-slate-800 text-[10px] font-black border border-white/10 hover:bg-neon-seafoam hover:text-slate-900 transition-all uppercase tracking-widest">FINALIZE</button>}
-                    {expandedROId === ro.id && <RODetail ro={ro} />}
-                  </div>
+                {getQueueROs('BILLING').map(ro => (
+                  <ROCard 
+                    key={ro.id} 
+                    ro={ro} 
+                    onClick={() => setExpandedROId(expandedROId === ro.id ? null : ro.id)}
+                    isExpanded={expandedROId === ro.id}
+                    actions={
+                      <button onClick={(e) => { e.stopPropagation(); setInvoicingRO(ro); }} className="w-full px-4 py-2 rounded-lg bg-slate-800 text-[10px] font-black border border-white/10 hover:bg-neon-seafoam hover:text-slate-900 transition-all uppercase tracking-widest">FINALIZE</button>
+                    }
+                  >
+                    <RODetail ro={ro} masterInventory={masterInventory} />
+                  </ROCard>
                 ))}
-                {filteredROs.filter(ro => ro.status === ROStatus.PENDING_INVOICE).length === 0 && <p className="text-slate-600 italic text-sm text-center py-4 font-medium">Billing queue clear.</p>}
-                
-                {/* Archive Section - Always show unless filtered by other status groups */}
-                <div className="pt-4 mt-4 border-t border-white/10">
-                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Recently Archived</h3>
-                  <div className="space-y-2 overflow-y-auto max-h-64 pr-2">
-                    {filteredROs.filter(ro => ro.status === ROStatus.COMPLETED).slice(0, 5).map(ro => (
-                      <div key={ro.id} className="p-3 rounded-xl border border-white/5 bg-slate-900/30 opacity-60">
-                        <div><h4 className="font-bold text-slate-400 text-xs">{ro.customerName}</h4><p className="text-[8px] text-slate-600 font-bold uppercase">{ro.vesselName}</p></div>
-                        <div className="mt-1 text-[8px] text-slate-600 font-mono">{new Date(ro.datePaid || ro.dateInvoiced || Date.now()).toLocaleDateString()}</div>
-                      </div>
+                {getQueueROs('BILLING').length === 0 && <p className="text-slate-600 italic text-sm text-center py-4 font-medium">Billing queue clear.</p>}
+              </div>
+            </div>
+            )}
+
+            {(!filterStatusGroup || filterStatusGroup === 'ARCHIVE') && (
+            <div className="glass rounded-2xl p-6 border-white/5">
+              <h2 className="text-lg font-bold mb-4 text-slate-500 uppercase tracking-tighter">Archive</h2>
+              <div className="space-y-4">
+                  <div className="space-y-2 overflow-y-auto max-h-96 pr-2">
+                    {getQueueROs('ARCHIVE').map(ro => (
+                      <ROCard 
+                        key={ro.id} 
+                        ro={ro} 
+                        onClick={() => setExpandedROId(expandedROId === ro.id ? null : ro.id)}
+                        isExpanded={expandedROId === ro.id}
+                      >
+                        <RODetail ro={ro} masterInventory={masterInventory} />
+                        <div className="mt-2 text-[8px] text-slate-600 font-mono">
+                          Processed: {new Date(ro.datePaid || ro.dateInvoiced || Date.now()).toLocaleDateString()}
+                        </div>
+                      </ROCard>
                     ))}
-                    {filteredROs.filter(ro => ro.status === ROStatus.COMPLETED).length === 0 && <p className="text-slate-600 italic text-xs text-center py-2 font-medium">Archive empty.</p>}
+                    {getQueueROs('ARCHIVE').length === 0 && <p className="text-slate-600 italic text-xs text-center py-2 font-medium">Archive empty.</p>}
                   </div>
-                </div>
               </div>
             </div>
             )}
@@ -713,7 +982,14 @@ const ServiceManagerPage: React.FC<ServiceManagerPageProps> = ({
       {viewingDNA && (<div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4"><VesselDNAView vessel={viewingDNA} allROs={repairOrders} onClose={() => setViewingDNA(null)} /></div>)}
       {authorizingRO && (<div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4"><div className="glass p-8 rounded-2xl w-full max-w-lg border border-neon-seafoam shadow-2xl shadow-neon-seafoam/20"><h3 className="text-lg font-black uppercase tracking-widest text-neon-seafoam mb-4">Authorization Gate</h3><p className="text-sm text-slate-300 mb-6">Authorize RO <span className="font-bold text-white">{authorizingRO.id}</span> for <span className="font-bold text-white">{authorizingRO.customerName}</span>.</p><SignatureCanvas onSave={(dataUrl) => { setSignatureForAuth(dataUrl); setIsVerbalCertifiedForAuth(false); }} onClear={() => setSignatureForAuth(null)} /><div className="flex items-center my-4"><div className="flex-grow h-px bg-white/10"></div><span className="px-4 text-xs font-bold text-slate-500">OR</span><div className="flex-grow h-px bg-white/10"></div></div><label htmlFor="verbalAuthModal" className={`py-4 rounded-xl font-bold text-sm transition-all border-2 flex items-center justify-center gap-3 cursor-pointer ${isVerbalCertifiedForAuth ? 'bg-neon-seafoam/20 border-neon-seafoam text-neon-seafoam' : 'bg-slate-800 border-slate-700 text-slate-300 hover:border-slate-500'}`}><input id="verbalAuthModal" type="checkbox" checked={isVerbalCertifiedForAuth} onChange={(e) => { setIsVerbalCertifiedForAuth(e.target.checked); if(e.target.checked) setSignatureForAuth(null); }} className="h-5 w-5 bg-slate-900 border-slate-600 text-neon-seafoam focus:ring-neon-seafoam" />I Certify Verbal Authorization</label><div className="flex justify-between items-center mt-6"><button onClick={() => setAuthorizingRO(null)} className="text-xs text-slate-500 hover:text-white">Cancel</button><button onClick={() => handleFinalizeAuthorization(authorizingRO, signatureForAuth ? 'digital' : 'verbal', signatureForAuth || 'Verbally authorized.')} disabled={!signatureForAuth && !isVerbalCertifiedForAuth} className="px-6 py-3 bg-neon-seafoam text-slate-900 font-bold rounded-lg hover:scale-105 disabled:opacity-50 disabled:grayscale disabled:hover:scale-100">Authorize</button></div></div></div>)}
       {assignTechnicianRO && (<div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4"><div className="glass p-8 rounded-2xl w-full max-w-md border border-neon-steel shadow-2xl shadow-neon-steel/20"><h3 className="text-lg font-black uppercase tracking-widest text-neon-steel mb-4">Assign Technician</h3><p className="text-sm text-slate-300 mb-6">Assign an available technician to RO <span className="font-bold text-white">{assignTechnicianRO.id}</span>.</p><div className="grid grid-cols-2 gap-4">{TECHNICIANS.map(tech => (<button key={tech.id} onClick={() => handleAssignTechnician(assignTechnicianRO, tech)} className="p-6 bg-slate-800/50 hover:bg-slate-700/50 border border-white/10 hover:border-neon-steel transition-all rounded-lg text-lg font-bold">{tech.name}</button>))}</div><button onClick={() => setAssignTechnicianRO(null)} className="text-xs text-slate-500 hover:text-white mt-6 w-full text-center">Cancel</button></div></div>)}
-      {reviewRequestRO && (<div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4"><div className="glass p-8 rounded-2xl w-full max-w-lg border border-red-500 shadow-2xl shadow-red-500/20"><h3 className="text-lg font-black uppercase tracking-widest text-red-400 mb-4">Technician Requisition Review</h3><p className="text-sm text-slate-300 mb-6">Reviewing {pendingRequests.length} pending request(s) for RO <span className="font-bold text-white">{reviewRequestRO.id}</span>.</p><div className="space-y-4 max-h-64 overflow-y-auto pr-2">{pendingRequests.map(request => (<div key={request.id} className="p-4 bg-slate-900/50 border border-white/10 rounded-lg"><div className="flex justify-between items-start"><div><span className="text-xs font-bold text-slate-400 uppercase">{request.type} REQUEST</span>{request.type === 'DIRECTIVE' && <p className="text-sm font-bold text-white">{(request.payload as {title: string}).title}</p>}{request.type === 'PART' && <p className="text-sm text-slate-300">Request to add part: <span className="font-bold text-white">{(request.payload as Part).description}</span></p>}</div><div className="flex gap-2"><button onClick={() => handleRequestReview(request, 'APPROVED')} className="p-2 bg-green-500/20 hover:bg-green-500/30 rounded-lg text-green-400"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg></button><button onClick={() => handleRequestReview(request, 'REJECTED')} className="p-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg text-red-400"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.697a1 1 0 010-1.414z" clipRule="evenodd" /></svg></button></div></div></div>))}</div><button onClick={() => setReviewRequestRO(null)} className="text-xs text-slate-500 hover:text-white mt-6 w-full text-center">Close</button></div></div>)}
+      {reviewRequestRO && (<div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4"><div className="glass p-8 rounded-2xl w-full max-w-lg border border-red-500 shadow-2xl shadow-red-500/20"><h3 className="text-lg font-black uppercase tracking-widest text-red-400 mb-4">Technician Requisition Review</h3><p className="text-sm text-slate-300 mb-6">Reviewing {pendingRequests.length} pending request(s) for RO <span className="font-bold text-white">{reviewRequestRO.id}</span>.</p><div className="space-y-4 max-h-64 overflow-y-auto pr-2">{pendingRequests.map(request => (<div key={request.id} className="p-4 bg-slate-900/50 border border-white/10 rounded-lg"><div className="flex justify-between items-start"><div><span className="text-xs font-bold text-slate-400 uppercase">{request.type} REQUEST</span>{request.type === 'DIRECTIVE' && <p className="text-sm font-bold text-white">{(request.payload as {title: string}).title}</p>}{request.type === 'PART' && (
+  <div className="space-y-1">
+    <p className="text-sm text-slate-300">Request to add part: <span className="font-bold text-white">{(request.payload as Part).description}</span></p>
+    {request.pmReview && (
+      <p className="text-[10px] font-black uppercase text-orange-400">PM Status: {request.pmReview}</p>
+    )}
+  </div>
+)}</div><div className="flex gap-2"><button onClick={() => handleRequestReview(request, 'APPROVED')} className="p-2 bg-green-500/20 hover:bg-green-500/30 rounded-lg text-green-400"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg></button><button onClick={() => handleRequestReview(request, 'REJECTED')} className="p-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg text-red-400"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.697a1 1 0 010-1.414z" clipRule="evenodd" /></svg></button></div></div></div>))}</div><button onClick={() => setReviewRequestRO(null)} className="text-xs text-slate-500 hover:text-white mt-6 w-full text-center">Close</button></div></div>)}
       {deferralRO && (
         <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">
           <div className="glass p-8 rounded-2xl w-full max-w-2xl border border-orange-500 shadow-2xl shadow-orange-500/20">

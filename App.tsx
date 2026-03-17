@@ -58,7 +58,7 @@ const App: React.FC = () => {
       setMasterInventory([]);
       return;
     }
-    await seedDatabase();
+    // await seedDatabase();
     const shopId = shopContextService.getActiveShopId();
     await loadFromSupabase(shopId);
     const [initialROs, initialInventory] = await Promise.all([
