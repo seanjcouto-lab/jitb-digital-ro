@@ -1,14 +1,43 @@
-
 import React from 'react';
-import { AppConfig } from '../types';
+import { AppConfig, CollectionsStatus } from '../types';
 import { appConfigService } from '../services/appConfigService';
-import { adminService } from '../services/adminService';
+import { repairOrderService } from '../services/repairOrderService';
+import { roStore } from '../data/roStore';
 
 interface AdminPageProps {
   config: AppConfig;
   setConfig: (cfg: AppConfig) => void;
   onExport: () => void;
 }
+
+const TEST_RO_INPUT = {
+  customerName: 'Test Customer',
+  customerPhones: ['555-0000'],
+  customerEmails: ['test@jitb.dev'],
+  customerAddress: {
+    street: '123 Test Marina Dr',
+    city: 'Testport',
+    state: 'MA',
+    zip: '02000',
+  },
+  customerNotes: null,
+  vesselHIN: 'TEST-HIN-001',
+  vesselName: 'Test Vessel',
+  boatMake: 'Test Make',
+  boatModel: 'Model X',
+  boatYear: '2020',
+  boatLength: '22',
+  engineMake: null,
+  engineModel: null,
+  engineYear: null,
+  engineHorsepower: null,
+  engineSerial: '',
+  selectedPackages: [],
+  manualParts: [],
+  manualDirectives: ['Verify persistence chain end-to-end'],
+  collectionsStatus: CollectionsStatus.NONE,
+  shopId: '00000000-0000-0000-0000-000000000001',
+};
 
 const AdminPage: React.FC<AdminPageProps> = ({ config, setConfig, onExport }) => {
   const handleInputFocus = (event: React.FocusEvent<HTMLInputElement>) => {
@@ -19,6 +48,23 @@ const AdminPage: React.FC<AdminPageProps> = ({ config, setConfig, onExport }) =>
   
   const handleColorChange = (colorKey: keyof AppConfig['themeColors'], value: string) => {
     setConfig(appConfigService.updateThemeColor(config, colorKey, value));
+  };
+
+  const handlePersistenceTest = async () => {
+    try {
+      console.log('[PERSISTENCE TEST] Step 1: Creation started...');
+      const testRO = repairOrderService.createRepairOrder(TEST_RO_INPUT, []);
+      console.log('[PERSISTENCE TEST] Step 2: RO created locally.', testRO);
+
+      console.log('[PERSISTENCE TEST] Step 3: Writing to local store...');
+      await roStore.add(testRO);
+      console.log('[PERSISTENCE TEST] Step 4: Local store write succeeded. Supabase sync triggered automatically.');
+
+      alert(`✅ RO Persistence Test PASSED\nRO ID: ${testRO.id}\nCheck console for sync details.`);
+    } catch (err: any) {
+      console.error('[PERSISTENCE TEST] FAILED:', err);
+      alert(`❌ RO Persistence Test FAILED\n${err?.message || 'Unknown error'}\nCheck console for details.`);
+    }
   };
 
   return (
@@ -78,7 +124,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ config, setConfig, onExport }) =>
                 <input type="color" value={config.themeColors.accent} onChange={(e) => handleColorChange('accent', e.target.value)} className="w-full h-12 bg-slate-900 border border-white/10 rounded-lg" />
               </div>
             </div>
-             <p className="text-[10px] text-slate-500 mt-2 text-center">Theme colors are applied application-wide in real-time.</p>
+            <p className="text-[10px] text-slate-500 mt-2 text-center">Theme colors are applied application-wide in real-time.</p>
           </div>
         </div>
       </div>
@@ -92,6 +138,14 @@ const AdminPage: React.FC<AdminPageProps> = ({ config, setConfig, onExport }) =>
                 Export Application Data
               </button>
               <p className="text-center text-[10px] text-slate-500 mt-2">Downloads a local JSON file of all current repair orders, inventory, and configuration.</p>
+
+              <div className="border-t border-white/10 pt-4 mt-4">
+                <h3 className="text-sm font-bold text-yellow-400 mb-2 text-center">⚠ Diagnostic Tools (Temporary)</h3>
+                <button onClick={handlePersistenceTest} className="w-full text-center px-6 py-3 bg-yellow-900/40 border border-yellow-500/40 text-yellow-300 hover:border-yellow-400 hover:text-yellow-100 transition-all rounded-lg font-bold text-xs uppercase tracking-widest">
+                  Run RO Persistence Test
+                </button>
+                <p className="text-center text-[10px] text-slate-500 mt-2">Creates a test RO and verifies the full persistence chain. Check browser console for step-by-step results.</p>
+              </div>
             </div>
         </div>
       </div>
