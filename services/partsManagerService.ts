@@ -136,7 +136,7 @@ export const PartsManagerService = {
         return { updatedRO: ro, soParts };
     } else {
         // When PM clicks FULFILL: The job always returns to SM.
-        return { updatedRO: { ...ro, status: ROStatus.PARTS_REVIEWED }, soParts: [] };
+       return { updatedRO: { ...ro, status: ROStatus.READY_FOR_TECH }, soParts: [] };
     }
   },
 

@@ -396,13 +396,14 @@ const ROCard: React.FC<ROCardProps> = ({
                             </div>
                             <button onClick={() => handleAddButtonClick(ro)} disabled={!(partSearchQueries[ro.id] || '').trim()} className="px-6 py-3 bg-slate-800 border border-white/10 text-slate-300 hover:border-neon-steel hover:text-white transition-all rounded-lg font-black text-[10px] uppercase tracking-widest disabled:opacity-50">Add</button>
                         </div>
-                        {[ROStatus.AUTHORIZED, ROStatus.PARTS_PENDING].includes(ro.status) && 
-                            <div className="border-t border-white/10 pt-4">
-                              <button onClick={() => handleFulfillmentComplete(ro)} disabled={!isFulfillable} className="w-full py-4 rounded-xl font-black uppercase tracking-widest text-sm transition-all shadow-2xl disabled:grayscale disabled:cursor-not-allowed bg-neon-seafoam text-slate-900 disabled:bg-slate-800 disabled:text-slate-500 hover:scale-105 active:scale-95">
-                               {ro.parts.some(p => p.status === PartStatus.SPECIAL_ORDER || p.status === PartStatus.MISSING) ? 'Save & Set as Parts Pending' : 'Fulfillment Complete'}
-                              </button>
-                            </div>
-                        }
+                      {[ROStatus.AUTHORIZED, ROStatus.PARTS_PENDING].includes(ro.status) && 
+    <div className="border-t border-white/10 pt-4 space-y-2">
+      <button onClick={() => handleFulfillmentComplete(ro)} disabled={!isFulfillable} className="w-full py-4 rounded-xl font-black uppercase tracking-widest text-sm transition-all shadow-2xl disabled:grayscale disabled:cursor-not-allowed bg-neon-seafoam text-slate-900 disabled:bg-slate-800 disabled:text-slate-500 hover:scale-105 active:scale-95">
+       {ro.parts.some(p => p.status === PartStatus.SPECIAL_ORDER || p.status === PartStatus.MISSING) ? 'Save & Set as Parts Pending' : 'Fulfillment Complete'}
+      </button>
+     
+    </div>
+}
                         {[ROStatus.ACTIVE, ROStatus.READY_FOR_TECH, ROStatus.HOLD, ROStatus.PENDING_INVOICE].includes(ro.status) && (
                             <div className="mt-4 p-4 rounded-xl bg-neon-seafoam/5 border border-neon-seafoam/20">
                                 <p className="text-[10px] font-black uppercase text-neon-seafoam mb-1">Post-Deployment Fulfillment Mode</p>
@@ -590,9 +591,9 @@ const PartsManagerPage: React.FC<PartsManagerPageProps> = ({
     }
 
     const allPartsProcessed = result.updatedRO.parts.every(p => p.status !== PartStatus.REQUIRED && p.status);
-    if (allPartsProcessed && result.updatedRO.parts.length > 0 && ![ROStatus.ACTIVE, ROStatus.READY_FOR_TECH].includes(result.updatedRO.status)) {
-        setExpandedROId(null);
-    }
+if (allPartsProcessed && result.updatedRO.parts.length > 0 && ![ROStatus.ACTIVE, ROStatus.READY_FOR_TECH].includes(result.updatedRO.status)) {
+    // No auto-jump — user must press Send to Service Manager
+}
   };
   
   const handleConfirmMissingPart = () => {

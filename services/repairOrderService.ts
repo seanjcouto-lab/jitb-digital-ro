@@ -524,14 +524,7 @@ export const repairOrderService = {
     let updatedInventory: Part[] | undefined;
     let alertToAdd: Omit<InventoryAlert, 'id' | 'timestamp'> | undefined;
 
-    // Auto-advance status if it was waiting on parts and now everything is in box
-    if (finalRO.status === ROStatus.PARTS_PENDING) {
-        const areAllPartsInBox = finalRO.parts.every(p => p.status === PartStatus.IN_BOX || p.status === PartStatus.USED);
-        if (areAllPartsInBox) {
-            finalRO.status = ROStatus.READY_FOR_TECH;
-            domainEventService.publish('repair-order:status-updated', finalRO);
-        }
-    }
+   // Status advance is manual — user must press Send to Service Manager
 
     if (status === PartStatus.IN_BOX && originalStatus !== PartStatus.IN_BOX) {
         if (!part.isCustom) {
