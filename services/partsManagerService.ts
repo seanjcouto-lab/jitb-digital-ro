@@ -130,7 +130,7 @@ export const PartsManagerService = {
 
   checkFulfillmentComplete: (ro: RepairOrder): { updatedRO: RepairOrder, soParts: Part[] } => {
     // Collect all special order parts
-    const soParts = ro.parts.filter(p => p.status === PartStatus.SPECIAL_ORDER);
+    const soParts = ro.parts.filter(p => p.status === PartStatus.SPECIAL_ORDER || p.status === PartStatus.MISSING);
     
     if (soParts.length > 0) {
         return { updatedRO: ro, soParts };
@@ -142,7 +142,7 @@ export const PartsManagerService = {
 
   finalizeSpecialOrders: (ro: RepairOrder): RepairOrder => {
     // JOBS with S/O parts also return to SM for review
-    return { ...ro, status: ROStatus.PARTS_REVIEWED };
+    return { ...ro, status: ROStatus.READY_FOR_TECH };
   },
 
   returnPartToStock: async (

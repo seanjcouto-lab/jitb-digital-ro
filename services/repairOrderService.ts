@@ -212,7 +212,7 @@ export const repairOrderService = {
     const finalDirectives = [ ...standardDirectives, ...manualDirectivesObjects, { id: 'd3', title: 'SEA TRIAL & WATER TEST', isCompleted: false, isApproved: true } ];
 
     const hasParts = uniqueParts.length > 0;
-    let status = hasParts ? ROStatus.PARTS_PENDING : ROStatus.READY_FOR_TECH;
+    let status = hasParts ? ROStatus.AUTHORIZED : ROStatus.READY_FOR_TECH;
     let authorizationType = input.authorization?.type ?? null;
     let authorizationData = input.authorization?.data ?? null;
     let authorizationTimestamp = input.authorization?.timestamp ?? null;
@@ -360,7 +360,7 @@ export const repairOrderService = {
 
   finalizeAuthorization: (ro: RepairOrder, type: 'digital' | 'verbal', data: string): RepairOrder => {
     const hasParts = ro.parts.length > 0;
-    const status = hasParts ? ROStatus.PARTS_PENDING : ROStatus.READY_FOR_TECH;
+    const status = hasParts ? ROStatus.AUTHORIZED : ROStatus.READY_FOR_TECH;
     const updatedRO: RepairOrder = {
         ...ro,
         status,

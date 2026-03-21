@@ -270,25 +270,43 @@ const ROCard: React.FC<ROCardProps> = ({
     const isFulfillable = ro.parts.length > 0 && ro.parts.every(p => p.status && p.status !== PartStatus.REQUIRED && p.status !== PartStatus.APPROVAL_PENDING);
     const oracleResults = getOracleResults(partSearchQueries[ro.id] || '', ro.parts);
 
-    const statusMap: Record<string, {pillClass: string, text: string, borderClass: string}> = {
-        [ROStatus.AUTHORIZED]: { pillClass: 'bg-neon-seafoam/10 border-neon-seafoam/30 text-neon-seafoam', text: 'Authorized', borderClass: 'border-white/5' },
-        [ROStatus.PARTS_PENDING]: { pillClass: 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400', text: 'Parts Pending', borderClass: 'border-yellow-500/20' },
-        [ROStatus.ACTIVE]: { pillClass: 'bg-neon-seafoam text-slate-900', text: 'Deployment Active', borderClass: 'border-neon-seafoam/40 shadow-[0_0_10px_rgba(45,212,191,0.1)]' },
-        [ROStatus.READY_FOR_TECH]: { pillClass: 'bg-neon-steel/20 text-neon-steel border-neon-steel/30', text: 'Deployment Ready', borderClass: 'border-white/5' }
-    }
+   const statusMap: Record<string, {pillClass: string, text: string, borderClass: string}> = {
+    [ROStatus.AUTHORIZED]: { pillClass: 'bg-neon-seafoam/10 border-neon-seafoam/30 text-neon-seafoam', text: 'Authorized', borderClass: 'border-white/5' },
+    [ROStatus.PARTS_PENDING]: { pillClass: 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400', text: 'Parts Pending', borderClass: 'border-yellow-500/20' },
+    [ROStatus.ACTIVE]: { pillClass: 'bg-neon-seafoam text-slate-900 shadow-lg shadow-neon-seafoam/40', text: 'ACTIVE — GET PARTS NOW', borderClass: 'border-neon-seafoam/40 shadow-[0_0_10px_rgba(45,212,191,0.1)]' },
+    [ROStatus.HOLD]: { pillClass: 'bg-slate-700 text-slate-300 border-slate-600', text: 'On Hold — SM Decision', borderClass: 'border-white/5' },
+    [ROStatus.READY_FOR_TECH]: { pillClass: 'bg-neon-steel/20 text-neon-steel border-neon-steel/30', text: 'Deployment Ready', borderClass: 'border-white/5' }
+}
     const statusInfo = statusMap[ro.status] || { pillClass: 'bg-slate-700 text-slate-300', text: ro.status, borderClass: 'border-white/5' };
 
+   const createdAt = parseInt(ro.id.split('-')[1]) || Date.now();
+    const minsAgo = Math.floor((Date.now() - createdAt) / 60000);
+    const hrsAgo = Math.floor(minsAgo / 60);
+    const daysAgo = Math.floor(hrsAgo / 24);
+    const relativeAge = minsAgo < 1 ? 'Just now' : minsAgo < 60 ? `${minsAgo}m ago` : hrsAgo < 24 ? `${hrsAgo}h ago` : `${daysAgo}d ago`;
+
     return (
-       <div className={`glass rounded-2xl p-6 border transition-all ${statusInfo.borderClass}`}>
-            <div onClick={() => setExpandedROId(expandedROId === ro.id ? null : ro.id)} className="flex justify-between items-start mb-6 border-b border-white/5 pb-4 cursor-pointer">
-              <div>
-                <h3 className="text-lg font-bold text-white">{ro.vesselName}</h3>
-                <p className="text-xs text-slate-500 uppercase font-bold tracking-tight mt-1">{ro.customerName}</p>
-                <p className="text-xs text-slate-500 font-mono">{ro.engineSerial}</p>
+       <div className={`bg-white/5 backdrop-blur-sm rounded-2xl p-5 border transition-all shadow-lg ${statusInfo.borderClass}`}>
+            <div onClick={() => setExpandedROId(expandedROId === ro.id ? null : ro.id)} className="flex flex-col gap-2 mb-4 pb-4 border-b border-white/5 cursor-pointer">
+              <div className="flex justify-between items-start">
+                <div className="flex flex-col">
+                  <span className="text-[9px] font-mono text-slate-500">{ro.id}</span>
+                  <h3 className="text-base font-bold text-slate-200 mt-0.5">{ro.customerName}</h3>
+                  <p className="text-[9px] text-slate-400 font-bold uppercase tracking-tight">{ro.vesselName}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className={`px-3 py-1 rounded text-[10px] font-black uppercase border ${statusInfo.pillClass}`}>{statusInfo.text}</div>
+                  <svg className={`w-4 h-4 text-slate-500 transition-transform ${expandedROId === ro.id ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <div className={`px-3 py-1 rounded text-[10px] font-black uppercase ${statusInfo.pillClass}`}>{statusInfo.text}</div>
-                 <svg className={`w-4 h-4 text-slate-500 transition-transform ${expandedROId === ro.id ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+              <div className="text-[9px] text-slate-500 font-medium">Opened {relativeAge}</div>
+              <div className="flex flex-wrap gap-3 text-[9px] font-bold uppercase tracking-wider text-slate-400">
+                <span>{ro.directives.length} Directives</span>
+                <span>{ro.parts.length} Parts</span>
+                {ro.parts.filter(p => p.status === PartStatus.IN_BOX).length > 0 && <span className="text-neon-seafoam">{ro.parts.filter(p => p.status === PartStatus.IN_BOX).length} In Box</span>}
+                {ro.parts.filter(p => p.status === PartStatus.MISSING).length > 0 && <span className="text-red-400">{ro.parts.filter(p => p.status === PartStatus.MISSING).length} Missing</span>}
+                {ro.parts.filter(p => p.status === PartStatus.SPECIAL_ORDER).length > 0 && <span className="text-orange-400">{ro.parts.filter(p => p.status === PartStatus.SPECIAL_ORDER).length} S/O</span>}
+                {ro.parts.filter(p => !p.status || p.status === PartStatus.REQUIRED).length > 0 && <span className="text-slate-500">{ro.parts.filter(p => !p.status || p.status === PartStatus.REQUIRED).length} Unreviewed</span>}
               </div>
             </div>
             {expandedROId === ro.id && (
@@ -363,8 +381,8 @@ const ROCard: React.FC<ROCardProps> = ({
                                         {part.status === PartStatus.IN_BOX && (
                                             <button onClick={() => handleUpdatePartStatus(ro, index, PartStatus.REQUIRED)} className="px-4 py-1.5 rounded-md bg-slate-700/50 text-slate-400 text-[10px] font-bold uppercase hover:bg-slate-600/50 transition-colors">Return to Stock</button>
                                         )}
-                                        {[PartStatus.MISSING, PartStatus.SPECIAL_ORDER].includes(part.status!) && (
-                                            <button onClick={() => handleUpdatePartStatus(ro, index, PartStatus.IN_BOX)} className="px-4 py-1.5 rounded-md bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase hover:scale-105 active:scale-95 transition-all shadow-lg shadow-neon-seafoam/20">Receive Arrival</button>
+                                       {[PartStatus.MISSING, PartStatus.SPECIAL_ORDER].includes(part.status!) && (
+                                            <button onClick={() => handleUpdatePartStatus(ro, index, PartStatus.IN_BOX)} className="px-4 py-1.5 rounded-md bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase hover:scale-105 active:scale-95 transition-all shadow-lg shadow-neon-seafoam/20">Receive</button>
                                         )}
                                     </div>
                                     <button onClick={() => handleRemovePart(ro, index)} className="p-1.5 bg-slate-800/50 rounded-md text-slate-500 hover:bg-red-500/20 hover:text-red-400 transition-colors">
@@ -491,19 +509,8 @@ const PartsManagerPage: React.FC<PartsManagerPageProps> = ({
 
 
   const fulfillmentQueue = useMemo(() => repairOrders.filter(ro => ro.status === ROStatus.AUTHORIZED), [repairOrders]);
-  const pendingQueue = useMemo(() => repairOrders.filter(ro => ro.status === ROStatus.PARTS_PENDING), [repairOrders]);
+  const pendingQueue = useMemo(() => repairOrders.filter(ro => ro.status === ROStatus.READY_FOR_TECH && ro.parts.some(p => p.status === PartStatus.MISSING || p.status === PartStatus.SPECIAL_ORDER)), [repairOrders]);
   
-  // Jobs already with technicians but needing parts to arrive
-  const deploymentFulfillmentQueue = useMemo(() => 
-    repairOrders.filter(ro => 
-        [ROStatus.READY_FOR_TECH, ROStatus.ACTIVE, ROStatus.HOLD, ROStatus.PENDING_INVOICE].includes(ro.status) &&
-        ro.parts.some(p => p.status === PartStatus.SPECIAL_ORDER || p.status === PartStatus.MISSING)
-    ), [repairOrders]);
-
-  const requestsQueue = useMemo(() => 
-    repairOrders.filter(ro => ro.requests?.some(req => req.status === 'PENDING')),
-    [repairOrders]
-  );
 
   const returnsQueue = useMemo(() => 
     repairOrders.filter(ro => 
@@ -714,75 +721,7 @@ if (allPartsProcessed && result.updatedRO.parts.length > 0 && ![ROStatus.ACTIVE,
   return (
     <>
       <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-        {requestsQueue.length > 0 && (
-          <div className="mb-12">
-            <h2 className="text-2xl font-bold text-purple-400 uppercase tracking-tighter mb-4">Technician Part Requests <span className="text-slate-500 text-lg">({requestsQueue.length})</span></h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {requestsQueue.map(ro => (
-                <div key={ro.id} className="glass p-4 rounded-2xl border-white/5 space-y-4">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="font-bold text-white">RO #{ro.id.slice(-4)}</h3>
-                      <p className="text-[10px] text-slate-500 uppercase">{ro.vesselName}</p>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    {ro.requests?.filter(req => req.status === 'PENDING' && req.type === 'PART').map(req => {
-                      const part = req.payload as Part;
-                      const invPart = masterInventory.find(p => p.partNumber === part.partNumber);
-                      const isAvailable = invPart && invPart.quantityOnHand > 0;
-                      
-                      return (
-                        <div key={req.id} className="bg-white/5 p-3 rounded-xl border border-white/5">
-                          <div className="flex justify-between items-center mb-2">
-                            <div>
-                              <p className="text-xs font-bold text-white">{part.description}</p>
-                              <p className="text-[10px] text-slate-500">{part.partNumber}</p>
-                            </div>
-                            <div className="text-right">
-                              <span className={`text-[10px] font-bold uppercase ${isAvailable ? 'text-emerald-400' : 'text-red-400'}`}>
-                                {isAvailable ? `In Stock: ${invPart.quantityOnHand}` : 'Out of Stock'}
-                              </span>
-                            </div>
-                          </div>
-                          
-                          <div className="flex gap-2">
-                            {isAvailable ? (
-                              <button 
-                                onClick={() => handleFulfillRequest(ro, req.id)}
-                                className="flex-1 py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 text-[10px] font-bold rounded-lg transition-colors uppercase"
-                              >
-                                Add to Box
-                              </button>
-                            ) : (
-                              <>
-                                <button 
-                                  onClick={() => handleFlagRequest(ro, req.id, 'MISSING')}
-                                  className={`flex-1 py-1.5 text-[10px] font-bold rounded-lg transition-colors uppercase border ${req.pmReview === 'MISSING' ? 'bg-red-500 text-white border-red-500' : 'bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500/20'}`}
-                                >
-                                  {req.pmReview === 'MISSING' ? 'Flagged Missing' : 'Missing'}
-                                </button>
-                                <button 
-                                  onClick={() => handleFlagRequest(ro, req.id, 'SPECIAL_ORDER')}
-                                  className={`flex-1 py-1.5 text-[10px] font-bold rounded-lg transition-colors uppercase border ${req.pmReview === 'SPECIAL_ORDER' ? 'bg-blue-500 text-white border-blue-500' : 'bg-blue-500/10 text-blue-400 border-blue-500/20 hover:bg-blue-500/20'}`}
-                                >
-                                  {req.pmReview === 'SPECIAL_ORDER' ? 'Flagged S.O.' : 'S.O.'}
-                                </button>
-                              </>
-                            )}
-                          </div>
-                          {req.pmReview && !isAvailable && (
-                            <p className="mt-2 text-[9px] text-slate-500 italic">Waiting for SM approval for {req.pmReview}.</p>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        
 
         <div className="flex justify-between items-end border-b border-white/5 pb-4">
             <div>
@@ -812,19 +751,12 @@ if (allPartsProcessed && result.updatedRO.parts.length > 0 && ![ROStatus.ACTIVE,
                 <div>
                     <h2 className="text-2xl font-bold text-yellow-400 uppercase tracking-tighter mb-4">Awaiting Parts <span className="text-slate-500 text-lg">({pendingQueue.length})</span></h2>
                     <div className="space-y-4">
-                        {pendingQueue.length === 0 && <div className="glass p-12 text-center rounded-2xl border-white/5"><p className="text-slate-500 text-sm">No jobs waiting on special orders.</p></div>}
+                       {pendingQueue.length === 0 && <div className="glass p-12 text-center rounded-2xl border-white/5"><p className="text-slate-500 text-sm">No jobs with missing or special order parts.</p></div>}
                         {pendingQueue.map(ro => <ROCard key={ro.id} ro={ro} {...cardProps} />)}
                     </div>
                 </div>
 
-                <div>
-                    <h2 className="text-2xl font-bold text-neon-seafoam uppercase tracking-tighter mb-4">Deployment Fulfillment <span className="text-slate-500 text-lg">({deploymentFulfillmentQueue.length})</span></h2>
-                    <p className="text-[10px] font-black uppercase text-slate-500 mb-4 tracking-widest">Receive arrivals for active bay jobs</p>
-                    <div className="space-y-4">
-                        {deploymentFulfillmentQueue.length === 0 && <div className="glass p-12 text-center rounded-2xl border-white/5"><p className="text-slate-500 text-sm">Active jobs are fully supplied.</p></div>}
-                        {deploymentFulfillmentQueue.map(ro => <ROCard key={ro.id} ro={ro} {...cardProps} />)}
-                    </div>
-                </div>
+            
             </div>
         </div>
 

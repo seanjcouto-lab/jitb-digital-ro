@@ -26,7 +26,7 @@ type ViewMode = 'SEARCH' | 'PROFILE_CREATE' | 'RO_CREATE';
 
 const STATUS_GROUPS = {
   STAGED: [ROStatus.READY_FOR_TECH, ROStatus.PARTS_READY],
-  PARTS: [ROStatus.PARTS_PENDING],
+  PARTS: [ROStatus.AUTHORIZED, ROStatus.PARTS_PENDING],
   ACTIVE: [ROStatus.ACTIVE, ROStatus.READY_FOR_TECH, ROStatus.PARTS_READY, ROStatus.PARTS_PENDING],
   ACTIVE_ONLY: [ROStatus.ACTIVE],
   HOLD: [ROStatus.HOLD],
@@ -780,7 +780,10 @@ const handleROGenerated = (newRO: RepairOrder) => {
                     onClick={() => setExpandedROId(expandedROId === ro.id ? null : ro.id)}
                     isExpanded={expandedROId === ro.id}
                     actions={
-                     <button onClick={(e) => { e.stopPropagation(); handleSendToBay(ro); }} className="w-full px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>
+                      <div className="flex gap-2">
+                        <button onClick={(e) => { e.stopPropagation(); handleSendToBay(ro); }} className="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>
+                        <button onClick={(e) => { e.stopPropagation(); handleHoldJob(ro); }} className="flex-1 px-4 py-2 rounded-lg bg-red-500/20 text-red-400 text-[10px] font-black border border-red-500/30 uppercase tracking-widest hover:bg-red-500/30 transition-all">HOLD</button>
+                      </div>
                     }
                   >
                     <RODetail 
@@ -792,18 +795,11 @@ const handleROGenerated = (newRO: RepairOrder) => {
                       onAddDirective={handleAddDirective}
                       onAddPart={handleAddPart}
                     />
-                    <div className="flex gap-2 mt-2">
-                     <button 
-  onClick={(e) => { e.stopPropagation(); handleSendToBay(ro); }}
-  className="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black border border-neon-seafoam/20 hover:scale-105 transition-all uppercase tracking-widest"
->
-  ASSIGN TECH
-</button>
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); handleDeleteRO(ro.id); }} 
-                        className="px-4 py-2 rounded-lg bg-red-500/10 text-red-500 text-[10px] font-black border border-red-500/20 hover:bg-red-500/20 transition-all uppercase tracking-widest"
-                      >
-                        REMOVE
+                   <div className="flex gap-2 mt-2">
+                      <button onClick={(e) => { e.stopPropagation(); handleSendToBay(ro); }} className="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black border border-neon-seafoam/20 hover:scale-105 transition-all uppercase tracking-widest">ASSIGN TECH</button>
+                      <button onClick={(e) => { e.stopPropagation(); handleHoldJob(ro); }} className="flex-1 px-4 py-2 rounded-lg bg-red-500/20 text-red-400 text-[10px] font-black border border-red-500/30 hover:bg-red-500/30 transition-all uppercase tracking-widest">HOLD</button>
+                     <button onClick={(e) => { e.stopPropagation(); handleDeleteRO(ro.id); }} className="p-2 rounded-lg bg-slate-800/30 text-slate-600 border border-white/5 hover:text-red-400 hover:bg-red-500/10 transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clipRule="evenodd" /></svg>
                       </button>
                     </div>
                   </ROCard>
@@ -826,40 +822,15 @@ const handleROGenerated = (newRO: RepairOrder) => {
                       ro={ro} 
                       onClick={() => setExpandedROId(expandedROId === ro.id ? null : ro.id)}
                       isExpanded={expandedROId === ro.id}
-                      actions={
-                        ro.status === ROStatus.PARTS_REVIEWED && (
-                          <div className="space-y-2">
-                            {hasMissingOrSO ? (
-                              <div className="flex gap-2">
-                                <button 
-                                  onClick={(e) => { 
-                                    e.stopPropagation(); 
-                                    const hasMissing = ro.parts.some(p => p.status === PartStatus.MISSING);
-                                    const hasSO = ro.parts.some(p => p.status === PartStatus.SPECIAL_ORDER);
-                                    const newStatus = (hasMissing || hasSO) ? ROStatus.PARTS_PENDING : ROStatus.PARTS_READY;
-                                    updateRO({ ...ro, status: newStatus });
-                                  }} 
-                                  className="flex-1 px-3 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all"
-                                >
-                                  Continue Job
-                                </button>
-                                <button 
-                                  onClick={(e) => { e.stopPropagation(); handleHoldJob(ro); }} 
-                                  className="flex-1 px-3 py-2 rounded-lg bg-red-500/20 text-red-400 text-[10px] font-black border border-red-500/30 uppercase tracking-widest hover:bg-red-500/30 transition-all"
-                                >
-                                  Hold Job
-                                </button>
-                              </div>
-                            ) : (
-                              <button 
-                                onClick={(e) => { e.stopPropagation(); handleSendToBay(ro); }} 
-                                className="w-full px-3 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all"
-                              >
-                                Assign Technician
-                              </button>
-                            )}
-                          </div>
-                        )
+                   actions={
+                        ro.status === ROStatus.READY_FOR_TECH ? (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleSendToBay(ro); }}
+                            className="w-full px-3 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all"
+                          >
+                            Assign Tech
+                          </button>
+                        ) : null
                       }
                     >
                       <RODetail ro={ro} masterInventory={masterInventory} />
