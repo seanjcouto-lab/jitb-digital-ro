@@ -81,7 +81,8 @@ const ROCard: React.FC<ROCardProps> = ({
   return (
     <div 
       onClick={onClick} 
-      className={`relative p-4 rounded-xl border bg-white/5 flex flex-col gap-3 group transition-all cursor-pointer ${
+     className={`relative p-4 rounded-xl border bg-white/5 flex flex-col gap-3 group transition-all cursor-pointer ${
+        hasAttn ? 'border-red-500 shadow-[0_0_10px_rgba(239,68,68,0.3)] animate-pulse' :
         ro.status === ROStatus.ACTIVE ? 'border-green-500/50 shadow-[0_0_10px_rgba(34,197,94,0.1)]' : 
         ro.status === ROStatus.HOLD ? 'border-red-500/30 bg-red-500/5' :
         'border-white/5 hover:border-white/20'
@@ -130,7 +131,7 @@ const ROCard: React.FC<ROCardProps> = ({
         <div className="flex flex-wrap gap-1 mt-1">
           {hasPartRequest && <span className="px-2 py-0.5 bg-red-500 text-white text-[8px] font-black rounded animate-pulse">PART REQUEST</span>}
           {hasAttn && <span className="px-2 py-0.5 bg-red-500 text-white text-[8px] font-black rounded-full animate-pulse">ATTN</span>}
-          {ro.status === ROStatus.HOLD && <span className="px-2 py-0.5 bg-red-500/20 text-red-400 text-[8px] font-black rounded border border-red-500/30">HOLD</span>}
+          {false && ro.status === ROStatus.HOLD && <span className="px-2 py-0.5 bg-red-500/20 text-red-400 text-[8px] font-black rounded border border-red-500/30">HOLD</span>}
         </div>
       )}
 
@@ -722,7 +723,7 @@ const handleROGenerated = (newRO: RepairOrder) => {
             <StatusPill count={stats.activeOnly} label="Active" colorClass="text-green-400" onClick={() => toggleStatusFilter('ACTIVE_ONLY')} isActive={filterStatusGroup === 'ACTIVE_ONLY'} />
             <StatusPill count={stats.hold} label="Hold" colorClass="text-red-400" onClick={() => toggleStatusFilter('HOLD')} isActive={filterStatusGroup === 'HOLD'} />
             <StatusPill count={stats.billing} label="Billing" colorClass="text-purple-400" onClick={() => toggleStatusFilter('BILLING')} isActive={filterStatusGroup === 'BILLING'} />
-            <StatusPill count={stats.archive} label="Archive" colorClass="text-slate-500" onClick={() => toggleStatusFilter('ARCHIVE')} isActive={filterStatusGroup === 'ARCHIVE'} />
+            
         </div>
 
         <div className="space-y-8">
@@ -885,14 +886,12 @@ const handleROGenerated = (newRO: RepairOrder) => {
                     ro={ro} 
                     onClick={() => setExpandedROId(expandedROId === ro.id ? null : ro.id)}
                     isExpanded={expandedROId === ro.id}
-                    actions={
-                      <div className="flex gap-2">
-                        <button onClick={(e) => { e.stopPropagation(); handleReactivateJob(ro); }} className="flex-1 px-4 py-2 rounded-lg bg-slate-800 text-[10px] font-black border border-white/10 hover:bg-neon-seafoam hover:text-slate-900 transition-all uppercase tracking-widest">Resume</button>
-                        <button onClick={(e) => { e.stopPropagation(); setDeferralRO(ro); }} className="flex-1 px-4 py-2 rounded-lg bg-slate-800 text-[10px] font-black border border-white/10 hover:bg-slate-700 hover:text-white transition-all uppercase tracking-widest">Finalize...</button>
-                      </div>
-                    }
                   >
                     <RODetail ro={ro} masterInventory={masterInventory} />
+                    <div className="flex gap-2 mt-2">
+                      <button onClick={(e) => { e.stopPropagation(); handleReactivateJob(ro); }} className="flex-1 px-4 py-2 rounded-lg bg-slate-800 text-[10px] font-black border border-white/10 hover:bg-neon-seafoam hover:text-slate-900 transition-all uppercase tracking-widest">Resume</button>
+                      <button onClick={(e) => { e.stopPropagation(); setDeferralRO(ro); }} className="flex-1 px-4 py-2 rounded-lg bg-slate-800 text-[10px] font-black border border-white/10 hover:bg-slate-700 hover:text-white transition-all uppercase tracking-widest">Finalize...</button>
+                    </div>
                   </ROCard>
                 ))}
                 {getQueueROs('HOLD').length === 0 && <p className="text-slate-600 italic text-sm text-center py-4 font-medium">None.</p>}
@@ -922,29 +921,7 @@ const handleROGenerated = (newRO: RepairOrder) => {
             </div>
             )}
 
-            {(!filterStatusGroup || filterStatusGroup === 'ARCHIVE') && (
-            <div className="glass rounded-2xl p-6 border-white/5">
-              <h2 className="text-lg font-bold mb-4 text-slate-500 uppercase tracking-tighter">Archive</h2>
-              <div className="space-y-4">
-                  <div className="space-y-2 overflow-y-auto max-h-96 pr-2">
-                    {getQueueROs('ARCHIVE').map(ro => (
-                      <ROCard 
-                        key={ro.id} 
-                        ro={ro} 
-                        onClick={() => setExpandedROId(expandedROId === ro.id ? null : ro.id)}
-                        isExpanded={expandedROId === ro.id}
-                      >
-                        <RODetail ro={ro} masterInventory={masterInventory} />
-                        <div className="mt-2 text-[8px] text-slate-600 font-mono">
-                          Processed: {new Date(ro.datePaid || ro.dateInvoiced || Date.now()).toLocaleDateString()}
-                        </div>
-                      </ROCard>
-                    ))}
-                    {getQueueROs('ARCHIVE').length === 0 && <p className="text-slate-600 italic text-xs text-center py-2 font-medium">Archive empty.</p>}
-                  </div>
-              </div>
-            </div>
-            )}
+            
           </section>
         </div>
       
@@ -960,7 +937,7 @@ const handleROGenerated = (newRO: RepairOrder) => {
       <p className="text-[10px] font-black uppercase text-orange-400">PM Status: {request.pmReview}</p>
     )}
   </div>
-)}</div><div className="flex gap-2"><button onClick={() => handleRequestReview(request, 'APPROVED')} className="p-2 bg-green-500/20 hover:bg-green-500/30 rounded-lg text-green-400"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg></button><button onClick={() => handleRequestReview(request, 'REJECTED')} className="p-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg text-red-400"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.697a1 1 0 010-1.414z" clipRule="evenodd" /></svg></button></div></div></div>))}</div><button onClick={() => setReviewRequestRO(null)} className="text-xs text-slate-500 hover:text-white mt-6 w-full text-center">Close</button></div></div>)}
+)}</div><div className="flex gap-2"><button onClick={() => handleRequestReview(request, 'APPROVED')} className="px-4 py-2 bg-green-500/20 hover:bg-green-500/30 rounded-lg text-green-400 text-xs font-black uppercase tracking-widest">Approve</button><button onClick={() => handleRequestReview(request, 'REJECTED')} className="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg text-red-400 text-xs font-black uppercase tracking-widest">Reject</button></div></div></div>))}</div><button onClick={() => setReviewRequestRO(null)} className="text-xs text-slate-500 hover:text-white mt-6 w-full text-center">Close</button></div></div>)}
       {deferralRO && (
         <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">
           <div className="glass p-8 rounded-2xl w-full max-w-2xl border border-orange-500 shadow-2xl shadow-orange-500/20">

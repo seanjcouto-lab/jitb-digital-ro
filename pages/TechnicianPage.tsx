@@ -294,12 +294,7 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, updateRO, 
             <section className="glass p-6 rounded-2xl border-white/5">
               <SectionHeader title="Service Directives" />
               {repairOrder.directives.map((directive, idx) => {
-                const partsForDirective = repairOrder.parts.filter(p => directive.requiredParts?.includes(p.partNumber));
-                const missingPartsForThisTask = partsForDirective.filter(p => p.status !== PartStatus.IN_BOX && p.status !== PartStatus.USED);
-                const hasMissingParts = missingPartsForThisTask.length > 0;
-                
                 const isWorkflowLocked = repairOrder.status !== ROStatus.ACTIVE;
-                const partsLock = hasMissingParts && directive.requiredParts && directive.requiredParts.length > 0;
                 
                 return (
                   <div key={directive.id} className={`p-4 rounded-xl border transition-all mb-4 last:mb-0 bg-slate-900/40 ${directive.isCompleted ? 'border-neon-seafoam/20 opacity-60' : 'border-white/5'} ${isWorkflowLocked ? 'grayscale opacity-30 cursor-not-allowed' : ''}`}>
@@ -307,7 +302,6 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, updateRO, 
                       <div>
                         <div className="flex items-center gap-2 mb-1">
                             <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Task 0{idx + 1}</span>
-                            {partsLock && <span className="text-[8px] font-black bg-red-500/10 text-red-500 px-2 py-0.5 rounded border border-red-500/20 uppercase tracking-tighter">Parts Pending</span>}
                         </div>
                         <h3 className="text-lg font-bold text-slate-200">{directive.title}</h3>
                       </div>
@@ -315,12 +309,12 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, updateRO, 
                       {directive.isCompleted ? (
                         <div className="text-neon-seafoam bg-neon-seafoam/10 border border-neon-seafoam/20 px-3 py-1 rounded-full text-[10px] font-black">COMPLETED</div>
                       ) : (
-                        <button 
-                            disabled={isWorkflowLocked || partsLock} 
+                       <button 
+                            disabled={isWorkflowLocked} 
                             onClick={() => handleDirectiveComplete(directive)} 
-                            className={`px-8 py-3 rounded-lg font-black text-xs uppercase tracking-widest shadow-xl transition-all ${isWorkflowLocked || partsLock ? 'bg-slate-800 text-slate-500' : 'bg-neon-seafoam text-slate-900 hover:scale-105 active:scale-95'}`}
+                            className={`px-8 py-3 rounded-lg font-black text-xs uppercase tracking-widest shadow-xl transition-all ${isWorkflowLocked ? 'bg-slate-800 text-slate-500' : 'bg-neon-seafoam text-slate-900 hover:scale-105 active:scale-95'}`}
                         >
-                          {isWorkflowLocked ? 'Locked' : partsLock ? 'Awaiting Parts' : 'Complete Task'}
+                          {isWorkflowLocked ? 'Locked' : 'Complete Task'}
                         </button>
                       )}
                     </div>

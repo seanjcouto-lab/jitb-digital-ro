@@ -4,6 +4,7 @@ import { repairOrderService } from '../services/repairOrderService';
 import { PartsManagerService } from '../services/partsManagerService';
 import { SERVICE_PACKAGES } from '../constants';
 import SectionHeader from '../components/SectionHeader';
+import { printRequisition } from '../utils/printRequisition';
 import InventoryImportModal from '../components/InventoryImportModal';
 import NotUsedReasonModal from '../components/NotUsedReasonModal';
 
@@ -22,8 +23,8 @@ const SpecialOrderFormModal = ({ ro, parts, onClose, onConfirm }: { ro: RepairOr
     const [shippingCost, setShippingCost] = useState('');
     const printableRef = useRef(null);
 
-    const handlePrint = () => {
-        window.print();
+const handlePrint = () => {
+        printRequisition(ro, parts, shippingCost);
     };
 
     const parsedShipping = parseFloat(shippingCost) || 0;
@@ -509,7 +510,7 @@ const PartsManagerPage: React.FC<PartsManagerPageProps> = ({
 
 
   const fulfillmentQueue = useMemo(() => repairOrders.filter(ro => ro.status === ROStatus.AUTHORIZED), [repairOrders]);
-  const pendingQueue = useMemo(() => repairOrders.filter(ro => ro.status === ROStatus.READY_FOR_TECH && ro.parts.some(p => p.status === PartStatus.MISSING || p.status === PartStatus.SPECIAL_ORDER)), [repairOrders]);
+ const pendingQueue = useMemo(() => repairOrders.filter(ro => [ROStatus.READY_FOR_TECH, ROStatus.HOLD, ROStatus.PARTS_PENDING, ROStatus.ACTIVE].includes(ro.status) && ro.parts.some(p => p.status === PartStatus.MISSING || p.status === PartStatus.SPECIAL_ORDER || p.status === PartStatus.APPROVAL_PENDING)), [repairOrders]);
   
 
   const returnsQueue = useMemo(() => 
@@ -611,12 +612,7 @@ if (allPartsProcessed && result.updatedRO.parts.length > 0 && ![ROStatus.ACTIVE,
     updateRO(updatedRO);
     addInventoryAlert(alert);
     
-    const allPartsProcessed = updatedRO.parts.every(p => p.status !== PartStatus.REQUIRED && p.status);
-    if (allPartsProcessed && updatedRO.parts.length > 0 && ![ROStatus.ACTIVE, ROStatus.READY_FOR_TECH].includes(updatedRO.status)) {
-        setExpandedROId(null);
-    }
-
-    setMissingPartInfo(null);
+   setMissingPartInfo(null);
     setMissingReason('');
     setMissingReasonNotes('');
   };
@@ -646,13 +642,14 @@ if (allPartsProcessed && result.updatedRO.parts.length > 0 && ![ROStatus.ACTIVE,
     updateRO(updatedRO);
   };
 
-  const handleFulfillmentComplete = (ro: RepairOrder) => {
+ const handleFulfillmentComplete = (ro: RepairOrder) => {
     const { updatedRO, soParts } = PartsManagerService.checkFulfillmentComplete(ro);
     
     if (soParts.length > 0) {
         setSpecialOrderSession({ ro, soParts });
     } else {
         updateRO(updatedRO);
+        setExpandedROId(null);
     }
   };
 
@@ -662,6 +659,7 @@ if (allPartsProcessed && result.updatedRO.parts.length > 0 && ![ROStatus.ACTIVE,
     const updatedRO = PartsManagerService.finalizeSpecialOrders(ro);
     updateRO(updatedRO);
     setSpecialOrderSession(null);
+    setExpandedROId(null);
   };
 
   const handleReturnPartToStock = async (roId: string, partIndex: number) => {
