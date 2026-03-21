@@ -287,7 +287,7 @@ const ROCard: React.FC<ROCardProps> = ({
     const relativeAge = minsAgo < 1 ? 'Just now' : minsAgo < 60 ? `${minsAgo}m ago` : hrsAgo < 24 ? `${hrsAgo}h ago` : `${daysAgo}d ago`;
 
     return (
-       <div className={`bg-white/5 backdrop-blur-sm rounded-2xl p-5 border transition-all shadow-lg ${statusInfo.borderClass}`}>
+       <div className={`bg-white/5 backdrop-blur-sm rounded-2xl p-5 border transition-all shadow-lg ${statusInfo.borderClass} ${ro.status === ROStatus.ACTIVE ? 'animate-pulse border-red-500 shadow-red-500/20' : ''}`}>
             <div onClick={() => setExpandedROId(expandedROId === ro.id ? null : ro.id)} className="flex flex-col gap-2 mb-4 pb-4 border-b border-white/5 cursor-pointer">
               <div className="flex justify-between items-start">
                 <div className="flex flex-col">
@@ -509,8 +509,8 @@ const PartsManagerPage: React.FC<PartsManagerPageProps> = ({
   const [specialOrderSession, setSpecialOrderSession] = useState<{ ro: RepairOrder; soParts: Part[] } | null>(null);
 
 
-  const fulfillmentQueue = useMemo(() => repairOrders.filter(ro => ro.status === ROStatus.AUTHORIZED), [repairOrders]);
- const pendingQueue = useMemo(() => repairOrders.filter(ro => [ROStatus.READY_FOR_TECH, ROStatus.HOLD, ROStatus.PARTS_PENDING, ROStatus.ACTIVE].includes(ro.status) && ro.parts.some(p => p.status === PartStatus.MISSING || p.status === PartStatus.SPECIAL_ORDER || p.status === PartStatus.APPROVAL_PENDING)), [repairOrders]);
+const fulfillmentQueue = useMemo(() => repairOrders.filter(ro => ro.status === ROStatus.AUTHORIZED || (ro.status === ROStatus.ACTIVE && ro.parts.some(p => p.status === PartStatus.REQUIRED))), [repairOrders]);
+const pendingQueue = useMemo(() => repairOrders.filter(ro => [ROStatus.READY_FOR_TECH, ROStatus.HOLD, ROStatus.PARTS_PENDING].includes(ro.status) && ro.parts.some(p => p.status === PartStatus.MISSING || p.status === PartStatus.SPECIAL_ORDER)), [repairOrders]);
   
 
   const returnsQueue = useMemo(() => 

@@ -390,16 +390,29 @@ export const repairOrderService = {
     );
     updatedRO.requests = updatedRequests;
 
-    if (decision === 'APPROVED') {
+   if (decision === 'APPROVED') {
       if (request.type === 'DIRECTIVE') {
-        updatedRO.directives.push({ id: `d-tech-${Date.now()}`, title: (request.payload as { title: string }).title, isCompleted: false, isApproved: true });
+        const requestedTitle = (request.payload as { title: string }).title;
+        const existingIndex = updatedRO.directives.findIndex(d => d.isApproved === false && d.title === requestedTitle);
+        if (existingIndex >= 0) {
+          updatedRO.directives = updatedRO.directives.map((d, i) =>
+            i === existingIndex ? { ...d, isApproved: true } : d
+          );
+        } else {
+          updatedRO.directives = [...updatedRO.directives, { id: `d-tech-${Date.now()}`, title: requestedTitle, isCompleted: false, isApproved: true }];
+        }
       } else if (request.type === 'PART') {
         const pmStatus = request.pmReview as PartStatus | undefined;
-        const newPart = { ...(request.payload as Part), status: pmStatus || PartStatus.REQUIRED };
-        updatedRO.parts.push(newPart);
+        const partPayload = request.payload as Part;
+        const existingIndex = updatedRO.parts.findIndex(p => p.partNumber === partPayload.partNumber && p.status === PartStatus.APPROVAL_PENDING);
+        if (existingIndex >= 0) {
+          updatedRO.parts = updatedRO.parts.map((p, i) =>
+            i === existingIndex ? { ...p, status: pmStatus || PartStatus.REQUIRED } : p
+          );
+        } else {
+          updatedRO.parts = [...updatedRO.parts, { ...partPayload, status: pmStatus || PartStatus.REQUIRED }];
+        }
 
-        // If the job is NOT active, it's safe to move it to PARTS_PENDING.
-        // If it IS active, we leave it active so the clock keeps running, per new requirement.
         if (updatedRO.status !== ROStatus.ACTIVE) {
           updatedRO.status = ROStatus.PARTS_PENDING;
           domainEventService.publish('repair-order:status-updated', updatedRO);

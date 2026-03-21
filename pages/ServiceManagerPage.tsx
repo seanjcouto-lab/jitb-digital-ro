@@ -526,6 +526,11 @@ const ServiceManagerPage: React.FC<ServiceManagerPageProps> = ({
         return isInStatusGroup;
       }
 
+      if (group === 'PARTS') {
+        return isInStatusGroup || 
+          (ro.status === ROStatus.ACTIVE && ro.parts.some(p => p.status === PartStatus.REQUIRED));
+      }
+
       return isInStatusGroup;
     });
 

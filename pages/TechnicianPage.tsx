@@ -160,13 +160,7 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, updateRO, 
 
   const handleRequestDirective = () => {
     if (!repairOrder || newDirectiveRequest.trim() === '') return;
-    const updatedRO = TechnicianService.submitRequest(repairOrder, {
-        roId: repairOrder.id,
-        type: 'DIRECTIVE',
-        payload: { title: newDirectiveRequest.trim().toUpperCase() },
-        status: 'PENDING',
-        requestedBy: 'TECHNICIAN'
-    });
+    const updatedRO = TechnicianService.requestDirective(repairOrder, newDirectiveRequest);
     updateRO(updatedRO);
     setNewDirectiveRequest('');
   };
@@ -295,7 +289,22 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, updateRO, 
               <SectionHeader title="Service Directives" />
               {repairOrder.directives.map((directive, idx) => {
                 const isWorkflowLocked = repairOrder.status !== ROStatus.ACTIVE;
+                const isPendingApproval = directive.isApproved === false;
                 
+                if (isPendingApproval) {
+                  return (
+                    <div key={directive.id} className="p-4 rounded-xl border border-orange-500/20 bg-slate-900/40 mb-4 last:mb-0 opacity-50 cursor-not-allowed">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Task 0{idx + 1}</span>
+                          <h3 className="text-lg font-bold text-slate-400">{directive.title}</h3>
+                        </div>
+                        <div className="px-3 py-1 rounded-full text-[10px] font-black uppercase border border-orange-500/30 bg-orange-500/10 text-orange-400 animate-pulse">PENDING APPROVAL</div>
+                      </div>
+                    </div>
+                  );
+                }
+
                 return (
                   <div key={directive.id} className={`p-4 rounded-xl border transition-all mb-4 last:mb-0 bg-slate-900/40 ${directive.isCompleted ? 'border-neon-seafoam/20 opacity-60' : 'border-white/5'} ${isWorkflowLocked ? 'grayscale opacity-30 cursor-not-allowed' : ''}`}>
                     <div className="flex justify-between items-start mb-4">
@@ -346,6 +355,16 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, updateRO, 
                     {repairOrder.parts.map((part, index) => {
                         const statusColors: Record<string, string> = { [PartStatus.IN_BOX]: 'bg-neon-seafoam/10 text-neon-seafoam border-neon-seafoam/30', [PartStatus.USED]: 'bg-neon-steel/20 text-neon-steel border-neon-steel/40', [PartStatus.SPECIAL_ORDER]: 'bg-orange-500/10 text-orange-400 border-orange-500/30', [PartStatus.MISSING]: 'bg-red-500/10 text-red-500 border-red-500/30', };
                         const colorClass = statusColors[part.status!] || 'bg-slate-800 text-slate-400 border-white/5';
+
+                        if (part.status === PartStatus.APPROVAL_PENDING) {
+                          return (
+                            <div key={part.partNumber + index} className="flex justify-between items-center p-3 bg-slate-900/50 rounded-xl border border-orange-500/20 opacity-50 cursor-not-allowed">
+                              <div><p className="font-bold text-sm text-slate-400">{part.description}</p><p className="text-[10px] text-slate-600 font-mono">{part.partNumber}</p></div>
+                              <span className="text-[9px] font-black uppercase px-3 py-1 rounded-full border border-orange-500/30 bg-orange-500/10 text-orange-400 animate-pulse">PENDING APPROVAL</span>
+                            </div>
+                          );
+                        }
+
                         return (
                             <div key={part.partNumber + index} className="flex justify-between items-center p-3 bg-slate-900/50 rounded-xl border border-white/5 group">
                                 <div><p className="font-bold text-sm text-slate-200">{part.description}</p><p className="text-[10px] text-slate-500 font-mono">{part.partNumber} • BIN: {part.binLocation}</p></div>

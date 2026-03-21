@@ -50,13 +50,21 @@ export const TechnicianService = {
   },
 
   requestDirective: (repairOrder: RepairOrder, requestTitle: string): RepairOrder => {
-     return TechnicianService.submitRequest(repairOrder, {
-        roId: repairOrder.id,
-        type: 'DIRECTIVE',
-        payload: { title: requestTitle.trim().toUpperCase() },
-        status: 'PENDING',
-        requestedBy: 'TECHNICIAN'
-     });
+    const title = requestTitle.trim().toUpperCase();
+    const withRequest = TechnicianService.submitRequest(repairOrder, {
+      roId: repairOrder.id,
+      type: 'DIRECTIVE',
+      payload: { title },
+      status: 'PENDING',
+      requestedBy: 'TECHNICIAN'
+    });
+    const pendingDirective: Directive = {
+      id: `d-tech-pending-${Date.now()}`,
+      title,
+      isCompleted: false,
+      isApproved: false
+    };
+    return { ...withRequest, directives: [...withRequest.directives, pendingDirective] };
   },
 
   requestPart: async (repairOrder: RepairOrder, part: Part): Promise<RepairOrder> => {
