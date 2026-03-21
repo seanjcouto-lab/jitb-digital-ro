@@ -171,6 +171,11 @@ const App: React.FC = () => {
     ro.technicianId === currentTechnicianId
   );
 
+  const haltedROsForTech = repairOrders.filter(ro =>
+    ro.status === ROStatus.HOLD &&
+    ro.technicianId === currentTechnicianId
+  );
+
   const currentTechnician = useMemo(() =>
     TECHNICIANS.find(t => t.id === currentTechnicianId),
     [currentTechnicianId]
@@ -197,7 +202,7 @@ const App: React.FC = () => {
         </div>
       );
     }
-    return <TechnicianPage repairOrder={activeROForTech} updateRO={updateRO} masterInventory={masterInventory} />;
+    return <TechnicianPage repairOrder={activeROForTech} haltedROs={haltedROsForTech} updateRO={updateRO} masterInventory={masterInventory} />;
   };
 
   if (isLoading) {

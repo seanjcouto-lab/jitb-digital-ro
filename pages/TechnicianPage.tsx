@@ -6,13 +6,14 @@ import EvidenceInputBlock from '../components/EvidenceInputBlock';
 
 interface TechnicianPageProps {
   repairOrder?: RepairOrder;
+  haltedROs?: RepairOrder[];
   updateRO: (ro: RepairOrder) => void;
   masterInventory: Part[];
 }
 
 type EvidenceModalMode = 'photo' | 'video' | 'audio';
 
-const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, updateRO, masterInventory }) => {
+const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs = [], updateRO, masterInventory }) => {
   const [laborNote, setLaborNote] = useState('');
   const [newDirectiveRequest, setNewDirectiveRequest] = useState('');
   const [newPartRequestQuery, setNewPartRequestQuery] = useState('');
@@ -198,10 +199,36 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, updateRO, 
     }, 300);
   };
 
-  if (!repairOrder) {
+if (!repairOrder) {
     return (
-      <div className="glass p-20 text-center rounded-2xl animate-in zoom-in duration-500">
-        <p className="text-slate-500 uppercase tracking-widest text-sm font-bold">No Active Job. See Service Manager.</p>
+      <div className="space-y-6 animate-in zoom-in duration-500">
+        <div className="glass p-20 text-center rounded-2xl">
+          <p className="text-slate-500 uppercase tracking-widest text-sm font-bold">No Active Job. See Service Manager.</p>
+        </div>
+        {haltedROs.length > 0 && (
+          <div className="glass p-6 rounded-2xl border-orange-500/30">
+            <h3 className="text-lg font-black uppercase tracking-widest text-orange-400 mb-4">My Halted Jobs</h3>
+            <div className="space-y-3">
+              {haltedROs.map(ro => (
+                <div key={ro.id} className="flex justify-between items-center p-4 bg-slate-900/50 rounded-xl border border-orange-500/20">
+                  <div>
+                    <p className="font-bold text-slate-200">{ro.customerName}</p>
+                    <p className="text-[10px] text-slate-500 uppercase font-bold">{ro.vesselName} • {ro.id}</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const newSession = { startTime: Date.now() };
+                      updateRO({ ...ro, status: ROStatus.ACTIVE, workSessions: [...ro.workSessions, newSession] });
+                    }}
+                    className="px-6 py-2 bg-neon-seafoam text-slate-900 font-black rounded-lg text-xs uppercase hover:scale-105 transition-all"
+                  >
+                    Resume
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -390,8 +417,8 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, updateRO, 
             <section className="glass p-6 rounded-2xl border-white/5 h-fit">
               <SectionHeader title="Log Requisitions" />
               <div className="space-y-6">
-                <div><label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] block mb-3">Add Directive Request</label><div className="flex gap-2"><input value={newDirectiveRequest} onFocus={(e) => handleInputFocus(e)} onChange={e => setNewDirectiveRequest(e.target.value)} placeholder="e.g. Check trim seal" className="flex-grow bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:border-neon-steel outline-none transition-colors" /><button onClick={handleRequestDirective} disabled={!newDirectiveRequest.trim()} className="px-4 py-3 bg-slate-800 border border-white/10 text-slate-300 rounded-lg font-black text-[10px] uppercase hover:text-white transition-all disabled:opacity-30">Add</button></div></div>
-                <div><label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] block mb-3">Request New Parts</label><div className="space-y-2"><div className="relative"><input value={newPartRequestQuery} onFocus={(e) => handleInputFocus(e)} onChange={e => setNewPartRequestQuery(e.target.value)} placeholder="Search Part # or Description" className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:border-neon-steel outline-none transition-colors" />{partSearchResults.length > 0 && (<div className="absolute w-full bg-slate-800 rounded-lg mt-1 border border-white/10 z-20 shadow-2xl overflow-hidden">{partSearchResults.map(part => (<div key={part.partNumber} onClick={() => handleRequestPart(part)} className="p-4 hover:bg-slate-700/50 cursor-pointer text-sm border-b border-white/5 last:border-0"><p className="font-bold text-slate-100">{part.description}</p><p className="text-[10px] font-mono text-slate-500">{part.partNumber}</p></div>))}</div>)}</div><button onClick={handlePartRequestButtonClick} disabled={!newPartRequestQuery.trim()} className="w-full py-3 bg-slate-800 border border-white/10 text-slate-300 rounded-lg font-black text-[10px] uppercase hover:text-white transition-all disabled:opacity-30">Manual Request</button></div></div>
+                <div><label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] block mb-3">Add Directive Request</label><div className="flex gap-2"><input value={newDirectiveRequest} onFocus={(e) => handleInputFocus(e)} onChange={e => setNewDirectiveRequest(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleRequestDirective()} placeholder="e.g. Check trim seal" className="flex-grow bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:border-neon-steel outline-none transition-colors" /><button onClick={handleRequestDirective} disabled={!newDirectiveRequest.trim()} className="px-4 py-3 bg-slate-800 border border-white/10 text-slate-300 rounded-lg font-black text-[10px] uppercase hover:text-white transition-all disabled:opacity-30">Add</button></div></div>
+                <div><label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] block mb-3">Request New Parts</label><div className="flex gap-2"><div className="relative flex-grow"><input value={newPartRequestQuery} onFocus={(e) => handleInputFocus(e)} onChange={e => setNewPartRequestQuery(e.target.value)} onKeyDown={e => e.key === 'Enter' && handlePartRequestButtonClick()} placeholder="Search Part # or Description" className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:border-neon-steel outline-none transition-colors" />{partSearchResults.length > 0 && (<div className="absolute w-full bg-slate-800 rounded-lg mt-1 border border-white/10 z-20 shadow-2xl overflow-hidden">{partSearchResults.map(part => (<div key={part.partNumber} onClick={() => handleRequestPart(part)} className="p-4 hover:bg-slate-700/50 cursor-pointer text-sm border-b border-white/5 last:border-0"><p className="font-bold text-slate-100">{part.description}</p><p className="text-[10px] font-mono text-slate-500">{part.partNumber}</p></div>))}</div>)}</div><button onClick={handlePartRequestButtonClick} disabled={!newPartRequestQuery.trim()} className="px-4 py-3 bg-slate-800 border border-white/10 text-slate-300 hover:border-neon-steel hover:text-white transition-all rounded-lg font-black text-[10px] uppercase tracking-widest disabled:opacity-30">Add</button></div></div>
               </div>
             </section>
 

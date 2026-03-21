@@ -647,7 +647,12 @@ const handleROGenerated = (newRO: RepairOrder) => {
     if (!reviewRequestRO) return;
     const updatedRO = repairOrderService.processReviewRequest(reviewRequestRO, request, decision);
     updateRO(updatedRO);
-    setReviewRequestRO(updatedRO);
+    const remainingPending = updatedRO.requests?.filter(r => r.status === 'PENDING') || [];
+    if (remainingPending.length === 0) {
+      setReviewRequestRO(null);
+    } else {
+      setReviewRequestRO(updatedRO);
+    }
   };
   
   const handleConfirmDeferral = async () => {
