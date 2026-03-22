@@ -244,7 +244,7 @@ const App: React.FC = () => {
       return <AccessDenied role={activeRole} />;
     }
     switch (activeRole) {
-     case UserRole.SERVICE_MANAGER: return <ServiceManagerPage addRO={addRO} repairOrders={repairOrders} updateRO={updateRO} deleteRO={deleteRO} hourlyRate={config.hourlyRate} taxRate={config.taxRate} masterInventory={masterInventory} />;
+     case UserRole.SERVICE_MANAGER: return <ServiceManagerPage addRO={addRO} repairOrders={repairOrders} updateRO={updateRO} deleteRO={deleteRO} hourlyRate={config.hourlyRate} taxRate={config.taxRate} overridePin={config.overridePin} masterInventory={masterInventory} />;
       case UserRole.PARTS_MANAGER: return <PartsManagerPage repairOrders={repairOrders.filter(ro => ro.status !== ROStatus.COMPLETED)} updateRO={updateRO} masterInventory={masterInventory} addInventoryAlert={addInventoryAlert} setMasterInventory={setMasterInventory} setInventoryAlerts={setInventoryAlerts} shopId={shopContextService.getActiveShopId()} />;
       case UserRole.INVENTORY_MANAGER: return <InventoryPage inventory={masterInventory} setInventory={setMasterInventory} alerts={inventoryAlerts} />;
       case UserRole.TECHNICIAN: return renderTechnicianView();

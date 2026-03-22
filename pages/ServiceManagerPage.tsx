@@ -20,6 +20,7 @@ interface ServiceManagerPageProps {
   deleteRO: (roId: string) => void;
   hourlyRate: number;
   taxRate: number;
+  overridePin: string;
   masterInventory: Part[];
 }
 
@@ -473,7 +474,7 @@ const SignatureCanvas = ({ onSave, onClear }: { onSave: (dataUrl: string) => voi
 };
 
 const ServiceManagerPage: React.FC<ServiceManagerPageProps> = ({ 
-  addRO, repairOrders, updateRO, deleteRO, hourlyRate, taxRate, masterInventory
+  addRO, repairOrders, updateRO, deleteRO, hourlyRate, taxRate, overridePin, masterInventory
 }) => {
   const [viewMode, setViewMode] = useState<ViewMode>('SEARCH');
   const [activeProfile, setActiveProfile] = useState(initialProfileState);
@@ -971,7 +972,7 @@ const handleROGenerated = (newRO: RepairOrder) => {
           </div>
         </div>
       )}
-      {invoicingRO && <InvoiceModal ro={repairOrders.find(r => r.id === invoicingRO.id) || invoicingRO} hourlyRate={hourlyRate} taxRate={taxRate} onClose={() => setInvoicingRO(null)} onFinalize={handleFinalizeInvoice} />}
+     {invoicingRO && <InvoiceModal ro={repairOrders.find(r => r.id === invoicingRO.id) || invoicingRO} hourlyRate={hourlyRate} taxRate={taxRate} overridePin={overridePin} onClose={() => setInvoicingRO(null)} onFinalize={handleFinalizeInvoice} />}
       
       {deletingRO && (
         <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">

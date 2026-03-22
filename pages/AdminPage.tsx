@@ -107,7 +107,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ config, setConfig, onExport }) =>
                 />
               </div>
             </div>
-            <div>
+           <div>
               <label className="block text-[10px] text-slate-500 uppercase font-black mb-2">Sales Tax Rate (%)</label>
               <div className="relative">
                 <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500">%</span>
@@ -119,6 +119,19 @@ const AdminPage: React.FC<AdminPageProps> = ({ config, setConfig, onExport }) =>
                   className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-neon-seafoam transition-all" 
                 />
               </div>
+            </div>
+            <div>
+              <label className="block text-[10px] text-slate-500 uppercase font-black mb-2">Invoice Override PIN</label>
+              <input 
+                type="password"
+                maxLength={4}
+                value={config.overridePin}
+                onChange={(e) => setConfig(appConfigService.updateOverridePin(config, e.target.value))}
+                onFocus={handleInputFocus}
+                className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-neon-seafoam transition-all font-mono tracking-widest"
+                placeholder="4-digit PIN"
+              />
+              <p className="text-[10px] text-slate-500 mt-1">Required to unlock price editing on invoices.</p>
             </div>
           </div>
           <div className="space-y-4">

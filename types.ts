@@ -212,6 +212,7 @@ export interface AppConfig {
   companyName: string;
   hourlyRate: number;
   taxRate: number;
+  overridePin: string;
   themeColors: {
     primary: string;
     secondary: string;

@@ -6,27 +6,50 @@ interface InvoiceModalProps {
   ro: RepairOrder;
   hourlyRate: number;
   taxRate: number;
+  overridePin: string;
   onClose: () => void;
   onFinalize: (ro: RepairOrder, isTaxExempt: boolean, taxExemptId: string) => void;
 }
 
-const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, onClose, onFinalize }) => {
+const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, overridePin, onClose, onFinalize }) => {
 
- const [isTaxExempt, setIsTaxExempt] = useState(false);
+  const [isTaxExempt, setIsTaxExempt] = useState(false);
   const [taxExemptId, setTaxExemptId] = useState('');
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [showPinModal, setShowPinModal] = useState(false);
+  const [pinEntry, setPinEntry] = useState('');
+  const [pinError, setPinError] = useState(false);
+  const [editedHours, setEditedHours] = useState<number | null>(null);
+  const [editedRate, setEditedRate] = useState<number | null>(null);
+  const [editedPartPrices, setEditedPartPrices] = useState<Record<number, number>>({});
+  const [discount, setDiscount] = useState<number>(0);
 
-  const totalMilliseconds = ro.workSessions.reduce((acc, session) => {
+  const handlePinSubmit = () => {
+    if (pinEntry === overridePin) {
+      setIsUnlocked(true);
+      setShowPinModal(false);
+      setPinEntry('');
+      setPinError(false);
+    } else {
+      setPinError(true);
+      setPinEntry('');
+    }
+  };
+
+ const totalMilliseconds = ro.workSessions.reduce((acc, session) => {
     if (session.endTime) {
       return acc + (session.endTime - session.startTime);
     }
     return acc;
   }, 0);
   
-  const totalHours = totalMilliseconds / (1000 * 60 * 60);
-  const laborTotal = totalHours * hourlyRate;
-  const partsTotal = ro.parts.reduce((acc, part) => acc + (part.msrp || 0), 0);
+  const baseHours = totalMilliseconds / (1000 * 60 * 60);
+  const totalHours = editedHours !== null ? editedHours : baseHours;
+  const effectiveRate = editedRate !== null ? editedRate : hourlyRate;
+  const laborTotal = totalHours * effectiveRate;
+  const partsTotal = ro.parts.reduce((acc, part, idx) => acc + (editedPartPrices[idx] !== undefined ? editedPartPrices[idx] : (part.msrp || 0)), 0);
   const taxAmount = isTaxExempt ? 0 : (partsTotal * (taxRate / 100));
-  const grandTotal = laborTotal + partsTotal + taxAmount;
+  const grandTotal = Math.max(0, laborTotal + partsTotal + taxAmount - discount);
 
   return (
     <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
@@ -51,14 +74,22 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, on
                 </div>
                 <div>
                     <span className="text-xs text-slate-400 block">Billable Hours</span>
-                    <span className="font-mono text-lg text-neon-seafoam">{totalHours.toFixed(2)} hrs</span>
+                    {isUnlocked ? (
+                      <input type="number" step="0.01" value={editedHours !== null ? editedHours : baseHours.toFixed(2)} onChange={e => setEditedHours(parseFloat(e.target.value) || 0)} className="w-full bg-yellow-500/10 border border-yellow-500/50 rounded px-2 py-1 text-yellow-300 font-mono text-lg outline-none" />
+                    ) : (
+                      <span className="font-mono text-lg text-neon-seafoam">{totalHours.toFixed(2)} hrs</span>
+                    )}
                 </div>
-                 <div>
+                <div>
                     <span className="text-xs text-slate-400 block">Rate</span>
-                    <span className="font-mono text-lg text-white">${hourlyRate.toFixed(2)}/hr</span>
+                    {isUnlocked ? (
+                      <input type="number" step="0.01" value={editedRate !== null ? editedRate : hourlyRate} onChange={e => setEditedRate(parseFloat(e.target.value) || 0)} className="w-full bg-yellow-500/10 border border-yellow-500/50 rounded px-2 py-1 text-yellow-300 font-mono text-lg outline-none" />
+                    ) : (
+                      <span className="font-mono text-lg text-white">${effectiveRate.toFixed(2)}/hr</span>
+                    )}
                 </div>
               </div>
-               <p className="text-xs text-slate-400 mt-3 border-t border-white/5 pt-3">
+              <p className="text-xs text-slate-400 mt-3 border-t border-white/5 pt-3">
                 <span className="font-bold block text-slate-300 mb-1">Technician's Notes:</span>
                 {ro.laborDescription || "No final notes provided."}
               </p>
@@ -77,12 +108,18 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, on
                     <th className="p-3 text-right">Price</th>
                   </tr>
                 </thead>
-                <tbody>
+               <tbody>
                   {ro.parts.map((part, idx) => (
                     <tr key={idx} className="border-b border-white/5 last:border-b-0">
                       <td className="p-3 font-mono text-xs">{part.partNumber}</td>
                       <td className="p-3">{part.description}</td>
-                      <td className="p-3 font-mono text-right">${(part.msrp || 0).toFixed(2)}</td>
+                      <td className="p-3 font-mono text-right">
+                        {isUnlocked ? (
+                          <input type="number" step="0.01" value={editedPartPrices[idx] !== undefined ? editedPartPrices[idx] : (part.msrp || 0)} onChange={e => setEditedPartPrices(prev => ({ ...prev, [idx]: parseFloat(e.target.value) || 0 }))} className="w-24 bg-yellow-500/10 border border-yellow-500/50 rounded px-2 py-1 text-yellow-300 font-mono text-right outline-none" />
+                        ) : (
+                          <span>${(editedPartPrices[idx] !== undefined ? editedPartPrices[idx] : (part.msrp || 0)).toFixed(2)}</span>
+                        )}
+                      </td>
                     </tr>
                   ))}
                   {ro.parts.length === 0 && (
@@ -118,7 +155,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, on
 
         </div>
         
-        {/* Totals & Actions */}
+     {/* Totals & Actions */}
         <div className="mt-6 border-t border-white/10 pt-4 flex justify-between items-center">
           <div className="flex flex-col gap-4">
             <div className="space-y-2">
@@ -129,12 +166,27 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, on
               {isTaxExempt && (
                 <input value={taxExemptId} onChange={e => setTaxExemptId(e.target.value)} placeholder="Tax Exempt ID #" className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-2 text-white text-sm focus:border-neon-seafoam outline-none" />
               )}
+              {!isUnlocked && (
+                <button onClick={() => setShowPinModal(true)} className="px-4 py-2 bg-slate-800 border border-yellow-500/30 text-yellow-400 text-xs font-black rounded-lg uppercase tracking-widest hover:bg-yellow-500/10 transition-all">
+                  Override Pricing
+                </button>
+              )}
+              {isUnlocked && (
+                <div className="space-y-2">
+                  <p className="text-[10px] font-black text-yellow-400 uppercase tracking-widest">⚠ Override Active</p>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-slate-400">Discount $</span>
+                    <input type="number" step="0.01" min="0" value={discount} onChange={e => setDiscount(parseFloat(e.target.value) || 0)} className="w-24 bg-yellow-500/10 border border-yellow-500/50 rounded px-2 py-1 text-yellow-300 font-mono outline-none" />
+                  </div>
+                </div>
+              )}
             </div>
             <div className="text-right">
               <div className="text-sm text-slate-400">Labor: <span className="font-mono">${laborTotal.toFixed(2)}</span></div>
               <div className="text-sm text-slate-400">Parts: <span className="font-mono">${partsTotal.toFixed(2)}</span></div>
               {!isTaxExempt && taxRate > 0 && <div className="text-sm text-slate-400">Tax ({taxRate}%): <span className="font-mono">${taxAmount.toFixed(2)}</span></div>}
               {isTaxExempt && <div className="text-sm text-green-400">Tax Exempt</div>}
+              {discount > 0 && <div className="text-sm text-yellow-400">Discount: <span className="font-mono">-${discount.toFixed(2)}</span></div>}
               <div className="text-xl font-bold text-white mt-1">Grand Total: <span className="font-mono text-neon-seafoam">${grandTotal.toFixed(2)}</span></div>
             </div>
           </div>
@@ -145,6 +197,31 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, on
             Generate Invoice & Complete
           </button>
         </div>
+
+        {/* PIN Modal */}
+        {showPinModal && (
+          <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+            <div className="glass p-8 rounded-2xl w-full max-w-sm border border-yellow-500 shadow-2xl shadow-yellow-500/20">
+              <h3 className="text-lg font-black uppercase tracking-widest text-yellow-400 mb-2">Override Authorization</h3>
+              <p className="text-xs text-slate-400 mb-6">Enter your 4-digit override PIN to unlock price editing.</p>
+              <input
+                type="password"
+                maxLength={4}
+                value={pinEntry}
+                onChange={e => { setPinEntry(e.target.value); setPinError(false); }}
+                onKeyDown={e => e.key === 'Enter' && handlePinSubmit()}
+                autoFocus
+                className={`w-full bg-slate-900 border ${pinError ? 'border-red-500' : 'border-white/10'} rounded-lg px-4 py-3 text-white text-center text-2xl font-mono tracking-widest outline-none focus:border-yellow-500 transition-colors`}
+                placeholder="••••"
+              />
+              {pinError && <p className="text-red-400 text-xs font-bold text-center mt-2 uppercase tracking-widest">Incorrect PIN</p>}
+              <div className="flex justify-between items-center mt-6">
+                <button onClick={() => { setShowPinModal(false); setPinEntry(''); setPinError(false); }} className="text-xs text-slate-500 hover:text-white">Cancel</button>
+                <button onClick={handlePinSubmit} className="px-6 py-3 bg-yellow-500 text-slate-900 font-black rounded-lg hover:scale-105 transition-all uppercase text-xs tracking-widest">Unlock</button>
+              </div>
+            </div>
+          </div>
+        )}
 
       </div>
     </div>

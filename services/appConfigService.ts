@@ -2,12 +2,13 @@ import { AppConfig } from '../types';
 import { DEFAULT_HOURLY_RATE } from '../constants';
 
 export const appConfigService = {
- getDefaultConfig(): AppConfig {
+getDefaultConfig(): AppConfig {
     return {
       logoUrl: 'https://i.imgur.com/QoW6b8j.png',
       companyName: 'STATELINE BOATWORKS',
       hourlyRate: DEFAULT_HOURLY_RATE,
       taxRate: 6.25,
+      overridePin: '1234',
       themeColors: {
         primary: '#2dd4bf',
         secondary: '#38bdf8',
@@ -28,9 +29,13 @@ updateHourlyRate(config: AppConfig, hourlyRate: number): AppConfig {
     return { ...config, hourlyRate };
   },
 
-  updateTaxRate(config: AppConfig, taxRate: number): AppConfig {
+updateTaxRate(config: AppConfig, taxRate: number): AppConfig {
     return { ...config, taxRate };
-  }, 
+  },
+
+  updateOverridePin(config: AppConfig, overridePin: string): AppConfig {
+    return { ...config, overridePin };
+  },
 
   updateThemeColor(config: AppConfig, colorKey: keyof AppConfig['themeColors'], value: string): AppConfig {
     return {
