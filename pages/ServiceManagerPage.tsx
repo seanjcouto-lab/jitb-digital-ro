@@ -170,7 +170,8 @@ const RODetail = ({
   const [partSearchResults, setPartSearchResults] = useState<Part[]>([]);
   const [showPartResults, setShowPartResults] = useState(false);
 
-  const handleAddDirective = () => {
+  const handleAddDirective = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     if (newDirective.trim() && onAddDirective) {
       onAddDirective(ro.id, newDirective.trim());
       setNewDirective('');
@@ -225,7 +226,7 @@ const RODetail = ({
   };
 
   return (
-    <div className="mt-4 pt-4 border-t border-white/10 animate-in fade-in duration-300 space-y-4 text-xs">
+    <div onClick={(e) => e.stopPropagation()} className="mt-4 pt-4 border-t border-white/10 animate-in fade-in duration-300 space-y-4 text-xs">
       <div>
         <h5 className="font-bold text-slate-400 uppercase tracking-wider text-[10px] mb-2 flex justify-between items-center">
           Directives
@@ -969,7 +970,7 @@ const handleROGenerated = (newRO: RepairOrder) => {
           </div>
         </div>
       )}
-      {invoicingRO && <InvoiceModal ro={invoicingRO} hourlyRate={hourlyRate} onClose={() => setInvoicingRO(null)} onFinalize={handleFinalizeInvoice} />}
+      {invoicingRO && <InvoiceModal ro={repairOrders.find(r => r.id === invoicingRO.id) || invoicingRO} hourlyRate={hourlyRate} onClose={() => setInvoicingRO(null)} onFinalize={handleFinalizeInvoice} />}
       
       {deletingRO && (
         <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">
