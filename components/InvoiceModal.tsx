@@ -1,15 +1,19 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { RepairOrder } from '../types';
 
 interface InvoiceModalProps {
   ro: RepairOrder;
   hourlyRate: number;
+  taxRate: number;
   onClose: () => void;
-  onFinalize: (ro: RepairOrder) => void;
+  onFinalize: (ro: RepairOrder, isTaxExempt: boolean, taxExemptId: string) => void;
 }
 
-const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, onClose, onFinalize }) => {
+const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, onClose, onFinalize }) => {
+
+ const [isTaxExempt, setIsTaxExempt] = useState(false);
+  const [taxExemptId, setTaxExemptId] = useState('');
 
   const totalMilliseconds = ro.workSessions.reduce((acc, session) => {
     if (session.endTime) {
@@ -21,7 +25,8 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, onClose, on
   const totalHours = totalMilliseconds / (1000 * 60 * 60);
   const laborTotal = totalHours * hourlyRate;
   const partsTotal = ro.parts.reduce((acc, part) => acc + (part.msrp || 0), 0);
-  const grandTotal = laborTotal + partsTotal;
+  const taxAmount = isTaxExempt ? 0 : (partsTotal * (taxRate / 100));
+  const grandTotal = laborTotal + partsTotal + taxAmount;
 
   return (
     <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
@@ -115,13 +120,26 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, onClose, on
         
         {/* Totals & Actions */}
         <div className="mt-6 border-t border-white/10 pt-4 flex justify-between items-center">
-          <div className="text-right">
-            <div className="text-sm text-slate-400">Labor: <span className="font-mono">${laborTotal.toFixed(2)}</span></div>
-            <div className="text-sm text-slate-400">Parts: <span className="font-mono">${partsTotal.toFixed(2)}</span></div>
-            <div className="text-xl font-bold text-white mt-1">Grand Total: <span className="font-mono text-neon-seafoam">${grandTotal.toFixed(2)}</span></div>
+          <div className="flex flex-col gap-4">
+            <div className="space-y-2">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input type="checkbox" checked={isTaxExempt} onChange={e => setIsTaxExempt(e.target.checked)} className="h-4 w-4" />
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Tax Exempt</span>
+              </label>
+              {isTaxExempt && (
+                <input value={taxExemptId} onChange={e => setTaxExemptId(e.target.value)} placeholder="Tax Exempt ID #" className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-2 text-white text-sm focus:border-neon-seafoam outline-none" />
+              )}
+            </div>
+            <div className="text-right">
+              <div className="text-sm text-slate-400">Labor: <span className="font-mono">${laborTotal.toFixed(2)}</span></div>
+              <div className="text-sm text-slate-400">Parts: <span className="font-mono">${partsTotal.toFixed(2)}</span></div>
+              {!isTaxExempt && taxRate > 0 && <div className="text-sm text-slate-400">Tax ({taxRate}%): <span className="font-mono">${taxAmount.toFixed(2)}</span></div>}
+              {isTaxExempt && <div className="text-sm text-green-400">Tax Exempt</div>}
+              <div className="text-xl font-bold text-white mt-1">Grand Total: <span className="font-mono text-neon-seafoam">${grandTotal.toFixed(2)}</span></div>
+            </div>
           </div>
           <button 
-            onClick={() => onFinalize(ro)} 
+            onClick={() => onFinalize(ro, isTaxExempt, taxExemptId)} 
             className="px-8 py-4 bg-neon-seafoam text-slate-900 font-black rounded-lg transition-all hover:scale-105 active:scale-95 text-sm uppercase tracking-widest"
           >
             Generate Invoice & Complete

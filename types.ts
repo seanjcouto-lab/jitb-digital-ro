@@ -211,6 +211,7 @@ export interface AppConfig {
   logoUrl: string;
   companyName: string;
   hourlyRate: number;
+  taxRate: number;
   themeColors: {
     primary: string;
     secondary: string;

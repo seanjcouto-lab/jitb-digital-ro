@@ -19,6 +19,7 @@ interface ServiceManagerPageProps {
   updateRO: (ro: RepairOrder) => void;
   deleteRO: (roId: string) => void;
   hourlyRate: number;
+  taxRate: number;
   masterInventory: Part[];
 }
 
@@ -472,7 +473,7 @@ const SignatureCanvas = ({ onSave, onClear }: { onSave: (dataUrl: string) => voi
 };
 
 const ServiceManagerPage: React.FC<ServiceManagerPageProps> = ({ 
-  addRO, repairOrders, updateRO, deleteRO, hourlyRate, masterInventory
+  addRO, repairOrders, updateRO, deleteRO, hourlyRate, taxRate, masterInventory
 }) => {
   const [viewMode, setViewMode] = useState<ViewMode>('SEARCH');
   const [activeProfile, setActiveProfile] = useState(initialProfileState);
@@ -626,7 +627,7 @@ const handleROGenerated = (newRO: RepairOrder) => {
     updateRO(updatedRO);
   };
 
-  const handleFinalizeInvoice = async (ro: RepairOrder) => {
+ const handleFinalizeInvoice = async (ro: RepairOrder, isTaxExempt: boolean, taxExemptId: string) => {
     const updatedRO = await repairOrderService.finalizeInvoice(ro, hourlyRate);
     updateRO(updatedRO);
     setInvoicingRO(null);
@@ -970,7 +971,7 @@ const handleROGenerated = (newRO: RepairOrder) => {
           </div>
         </div>
       )}
-      {invoicingRO && <InvoiceModal ro={repairOrders.find(r => r.id === invoicingRO.id) || invoicingRO} hourlyRate={hourlyRate} onClose={() => setInvoicingRO(null)} onFinalize={handleFinalizeInvoice} />}
+      {invoicingRO && <InvoiceModal ro={repairOrders.find(r => r.id === invoicingRO.id) || invoicingRO} hourlyRate={hourlyRate} taxRate={taxRate} onClose={() => setInvoicingRO(null)} onFinalize={handleFinalizeInvoice} />}
       
       {deletingRO && (
         <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">
