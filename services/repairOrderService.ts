@@ -207,7 +207,7 @@ export const repairOrderService = {
     const uniqueParts = Array.from(new Map(allParts.map(p => [p.partNumber, p])).values());
 
     const directiveTitle = input.selectedPackages.length > 0 ? `PERFORM ${input.selectedPackages.join(', ')}` : 'PERFORM DIAGNOSTICS & REQUESTED WORK';
-    const standardDirectives = [ { id: 'd1', title: 'HAUL VESSEL INTO THE BAY', isCompleted: false, isApproved: true }, { id: 'd2', title: directiveTitle, isCompleted: false, requiredParts: uniqueParts.map(p => p.partNumber), isApproved: true } ];
+    const standardDirectives = [ { id: 'd2', title: directiveTitle, isCompleted: false, requiredParts: uniqueParts.map(p => p.partNumber), isApproved: true } ];
     const manualDirectivesObjects = input.manualDirectives.map((title, index) => ({ id: `manual-${index}-${Date.now()}`, title: title.toUpperCase(), isCompleted: false, isApproved: true }));
     const finalDirectives = [ ...standardDirectives, ...manualDirectivesObjects ];
 
@@ -315,8 +315,9 @@ export const repairOrderService = {
       collectionsStatus: CollectionsStatus.NONE,
     };
 
-    // Update Vessel DNA
-    const vessel = await vesselService.getVesselByHIN(ro.vesselHIN);
+   // Update Vessel DNA
+    const vesselKey = ro.vesselHIN || ro.engineSerial || ro.id;
+    const vessel = await vesselService.getVesselByHIN(vesselKey);
     const partsUsed = ro.parts
       .filter(p => p.status === PartStatus.USED)
       .map(p => ({ partNumber: p.partNumber, description: p.description }));
@@ -329,10 +330,10 @@ export const repairOrderService = {
     };
 
     if (vessel) {
-      await vesselService.addPastRO(ro.vesselHIN, newPastROEntry);
+      await vesselService.addPastRO(vesselKey, newPastROEntry);
     } else {
       const newVesselDNA: VesselHistory = {
-        vesselHIN: ro.vesselHIN,
+        vesselHIN: vesselKey,
         customerName: ro.customerName,
         customerPhones: ro.customerPhones,
         customerEmails: ro.customerEmails,
@@ -389,6 +390,20 @@ export const repairOrderService = {
       r.id === request.id ? { ...r, status: decision } : r
     );
     updatedRO.requests = updatedRequests;
+
+   if (decision === 'REJECTED') {
+      if (request.type === 'PART') {
+        const partPayload = request.payload as Part;
+        updatedRO.parts = updatedRO.parts.map(p =>
+          p.partNumber === partPayload.partNumber && p.status === PartStatus.APPROVAL_PENDING
+            ? { ...p, status: PartStatus.DECLINED }
+            : p
+        );
+      } else if (request.type === 'DIRECTIVE') {
+        const requestedTitle = (request.payload as { title: string }).title;
+        updatedRO.directives = updatedRO.directives.filter(d => !(d.isApproved === false && d.title === requestedTitle));
+      }
+    }
 
    if (decision === 'APPROVED') {
       if (request.type === 'DIRECTIVE') {

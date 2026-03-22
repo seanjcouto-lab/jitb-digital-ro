@@ -241,7 +241,7 @@ if (!repairOrder) {
   };
 
  const areAllDirectivesDone = repairOrder.directives.every(d => d.isCompleted);
-  const hasPendingPartDecisions = repairOrder.parts.some(p => p.status === PartStatus.APPROVAL_PENDING);
+  const hasPendingPartDecisions = repairOrder.parts.some(p => p.status === PartStatus.APPROVAL_PENDING || p.status === PartStatus.REQUESTED);
   const isFinalizable = areAllDirectivesDone && laborNote.length > 10 && !hasPendingPartDecisions;
   const handleFinalize = async () => {
     if (!repairOrder) return;
@@ -315,8 +315,7 @@ if (!repairOrder) {
             <section className="glass p-6 rounded-2xl border-white/5">
               <SectionHeader title="Service Directives" />
               {repairOrder.directives.map((directive, idx) => {
-                const isFirstDirective = directive.id === 'd1';
-                const isWorkflowLocked = repairOrder.status !== ROStatus.ACTIVE && !isFirstDirective;
+                const isWorkflowLocked = repairOrder.status !== ROStatus.ACTIVE;
                 const isPendingApproval = directive.isApproved === false;
                 
                 if (isPendingApproval) {

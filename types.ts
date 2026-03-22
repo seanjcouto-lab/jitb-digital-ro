@@ -46,6 +46,7 @@ export enum PartStatus {
   // For tech requests
   APPROVAL_PENDING = 'APPROVAL_PENDING',
   RETURNED = 'RETURNED',
+  DECLINED = 'DECLINED',
   NOT_USED = 'NOT_USED',
   REQUESTED = 'REQUESTED'
 }
