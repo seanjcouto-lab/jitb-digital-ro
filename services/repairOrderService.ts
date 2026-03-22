@@ -209,7 +209,7 @@ export const repairOrderService = {
     const directiveTitle = input.selectedPackages.length > 0 ? `PERFORM ${input.selectedPackages.join(', ')}` : 'PERFORM DIAGNOSTICS & REQUESTED WORK';
     const standardDirectives = [ { id: 'd1', title: 'HAUL VESSEL INTO THE BAY', isCompleted: false, isApproved: true }, { id: 'd2', title: directiveTitle, isCompleted: false, requiredParts: uniqueParts.map(p => p.partNumber), isApproved: true } ];
     const manualDirectivesObjects = input.manualDirectives.map((title, index) => ({ id: `manual-${index}-${Date.now()}`, title: title.toUpperCase(), isCompleted: false, isApproved: true }));
-    const finalDirectives = [ ...standardDirectives, ...manualDirectivesObjects, { id: 'd3', title: 'SEA TRIAL & WATER TEST', isCompleted: false, isApproved: true } ];
+    const finalDirectives = [ ...standardDirectives, ...manualDirectivesObjects ];
 
     const hasParts = uniqueParts.length > 0;
     let status = hasParts ? ROStatus.AUTHORIZED : ROStatus.READY_FOR_TECH;

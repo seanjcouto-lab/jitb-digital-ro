@@ -315,7 +315,8 @@ if (!repairOrder) {
             <section className="glass p-6 rounded-2xl border-white/5">
               <SectionHeader title="Service Directives" />
               {repairOrder.directives.map((directive, idx) => {
-                const isWorkflowLocked = repairOrder.status !== ROStatus.ACTIVE;
+                const isFirstDirective = directive.id === 'd1';
+                const isWorkflowLocked = repairOrder.status !== ROStatus.ACTIVE && !isFirstDirective;
                 const isPendingApproval = directive.isApproved === false;
                 
                 if (isPendingApproval) {
