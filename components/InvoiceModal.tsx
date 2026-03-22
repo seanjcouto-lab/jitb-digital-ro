@@ -36,6 +36,151 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, ov
     }
   };
 
+  const handlePrint = () => {
+    const evidenceSummary = (directive: any) => {
+      if (!directive.evidence || directive.evidence.length === 0) return '';
+      const photos = directive.evidence.filter((e: any) => e.type === 'photo').length;
+      const videos = directive.evidence.filter((e: any) => e.type === 'video').length;
+      const audio = directive.evidence.filter((e: any) => e.type === 'audio').length;
+      const parts = [];
+      if (photos > 0) parts.push(`📷 ${photos} Photo${photos > 1 ? 's' : ''}`);
+      if (videos > 0) parts.push(`🎥 ${videos} Video${videos > 1 ? 's' : ''}`);
+      if (audio > 0) parts.push(`🎤 ${audio} Audio Note${audio > 1 ? 's' : ''}`);
+      return parts.join(' | ');
+    };
+
+    const printContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Invoice ${ro.id}</title>
+        <style>
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body { font-family: Arial, sans-serif; font-size: 12px; color: #111; padding: 40px; }
+          .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; border-bottom: 2px solid #111; padding-bottom: 16px; }
+          .shop-name { font-size: 24px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; }
+          .invoice-title { font-size: 18px; font-weight: 700; text-align: right; }
+          .invoice-meta { font-size: 11px; color: #555; text-align: right; margin-top: 4px; }
+          .section { margin-bottom: 24px; }
+          .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #555; border-bottom: 1px solid #ddd; padding-bottom: 4px; margin-bottom: 10px; }
+          table { width: 100%; border-collapse: collapse; }
+          th { text-align: left; font-size: 10px; text-transform: uppercase; color: #555; padding: 6px 8px; border-bottom: 1px solid #ddd; }
+          td { padding: 6px 8px; border-bottom: 1px solid #f0f0f0; }
+          .text-right { text-align: right; }
+          .totals { margin-left: auto; width: 280px; }
+          .totals-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 12px; }
+          .totals-row.grand { font-size: 16px; font-weight: 900; border-top: 2px solid #111; padding-top: 8px; margin-top: 4px; }
+          .evidence-note { font-size: 10px; color: #888; margin-top: 2px; }
+          .tech-notes { background: #f9f9f9; padding: 10px; border-radius: 4px; font-size: 11px; color: #333; margin-top: 8px; }
+          .payment-terms { margin-top: 32px; padding: 16px; border: 2px solid #111; border-radius: 4px; text-align: center; }
+          .payment-terms p { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+          .payment-terms small { font-size: 10px; color: #555; }
+          .directive-item { padding: 4px 0; border-bottom: 1px solid #f0f0f0; }
+          .directive-title { font-weight: 600; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <div>
+            <div class="shop-name">STATELINE BOATWORKS</div>
+            <div style="font-size:11px;color:#555;margin-top:4px;">Professional Marine Services</div>
+          </div>
+          <div>
+            <div class="invoice-title">SERVICE INVOICE</div>
+            <div class="invoice-meta">RO: ${ro.id}</div>
+            <div class="invoice-meta">Date: ${new Date().toLocaleDateString()}</div>
+            <div class="invoice-meta">Technician: ${ro.technicianName || 'N/A'}</div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Customer & Vessel</div>
+          <table>
+            <tr>
+              <td><strong>${ro.customerName}</strong></td>
+              <td>Vessel: <strong>${ro.vesselName || 'N/A'}</strong></td>
+            </tr>
+            <tr>
+              <td>${ro.customerPhones?.[0] || ''}</td>
+              <td>Make/Model: ${[ro.boatMake, ro.boatModel, ro.boatYear].filter(Boolean).join(' ')}</td>
+            </tr>
+            <tr>
+              <td>${ro.customerEmails?.[0] || ''}</td>
+              <td>HIN: ${ro.vesselHIN || 'N/A'} | Engine S/N: ${ro.engineSerial || 'N/A'}</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Services Performed</div>
+          ${ro.directives.map(d => `
+            <div class="directive-item">
+              <div class="directive-title">✓ ${d.title}</div>
+              ${evidenceSummary(d) ? `<div class="evidence-note">${evidenceSummary(d)}</div>` : ''}
+            </div>
+          `).join('')}
+          ${ro.laborDescription ? `<div class="tech-notes"><strong>Technician Notes:</strong> ${ro.laborDescription}</div>` : ''}
+        </div>
+
+        <div class="section">
+          <div class="section-title">Labor</div>
+          <table>
+            <thead><tr><th>Technician</th><th>Hours</th><th>Rate</th><th class="text-right">Total</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>${ro.technicianName || 'N/A'}</td>
+                <td>${totalHours.toFixed(2)} hrs</td>
+                <td>$${effectiveRate.toFixed(2)}/hr</td>
+                <td class="text-right">$${laborTotal.toFixed(2)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        ${ro.parts.length > 0 ? `
+        <div class="section">
+          <div class="section-title">Parts</div>
+          <table>
+            <thead><tr><th>Part #</th><th>Description</th><th class="text-right">Price</th></tr></thead>
+            <tbody>
+              ${ro.parts.map((part, idx) => `
+                <tr>
+                  <td style="font-family:monospace;font-size:10px">${part.partNumber}</td>
+                  <td>${part.description}</td>
+                  <td class="text-right">$${(editedPartPrices[idx] !== undefined ? editedPartPrices[idx] : (part.msrp || 0)).toFixed(2)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+        ` : ''}
+
+        <div class="totals">
+          <div class="totals-row"><span>Labor:</span><span>$${laborTotal.toFixed(2)}</span></div>
+          <div class="totals-row"><span>Parts:</span><span>$${partsTotal.toFixed(2)}</span></div>
+          ${!isTaxExempt && taxRate > 0 ? `<div class="totals-row"><span>Tax (${taxRate}%):</span><span>$${taxAmount.toFixed(2)}</span></div>` : ''}
+          ${isTaxExempt ? `<div class="totals-row"><span>Tax:</span><span>EXEMPT</span></div>` : ''}
+          ${discount > 0 ? `<div class="totals-row"><span>Discount:</span><span>-$${discount.toFixed(2)}</span></div>` : ''}
+          <div class="totals-row grand"><span>TOTAL DUE:</span><span>$${grandTotal.toFixed(2)}</span></div>
+        </div>
+
+        <div class="payment-terms">
+          <p>Payment Due Upon Receipt</p>
+          <small>No payment, no release of vessel or equipment.</small>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(printContent);
+      printWindow.document.close();
+      printWindow.focus();
+      setTimeout(() => printWindow.print(), 500);
+    }
+  };
+
  const totalMilliseconds = ro.workSessions.reduce((acc, session) => {
     if (session.endTime) {
       return acc + (session.endTime - session.startTime);
@@ -190,12 +335,20 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, ov
               <div className="text-xl font-bold text-white mt-1">Grand Total: <span className="font-mono text-neon-seafoam">${grandTotal.toFixed(2)}</span></div>
             </div>
           </div>
-          <button 
-            onClick={() => onFinalize(ro, isTaxExempt, taxExemptId)} 
-            className="px-8 py-4 bg-neon-seafoam text-slate-900 font-black rounded-lg transition-all hover:scale-105 active:scale-95 text-sm uppercase tracking-widest"
-          >
-            Generate Invoice & Complete
-          </button>
+          <div className="flex flex-col gap-3">
+            <button 
+              onClick={handlePrint}
+              className="px-8 py-3 bg-slate-800 border border-white/10 text-slate-300 font-black rounded-lg transition-all hover:border-neon-steel hover:text-white text-sm uppercase tracking-widest"
+            >
+              🖨 Print Invoice
+            </button>
+            <button 
+              onClick={() => onFinalize(ro, isTaxExempt, taxExemptId)} 
+              className="px-8 py-4 bg-neon-seafoam text-slate-900 font-black rounded-lg transition-all hover:scale-105 active:scale-95 text-sm uppercase tracking-widest"
+            >
+              Generate Invoice & Complete
+            </button>
+          </div>
         </div>
 
         {/* PIN Modal */}

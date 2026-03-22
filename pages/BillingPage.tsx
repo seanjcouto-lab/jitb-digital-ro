@@ -19,7 +19,7 @@ const PaymentModal = ({ ro, onClose, onSave }: { ro: RepairOrder, onClose: () =>
     const [method, setMethod] = useState<Payment['method']>('Credit Card');
     const [reference, setReference] = useState('');
 
-    const balanceDue = (ro.invoiceTotal || 0) - (ro.payments?.reduce((sum, p) => sum + p.amount, 0) || 0);
+    const balanceDue = Math.round(((ro.invoiceTotal || 0) - (ro.payments?.reduce((sum, p) => sum + p.amount, 0) || 0)) * 100) / 100;
 
     useEffect(() => {
         setAmount(balanceDue);
