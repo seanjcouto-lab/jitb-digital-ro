@@ -171,7 +171,7 @@ const BillingPage: React.FC<BillingPageProps> = ({ repairOrders, updateRO }) => 
         return <div className={`px-2 py-0.5 text-[10px] font-black rounded-full uppercase ${colors[status || PaymentStatus.UNPAID]}`}>{status?.replace('_', ' ')}</div>;
     };
 
-    const sortedROs = [...repairOrders].sort((a,b) => (b.dateInvoiced || 0) - (a.dateInvoiced || 0));
+    const sortedROs = [...repairOrders].filter(ro => ro.dateInvoiced !== null && ro.invoiceTotal !== null && ro.paymentStatus !== PaymentStatus.PAID).sort((a,b) => (b.dateInvoiced || 0) - (a.dateInvoiced || 0));
 
     return (
         <div className="space-y-8">
