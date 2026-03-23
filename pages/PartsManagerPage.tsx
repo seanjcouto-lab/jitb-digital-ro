@@ -374,7 +374,7 @@ const ROCard: React.FC<ROCardProps> = ({
                                     <div className="flex gap-2">
                                         {(part.status === PartStatus.REQUIRED || !part.status) && (
                                             <>
-                                                <button onClick={() => handleUpdatePartStatus(ro, index, PartStatus.IN_BOX)} disabled={invPart && !part.isCustom ? invPart.quantityOnHand <= 0 : false} className="px-4 py-1.5 rounded-md bg-neon-seafoam/20 text-neon-seafoam text-[10px] font-bold uppercase hover:bg-neon-seafoam/30 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">Add to Box</button>
+                                                <button onClick={() => handleUpdatePartStatus(ro, index, PartStatus.IN_BOX)} className="px-4 py-1.5 rounded-md bg-neon-seafoam/20 text-neon-seafoam text-[10px] font-bold uppercase hover:bg-neon-seafoam/30 transition-colors">Add to Box</button>
                                                 <button onClick={() => handleUpdatePartStatus(ro, index, PartStatus.MISSING)} className="px-3 py-1.5 rounded-md bg-red-500/10 text-red-400 text-[10px] font-bold uppercase hover:bg-red-500/20 transition-colors">Missing</button>
                                                 <button onClick={() => handleUpdatePartStatus(ro, index, PartStatus.SPECIAL_ORDER)} className="px-3 py-1.5 rounded-md bg-orange-400/10 text-orange-400 text-[10px] font-bold uppercase hover:bg-orange-400/20 transition-colors">S/O</button>
                                             </>

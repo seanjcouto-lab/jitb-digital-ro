@@ -628,8 +628,8 @@ const handleROGenerated = (newRO: RepairOrder) => {
     updateRO(updatedRO);
   };
 
- const handleFinalizeInvoice = async (ro: RepairOrder, isTaxExempt: boolean, taxExemptId: string) => {
-    const updatedRO = await repairOrderService.finalizeInvoice(ro, hourlyRate);
+  const handleFinalizeInvoice = async (ro: RepairOrder, isTaxExempt: boolean, taxExemptId: string, invoiceTotal: number) => {
+    const updatedRO = await repairOrderService.finalizeInvoice(ro, hourlyRate, invoiceTotal);
     updateRO(updatedRO);
     setInvoicingRO(null);
   };

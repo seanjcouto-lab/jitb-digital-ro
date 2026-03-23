@@ -8,7 +8,7 @@ interface InvoiceModalProps {
   taxRate: number;
   overridePin: string;
   onClose: () => void;
-  onFinalize: (ro: RepairOrder, isTaxExempt: boolean, taxExemptId: string) => void;
+  onFinalize: (ro: RepairOrder, isTaxExempt: boolean, taxExemptId: string, invoiceTotal: number) => void;
 }
 
 const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, overridePin, onClose, onFinalize }) => {
@@ -343,7 +343,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, ov
               🖨 Print Invoice
             </button>
             <button 
-              onClick={() => onFinalize(ro, isTaxExempt, taxExemptId)} 
+              onClick={() => onFinalize(ro, isTaxExempt, taxExemptId, grandTotal)}
               className="px-8 py-4 bg-neon-seafoam text-slate-900 font-black rounded-lg transition-all hover:scale-105 active:scale-95 text-sm uppercase tracking-widest"
             >
               Generate Invoice & Complete

@@ -294,19 +294,24 @@ export const repairOrderService = {
     return updatedRO;
   },
 
-  finalizeInvoice: async (ro: RepairOrder, hourlyRate: number): Promise<RepairOrder> => {
-    const totalMilliseconds = ro.workSessions.reduce((acc, session) => {
-      if (session.endTime) { return acc + (session.endTime - session.startTime); }
-      return acc;
-    }, 0);
-    const totalHours = totalMilliseconds / (1000 * 60 * 60);
-    const laborTotal = totalHours * hourlyRate;
-    const partsTotal = ro.parts.reduce((acc, part) => acc + (part.msrp || 0), 0);
-    const grandTotal = laborTotal + partsTotal;
+  finalizeInvoice: async (ro: RepairOrder, hourlyRate: number, invoiceTotal?: number): Promise<RepairOrder> => {
+    let grandTotal: number;
+    if (invoiceTotal !== undefined) {
+      grandTotal = invoiceTotal;
+    } else {
+      const totalMilliseconds = ro.workSessions.reduce((acc, session) => {
+        if (session.endTime) { return acc + (session.endTime - session.startTime); }
+        return acc;
+      }, 0);
+      const totalHours = totalMilliseconds / (1000 * 60 * 60);
+      const laborTotal = totalHours * hourlyRate;
+      const partsTotal = ro.parts.reduce((acc, part) => acc + (part.msrp || 0), 0);
+      grandTotal = laborTotal + partsTotal;
+    }
 
     const dateInvoiced = Date.now();
-    const updatedRO: RepairOrder = { 
-      ...ro, 
+    const updatedRO: RepairOrder = {
+      ...ro,
       status: ROStatus.COMPLETED,
       invoiceTotal: grandTotal,
       dateInvoiced,
