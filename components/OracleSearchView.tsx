@@ -6,7 +6,7 @@ import { MOCK_NEW_CUSTOMER } from '../seedData';
 
 interface OracleSearchViewProps {
   onVesselSelect: (vessel: VesselHistory) => void;
-  onNewCustomer: () => void;
+  onNewCustomer: (searchTerm: string) => void;
   onLoadMockData: () => void;
   onHistoricalAlert: (vessel: VesselHistory) => void;
   searchTerm?: string;
@@ -77,7 +77,7 @@ const OracleSearchView: React.FC<OracleSearchViewProps> = ({
   };
 
   return (
-    <div className="glass rounded-3xl p-8 border-white/5 shadow-2xl relative overflow-hidden group">
+    <div className="glass rounded-3xl p-4 border-white/5 shadow-2xl relative overflow-hidden group">
       {/* Decorative Technical Grid */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.02] overflow-hidden">
         <svg width="100%" height="100%">
@@ -91,7 +91,7 @@ const OracleSearchView: React.FC<OracleSearchViewProps> = ({
       {/* Search Header */}
       <div className="relative z-10">
         <div className="flex justify-between items-center mb-4">
-            <label htmlFor="oracle-search" className="block text-[10px] text-neon-seafoam uppercase font-black tracking-[0.2em] animate-pulse">Neural Link: Identity Scan Engine</label>
+            <label htmlFor="oracle-search" className="block text-[10px] text-neon-seafoam uppercase font-black tracking-[0.2em] animate-pulse">Oracle Search</label>
             {isSearching && <span className="text-[8px] font-black text-slate-500 uppercase animate-pulse">Scanning Registry Streams...</span>}
         </div>
         <div className="relative">
@@ -102,7 +102,7 @@ const OracleSearchView: React.FC<OracleSearchViewProps> = ({
             onChange={(e) => setQuery(e.target.value)} 
             onFocus={handleInputFocus}
             placeholder="Search by Name, HIN, or Serial..." 
-            className="w-full bg-slate-900/60 border-2 border-neon-seafoam/10 rounded-2xl px-14 py-5 text-white focus:outline-none focus:border-neon-seafoam transition-all text-xl shadow-[0_0_40px_rgba(45,212,191,0.05)] placeholder:text-slate-700 font-medium" 
+            className="w-full bg-slate-900/60 border-2 border-neon-seafoam/10 rounded-2xl px-14 py-3 text-white focus:outline-none focus:border-neon-seafoam transition-all text-base shadow-[0_0_40px_rgba(45,212,191,0.05)] placeholder:text-slate-700 font-medium"
           />
           <div className="absolute left-5 top-1/2 -translate-y-1/2">
             <svg className={`w-6 h-6 transition-colors duration-300 ${isSearching ? 'text-neon-seafoam animate-spin' : 'text-slate-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -113,7 +113,7 @@ const OracleSearchView: React.FC<OracleSearchViewProps> = ({
       </div>
 
       {/* Results HUD */}
-      <div className="space-y-4 mt-8 relative z-10 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+      <div className="space-y-4 mt-3 relative z-10 max-h-[200px] overflow-y-auto pr-2 custom-scrollbar">
         {oracleResults.map(res => (
           <div 
             key={res.vesselHIN} 
@@ -143,7 +143,7 @@ const OracleSearchView: React.FC<OracleSearchViewProps> = ({
         ))}
 
         {query.length > 1 && !isSearching && oracleResults.length === 0 && (
-          <div className="text-center py-12 border-2 border-dashed border-white/5 rounded-3xl bg-slate-900/20 animate-in fade-in zoom-in duration-500">
+          <div className="text-center py-6 border-2 border-dashed border-white/5 rounded-3xl bg-slate-900/20 animate-in fade-in zoom-in duration-500">
             <div className="mb-6 opacity-20">
                 <svg className="w-16 h-16 mx-auto text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
@@ -151,7 +151,7 @@ const OracleSearchView: React.FC<OracleSearchViewProps> = ({
             </div>
             <p className="text-slate-500 font-bold mb-6 text-sm">Identity Protocol Failure: No Match Found</p>
             <div className="flex flex-col sm:flex-row justify-center gap-4 px-8">
-                <button onClick={onNewCustomer} className="bg-neon-seafoam text-slate-900 text-[10px] font-black px-10 py-4 rounded-xl shadow-xl hover:scale-105 active:scale-95 transition-all uppercase tracking-[0.2em]">Initialize Profile</button>
+                <button onClick={() => onNewCustomer(query)} className="bg-neon-seafoam text-slate-900 text-[10px] font-black px-10 py-4 rounded-xl shadow-xl hover:scale-105 active:scale-95 transition-all uppercase tracking-[0.2em]">Initialize Profile</button>
                 <button onClick={onLoadMockData} className="bg-slate-800 text-slate-300 text-[10px] font-black px-10 py-4 rounded-xl border border-white/10 hover:bg-slate-700 transition-all uppercase tracking-[0.2em]">Load Mock Profile</button>
             </div>
           </div>
