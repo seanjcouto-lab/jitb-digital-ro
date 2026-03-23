@@ -929,7 +929,9 @@ const handleROGenerated = (newRO: RepairOrder) => {
                     onClick={() => setExpandedROId(expandedROId === ro.id ? null : ro.id)}
                     isExpanded={expandedROId === ro.id}
                     actions={
-                      <button onClick={(e) => { e.stopPropagation(); setInvoicingRO(ro); }} className="w-full px-4 py-2 rounded-lg bg-slate-800 text-[10px] font-black border border-white/10 hover:bg-neon-seafoam hover:text-slate-900 transition-all uppercase tracking-widest">FINALIZE</button>
+                      ro.status === ROStatus.PENDING_INVOICE
+                        ? <button onClick={(e) => { e.stopPropagation(); setInvoicingRO(ro); }} className="w-full px-4 py-2 rounded-lg bg-slate-800 text-[10px] font-black border border-white/10 hover:bg-neon-seafoam hover:text-slate-900 transition-all uppercase tracking-widest">FINALIZE</button>
+                        : undefined
                     }
                   >
                     <RODetail ro={ro} masterInventory={masterInventory} />
