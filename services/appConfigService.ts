@@ -1,7 +1,23 @@
 import { AppConfig } from '../types';
 import { DEFAULT_HOURLY_RATE } from '../constants';
 
+const CONFIG_STORAGE_KEY = 'scc_app_config';
+
 export const appConfigService = {
+  loadConfig(): AppConfig {
+    try {
+      const stored = localStorage.getItem(CONFIG_STORAGE_KEY);
+      if (stored) return { ...appConfigService.getDefaultConfig(), ...JSON.parse(stored) };
+    } catch {}
+    return appConfigService.getDefaultConfig();
+  },
+
+  saveConfig(config: AppConfig): void {
+    try {
+      localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(config));
+    } catch {}
+  },
+
 getDefaultConfig(): AppConfig {
     return {
       logoUrl: 'https://i.imgur.com/QoW6b8j.png',

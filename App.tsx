@@ -46,7 +46,7 @@ const App: React.FC = () => {
   const [repairOrders, setRepairOrders] = useState<RepairOrder[]>([]);
   const [masterInventory, setMasterInventory] = useState<Part[]>([]);
   const [inventoryAlerts, setInventoryAlerts] = useState<InventoryAlert[]>([]);
-  const [config, setConfig] = useState<AppConfig>(appConfigService.getDefaultConfig());
+  const [config, setConfig] = useState<AppConfig>(appConfigService.loadConfig());
   const [currentTechnicianId, setCurrentTechnicianId] = useState<string | null>(null);
   const [isCommsLinkOpen, setIsCommsLinkOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -123,6 +123,10 @@ const App: React.FC = () => {
       setCurrentTechnicianId(null);
     }
   }, [activeRole, loggedInUser]);
+
+  useEffect(() => {
+    appConfigService.saveConfig(config);
+  }, [config]);
 
   useEffect(() => {
     const root = document.documentElement;
