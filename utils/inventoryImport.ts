@@ -199,6 +199,8 @@ export async function importInventoryFromFile(file: File): Promise<{ rows: any[]
 
 export async function commitInventoryImport(rows: any[], mapping: Record<string, string>, shopId: string): Promise<void> {
   const parts = transformRows(rows, mapping, shopId);
-  await db.masterInventory.where('shopId').equals(shopId).delete();
-  await db.masterInventory.bulkPut(parts);
+  await db.transaction('rw', db.masterInventory, async () => {
+    await db.masterInventory.where('shopId').equals(shopId).delete();
+    await db.masterInventory.bulkPut(parts);
+  });
 }
