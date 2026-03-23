@@ -55,12 +55,6 @@ export const repairOrderService = {
     if (!request || request.type !== 'PART' || request.status !== 'PENDING') return null;
 
     const partPayload = request.payload as Part;
-    const invPart = masterInventory.find(p => p.partNumber === partPayload.partNumber);
-    
-    if (!invPart || invPart.quantityOnHand <= 0) {
-      // Cannot fulfill from stock if not available
-      return null;
-    }
 
     const updatedRequests = ro.requests!.map(r => 
       r.id === requestId ? { ...r, status: 'APPROVED' as const, decision: 'FILL_FROM_STOCK' as const } : r
@@ -114,16 +108,6 @@ export const repairOrderService = {
     let actualDecision = decision;
     let updatedInventory: Part[] | undefined;
     let alertToAdd: Omit<InventoryAlert, 'id' | 'timestamp'> | undefined;
-
-    // 3) On decision === 'FILL_FROM_STOCK': Check current on-hand
-    if (decision === 'FILL_FROM_STOCK') {
-      const invPart = masterInventory.find(p => p.partNumber === partPayload.partNumber);
-      
-      // If quantityOnHand <= 0: Treat as SPECIAL_ORDER instead
-      if (!invPart || invPart.quantityOnHand <= 0) {
-        actualDecision = 'SPECIAL_ORDER';
-      }
-    }
 
     // 2) Update the request in updatedRequests: Set status and decision
     const updatedRequests = (repairOrder.requests || []).map(req => {
