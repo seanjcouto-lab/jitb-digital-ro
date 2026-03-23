@@ -137,13 +137,13 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, ov
           </table>
         </div>
 
-        ${ro.parts.length > 0 ? `
+        ${billableParts.length > 0 ? `
         <div class="section">
           <div class="section-title">Parts</div>
           <table>
             <thead><tr><th>Part #</th><th>Description</th><th class="text-right">Price</th></tr></thead>
             <tbody>
-              ${ro.parts.map((part, idx) => `
+              ${billableParts.map(({ part, idx }) => `
                 <tr>
                   <td style="font-family:monospace;font-size:10px">${part.partNumber}</td>
                   <td>${part.description}</td>
@@ -192,7 +192,10 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, ov
   const totalHours = editedHours !== null ? editedHours : baseHours;
   const effectiveRate = editedRate !== null ? editedRate : hourlyRate;
   const laborTotal = totalHours * effectiveRate;
-  const partsTotal = ro.parts.reduce((acc, part, idx) => acc + (editedPartPrices[idx] !== undefined ? editedPartPrices[idx] : (part.msrp || 0)), 0);
+  const billableParts = ro.parts
+    .map((part, idx) => ({ part, idx }))
+    .filter(({ part }) => part.status !== 'DECLINED');
+  const partsTotal = billableParts.reduce((acc, { part, idx }) => acc + (editedPartPrices[idx] !== undefined ? editedPartPrices[idx] : (part.msrp || 0)), 0);
   const taxAmount = isTaxExempt ? 0 : (partsTotal * (taxRate / 100));
   const grandTotal = Math.max(0, laborTotal + partsTotal + taxAmount - discount);
 
@@ -254,7 +257,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, ov
                   </tr>
                 </thead>
                <tbody>
-                  {ro.parts.map((part, idx) => (
+                  {billableParts.map(({ part, idx }) => (
                     <tr key={idx} className="border-b border-white/5 last:border-b-0">
                       <td className="p-3 font-mono text-xs">{part.partNumber}</td>
                       <td className="p-3">{part.description}</td>
@@ -267,7 +270,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, ov
                       </td>
                     </tr>
                   ))}
-                  {ro.parts.length === 0 && (
+                  {billableParts.length === 0 && (
                     <tr>
                         <td colSpan={3} className="p-4 text-center text-slate-500 italic text-xs">No parts were used for this job.</td>
                     </tr>
