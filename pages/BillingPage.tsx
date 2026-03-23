@@ -142,7 +142,7 @@ const BillingPage: React.FC<BillingPageProps> = ({ repairOrders, updateRO }) => 
     const handleSavePayment = (ro: RepairOrder, payment: Payment) => {
         const updatedPayments = [...(ro.payments || []), payment];
         const totalPaid = updatedPayments.reduce((sum, p) => sum + p.amount, 0);
-        const balanceDue = (ro.invoiceTotal || 0) - totalPaid;
+        const balanceDue = Math.round(((ro.invoiceTotal || 0) - totalPaid) * 100) / 100;
 
         let newPaymentStatus = PaymentStatus.PARTIALLY_PAID;
         if (balanceDue <= 0) {
