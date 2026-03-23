@@ -1,5 +1,5 @@
 import React from 'react';
-import { VesselHistory, RepairOrder, PartStatus } from '../types';
+import { VesselHistory, RepairOrder } from '../types';
 import SectionHeader from './SectionHeader';
 
 interface VesselDNAViewProps {
@@ -9,7 +9,7 @@ interface VesselDNAViewProps {
 }
 
 const VesselDNAView: React.FC<VesselDNAViewProps> = ({ vessel, allROs, onClose }) => {
-  const vesselROs = allROs.filter(ro => ro.vesselHIN === vessel.vesselHIN).sort((a,b) => b.id.localeCompare(a.id));
+  const vesselROs = vessel.pastROs.slice().sort((a, b) => b.id.localeCompare(a.id));
 
   return (
     <div className="glass p-6 rounded-3xl w-full max-w-6xl border border-neon-steel shadow-2xl shadow-neon-steel/20 flex flex-col max-h-[90vh] relative overflow-hidden">
@@ -111,28 +111,30 @@ const VesselDNAView: React.FC<VesselDNAViewProps> = ({ vessel, allROs, onClose }
           <div className="lg:col-span-2 space-y-4">
                <SectionHeader title="Service History Manifest" />
                <div className="space-y-3 pb-6">
-                  {vesselROs.map(ro => {
-                      const usedParts = ro.parts.filter(p => p.status === PartStatus.USED);
+                  {vesselROs.map(pastRO => {
+                      const fullRO = allROs.find(r => r.id === pastRO.id);
                       return (
-                        <div key={ro.id} className="p-4 bg-slate-900/70 rounded-2xl border border-white/5 hover:border-neon-steel transition-all group">
+                        <div key={pastRO.id} className="p-4 bg-slate-900/70 rounded-2xl border border-white/5 hover:border-neon-steel transition-all group">
                             <div className="flex justify-between items-center">
                                 <div>
-                                    <p className="font-black text-white group-hover:neon-steel transition-all">{ro.id}</p>
-                                    <p className="text-[10px] text-slate-500 font-mono uppercase">Gate Closed: {new Date(ro.datePaid || ro.dateInvoiced || Date.now()).toLocaleDateString()}</p>
+                                    <p className="font-black text-white group-hover:neon-steel transition-all">{pastRO.id}</p>
+                                    <p className="text-[10px] text-slate-500 font-mono uppercase">Gate Closed: {pastRO.date}</p>
                                 </div>
                                 <div className="text-[9px] font-black px-2 py-0.5 rounded bg-slate-800 text-slate-400">ARCHIVED</div>
                             </div>
-                            <div className="mt-3 border-t border-white/5 pt-3">
-                                <p className="text-[9px] text-slate-500 font-black uppercase mb-2">Directives Executed</p>
-                                <div className="flex flex-wrap gap-1">
-                                    {ro.directives.map(d => <span key={d.id} className="text-[8px] bg-slate-800 border border-white/5 text-slate-300 px-2 py-0.5 rounded uppercase tracking-tighter">{d.title}</span>)}
-                                </div>
-                            </div>
-                             {usedParts.length > 0 && (
+                            {fullRO && fullRO.directives.length > 0 && (
+                              <div className="mt-3 border-t border-white/5 pt-3">
+                                  <p className="text-[9px] text-slate-500 font-black uppercase mb-2">Directives Executed</p>
+                                  <div className="flex flex-wrap gap-1">
+                                      {fullRO.directives.map(d => <span key={d.id} className="text-[8px] bg-slate-800 border border-white/5 text-slate-300 px-2 py-0.5 rounded uppercase tracking-tighter">{d.title}</span>)}
+                                  </div>
+                              </div>
+                            )}
+                            {pastRO.partsUsed.length > 0 && (
                                 <div className="mt-3 border-t border-white/5 pt-3">
                                     <p className="text-[9px] text-slate-500 font-black uppercase mb-2">Parts Consumed</p>
                                     <div className="flex flex-wrap gap-1">
-                                        {usedParts.map(part => (
+                                        {pastRO.partsUsed.map(part => (
                                             <span key={part.partNumber} className="text-[8px] font-mono bg-slate-800/60 border border-white/5 text-slate-400 px-2 py-0.5 rounded" title={part.description}>
                                                 {part.partNumber}
                                             </span>
@@ -140,10 +142,10 @@ const VesselDNAView: React.FC<VesselDNAViewProps> = ({ vessel, allROs, onClose }
                                     </div>
                                 </div>
                             )}
-                            {ro.laborDescription && (
+                            {pastRO.summary && pastRO.summary !== 'No summary provided.' && (
                               <div className="mt-3 bg-white/5 p-2 rounded-lg">
                                   <p className="text-[9px] font-bold text-slate-400 uppercase mb-1">Tech Summary:</p>
-                                  <p className="text-[10px] text-slate-300 leading-tight line-clamp-2">{ro.laborDescription}</p>
+                                  <p className="text-[10px] text-slate-300 leading-tight line-clamp-2">{pastRO.summary}</p>
                               </div>
                             )}
                         </div>
