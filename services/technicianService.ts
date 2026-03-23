@@ -1,4 +1,4 @@
-import { RepairOrder, PartStatus, Directive, Part, RORequest } from '../types';
+import { RepairOrder, PartStatus, Directive, Part, RORequest, InventoryAlert } from '../types';
 import { repairOrderService } from './repairOrderService';
 import { inventoryService } from './inventoryService';
 import { shopContextService } from './shopContextService';
@@ -114,11 +114,8 @@ export const TechnicianService = {
     return updatedRO;
   },
 
-  reportMissingPart: (ro: RepairOrder, partIndex: number, reason: string, notes: string): RepairOrder => {
-    const { updatedRO, alert } = repairOrderService.confirmMissingPart(ro, partIndex, reason, notes);
-    // In a real app, we'd save the alert to a store. For now, it's handled by the service returning it.
-    // The UI will call updateRO with the updatedRO.
-    return updatedRO;
+  reportMissingPart: (ro: RepairOrder, partIndex: number, reason: string, notes: string): { updatedRO: RepairOrder, alert: Omit<InventoryAlert, 'id' | 'timestamp'> } => {
+    return repairOrderService.confirmMissingPart(ro, partIndex, reason, notes);
   },
 
   reportNotUsed: (ro: RepairOrder, partIndex: number, reason: string, notes: string): RepairOrder => {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { RepairOrder, ROStatus, PartStatus, Directive, Part, RORequest } from '../types';
+import { RepairOrder, ROStatus, PartStatus, Directive, Part, RORequest, InventoryAlert } from '../types';
 import { TechnicianService } from '../services/technicianService';
 import SectionHeader from '../components/SectionHeader';
 import EvidenceInputBlock from '../components/EvidenceInputBlock';
@@ -9,11 +9,12 @@ interface TechnicianPageProps {
   haltedROs?: RepairOrder[];
   updateRO: (ro: RepairOrder) => void;
   masterInventory: Part[];
+  addInventoryAlert: (alert: Omit<InventoryAlert, 'id' | 'timestamp'>) => void;
 }
 
 type EvidenceModalMode = 'photo' | 'video' | 'audio';
 
-const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs = [], updateRO, masterInventory }) => {
+const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs = [], updateRO, masterInventory, addInventoryAlert }) => {
   const [laborNote, setLaborNote] = useState('');
   const [newDirectiveRequest, setNewDirectiveRequest] = useState('');
   const [newPartRequestQuery, setNewPartRequestQuery] = useState('');
@@ -259,8 +260,9 @@ if (!repairOrder) {
 
   const handleConfirmMissing = () => {
     if (!repairOrder || missingPartIndex === null) return;
-    const updatedRO = TechnicianService.reportMissingPart(repairOrder, missingPartIndex, missingReason, missingNotes);
+    const { updatedRO, alert } = TechnicianService.reportMissingPart(repairOrder, missingPartIndex, missingReason, missingNotes);
     updateRO(updatedRO);
+    addInventoryAlert(alert);
     setMissingPartIndex(null);
     setMissingReason('Discrepancy');
     setMissingNotes('');

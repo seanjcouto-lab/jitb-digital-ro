@@ -202,7 +202,7 @@ const App: React.FC = () => {
         </div>
       );
     }
-    return <TechnicianPage repairOrder={activeROForTech} haltedROs={haltedROsForTech} updateRO={updateRO} masterInventory={masterInventory} />;
+    return <TechnicianPage repairOrder={activeROForTech} haltedROs={haltedROsForTech} updateRO={updateRO} masterInventory={masterInventory} addInventoryAlert={addInventoryAlert} />;
   };
 
   if (isLoading) {

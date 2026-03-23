@@ -601,8 +601,9 @@ export const repairOrderService = {
         missingReason: missingReason,
         missingReasonNotes: missingReasonNotes,
     };
-    const finalRO = { ...ro, parts: updatedParts };
-    
+    const newStatus = ro.status === ROStatus.ACTIVE ? ROStatus.PARTS_PENDING : ro.status;
+    const finalRO = { ...ro, parts: updatedParts, status: newStatus };
+
     const alert = {
       partNumber: part.partNumber,
       message: `Part marked MISSING by Parts Dept. Reason: ${missingReason}.`,
