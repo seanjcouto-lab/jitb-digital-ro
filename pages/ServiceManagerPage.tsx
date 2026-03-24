@@ -749,7 +749,7 @@ const handleROGenerated = (newRO: RepairOrder) => {
               <div className="space-y-4">
                 <OracleSearchView 
                   onVesselSelect={(vessel) => { setVesselActionMenu(vessel); }} 
-                  onNewCustomer={() => setViewMode('PROFILE_CREATE')} 
+                  onNewCustomer={(term) => { setActiveProfile({ ...initialProfileState, customerName: term }); setViewMode('PROFILE_CREATE'); }}
                   onLoadMockData={() => { setActiveProfile(MOCK_NEW_CUSTOMER); setViewMode('PROFILE_CREATE'); }} 
                   onHistoricalAlert={setHistoricalAlert}
                   searchTerm={searchQuery}
