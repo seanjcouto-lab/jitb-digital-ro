@@ -1,5 +1,8 @@
 import { db } from '../localDb';
 import { VesselHistory } from '../types';
+import { syncVesselToSupabase } from '../utils/supabaseSync';
+import { supabase } from '../supabaseClient';
+import { shopContextService } from './shopContextService';
 
 export const vesselService = {
   /**
@@ -34,6 +37,7 @@ export const vesselService = {
    */
   createVessel: async (vessel: VesselHistory): Promise<void> => {
     await db.vesselDnaHistory.add(vessel);
+    syncVesselToSupabase(vessel).catch(err => console.warn('Supabase vessel sync failed (create):', err));
   },
 
   /**
@@ -41,6 +45,7 @@ export const vesselService = {
    */
   updateVessel: async (vessel: VesselHistory): Promise<void> => {
     await db.vesselDnaHistory.put(vessel);
+    syncVesselToSupabase(vessel).catch(err => console.warn('Supabase vessel sync failed (update):', err));
   },
 
   /**
@@ -49,9 +54,9 @@ export const vesselService = {
   addPastRO: async (vesselHIN: string, roEntry: any): Promise<void> => {
     const vessel = await db.vesselDnaHistory.get(vesselHIN);
     if (vessel) {
-      await db.vesselDnaHistory.update(vesselHIN, { 
-        pastROs: [...vessel.pastROs, roEntry] 
-      });
+      const updated = { ...vessel, pastROs: [...vessel.pastROs, roEntry] };
+      await db.vesselDnaHistory.put(updated);
+      syncVesselToSupabase(updated).catch(err => console.warn('Supabase vessel sync failed (addPastRO):', err));
     }
   },
 
@@ -61,15 +66,56 @@ export const vesselService = {
   flagUnresolvedIssues: async (vesselHIN: string, notes: string): Promise<void> => {
     const vessel = await db.vesselDnaHistory.get(vesselHIN);
     if (vessel) {
-        const newUnresolvedNotes = vessel.unresolvedNotes 
+        const newUnresolvedNotes = vessel.unresolvedNotes
             ? `${vessel.unresolvedNotes}\n- [${new Date().toLocaleDateString()}] ${notes}`
             : `[${new Date().toLocaleDateString()}] ${notes}`;
-        
-        await db.vesselDnaHistory.put({
-            ...vessel,
-            status: 'INCOMPLETE',
-            unresolvedNotes: newUnresolvedNotes
-        });
+        const updated = { ...vessel, status: 'INCOMPLETE' as const, unresolvedNotes: newUnresolvedNotes };
+        await db.vesselDnaHistory.put(updated);
+        syncVesselToSupabase(updated).catch(err => console.warn('Supabase vessel sync failed (flagUnresolved):', err));
+    }
+  },
+
+  /**
+   * Load vessel history from Supabase into local Dexie. Local wins on conflict.
+   */
+  loadVesselsFromSupabase: async (shopId: string): Promise<void> => {
+    try {
+      const { data: rows, error } = await supabase
+        .from('vessel_history')
+        .select('*')
+        .eq('shop_id', shopId);
+
+      if (error) { console.warn('Supabase vessel fetch failed:', error.message); return; }
+      if (!rows) return;
+
+      for (const row of rows) {
+        const existing = await db.vesselDnaHistory.get(row.vessel_hin);
+        if (!existing) {
+          await db.vesselDnaHistory.put({
+            vesselHIN: row.vessel_hin,
+            customerName: row.customer_name,
+            customerPhones: row.customer_phones ?? [],
+            customerEmails: row.customer_emails ?? [],
+            customerAddress: row.customer_address ?? { street: '', city: '', state: '', zip: '' },
+            customerNotes: row.customer_notes ?? null,
+            status: row.status as 'COMPLETE' | 'INCOMPLETE',
+            unresolvedNotes: row.unresolved_notes ?? '',
+            boatMake: row.boat_make ?? '',
+            boatModel: row.boat_model ?? '',
+            boatYear: row.boat_year ?? '',
+            boatLength: row.boat_length ?? '',
+            engineMake: row.engine_make ?? '',
+            engineModel: row.engine_model ?? '',
+            engineYear: row.engine_year ?? '',
+            engineHorsepower: row.engine_horsepower ?? '',
+            engineSerial: row.engine_serial ?? '',
+            pastROs: row.past_ros ?? [],
+          });
+        }
+      }
+      console.log(`Hydrated ${rows.length} vessel records from Supabase`);
+    } catch (err) {
+      console.warn('Error in loadVesselsFromSupabase:', err);
     }
   },
 

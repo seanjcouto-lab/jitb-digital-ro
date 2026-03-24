@@ -3,6 +3,7 @@ import { UserRole, RepairOrder, ROStatus, AppConfig, Part, InventoryAlert, Logge
 import { TECHNICIANS } from './constants';
 import { seedDatabase } from './localDb';
 import { roStore, loadFromSupabase } from './data/roStore';
+import { vesselService } from './services/vesselService';
 import { inventoryStore } from './data/inventoryStore';
 import { repairOrderService } from './services/repairOrderService';
 import { inventoryService } from './services/inventoryService';
@@ -61,6 +62,7 @@ const App: React.FC = () => {
     // await seedDatabase();
     const shopId = shopContextService.getActiveShopId();
     await loadFromSupabase(shopId);
+    await vesselService.loadVesselsFromSupabase(shopId);
     const [initialROs, initialInventory] = await Promise.all([
       roStore.getAll(shopId),
       inventoryStore.getAll(shopId)

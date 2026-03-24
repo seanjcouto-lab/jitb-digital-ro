@@ -1,6 +1,7 @@
 import { supabase } from '../supabaseClient'
 import { mapROToSupabase } from './supabaseMapper'
-import { RepairOrder } from '../types'
+import { RepairOrder, VesselHistory } from '../types'
+import { shopContextService } from '../services/shopContextService'
 
 export async function syncROToSupabase(ro: RepairOrder): Promise<void> {
   const mapped = mapROToSupabase(ro)
@@ -126,4 +127,35 @@ export async function syncROToSupabase(ro: RepairOrder): Promise<void> {
   }
 
   console.log('Supabase sync OK:', ro.id)
+}
+
+export async function syncVesselToSupabase(vessel: VesselHistory): Promise<void> {
+  const shopId = shopContextService.getActiveShopId()
+  const { error } = await supabase.from('vessel_history').upsert({
+    vessel_hin: vessel.vesselHIN,
+    shop_id: shopId,
+    customer_name: vessel.customerName,
+    customer_phones: vessel.customerPhones,
+    customer_emails: vessel.customerEmails,
+    customer_address: vessel.customerAddress,
+    customer_notes: vessel.customerNotes,
+    status: vessel.status,
+    unresolved_notes: vessel.unresolvedNotes,
+    boat_make: vessel.boatMake,
+    boat_model: vessel.boatModel,
+    boat_year: vessel.boatYear,
+    boat_length: vessel.boatLength,
+    engine_make: vessel.engineMake,
+    engine_model: vessel.engineModel,
+    engine_year: vessel.engineYear,
+    engine_horsepower: vessel.engineHorsepower,
+    engine_serial: vessel.engineSerial,
+    past_ros: vessel.pastROs,
+    updated_at: new Date().toISOString(),
+  })
+  if (error) {
+    console.error('Supabase vessel sync failed:', error.message)
+  } else {
+    console.log('Supabase vessel sync OK:', vessel.vesselHIN)
+  }
 }
