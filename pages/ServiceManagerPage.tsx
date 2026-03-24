@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Plus, X, Search } from 'lucide-react';
 import { RepairOrder, ROStatus, PartStatus, VesselHistory, Part, RORequest, Technician, PaymentStatus, CollectionsStatus } from '../types';
 import { TECHNICIANS } from '../constants';
@@ -572,14 +572,24 @@ const ServiceManagerPage: React.FC<ServiceManagerPageProps> = ({
     return filtered;
   };
 
+  const queues = useMemo(() => ({
+    STAGED: getQueueROs('STAGED'),
+    PARTS: getQueueROs('PARTS'),
+    ACTIVE: getQueueROs('ACTIVE'),
+    ACTIVE_ONLY: getQueueROs('ACTIVE_ONLY'),
+    HOLD: getQueueROs('HOLD'),
+    BILLING: getQueueROs('BILLING'),
+    ARCHIVE: getQueueROs('ARCHIVE'),
+  }), [repairOrders, searchQuery, filterTechId]);
+
   const stats = {
-    staged: getQueueROs('STAGED').length,
-    parts: getQueueROs('PARTS').length,
-    deployment: getQueueROs('ACTIVE').length,
-    activeOnly: getQueueROs('ACTIVE_ONLY').length,
-    hold: getQueueROs('HOLD').length,
-    billing: getQueueROs('BILLING').length,
-    archive: getQueueROs('ARCHIVE').length,
+    staged: queues.STAGED.length,
+    parts: queues.PARTS.length,
+    deployment: queues.ACTIVE.length,
+    activeOnly: queues.ACTIVE_ONLY.length,
+    hold: queues.HOLD.length,
+    billing: queues.BILLING.length,
+    archive: queues.ARCHIVE.length,
   };
 
   useEffect(() => {
@@ -788,10 +798,10 @@ const handleROGenerated = (newRO: RepairOrder) => {
             <div className="glass rounded-2xl p-6 border-white/5">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg font-bold neon-steel uppercase tracking-tighter">Staged Queue</h2>
-                <span className="text-[10px] font-bold text-slate-500 bg-white/5 px-2 py-0.5 rounded-full">{getQueueROs('STAGED').length}</span>
+                <span className="text-[10px] font-bold text-slate-500 bg-white/5 px-2 py-0.5 rounded-full">{queues.STAGED.length}</span>
               </div>
               <div className="space-y-4">
-                {getQueueROs('STAGED').map(ro => (
+                {queues.STAGED.map(ro => (
                   <ROCard 
                     key={ro.id} 
                     ro={ro} 
@@ -822,7 +832,7 @@ const handleROGenerated = (newRO: RepairOrder) => {
                     </div>
                   </ROCard>
                 ))}
-                {getQueueROs('STAGED').length === 0 && <p className="text-slate-600 italic text-sm text-center py-4 font-medium">Queue empty.</p>}
+                {queues.STAGED.length === 0 && <p className="text-slate-600 italic text-sm text-center py-4 font-medium">Queue empty.</p>}
               </div>
             </div>
             )}
@@ -831,7 +841,7 @@ const handleROGenerated = (newRO: RepairOrder) => {
             <div className="glass rounded-2xl p-6 border-white/5">
               <h2 className="text-lg font-bold mb-4 text-yellow-400 uppercase tracking-tighter">Parts Dept</h2>
               <div className="space-y-4">
-                {getQueueROs('PARTS').map(ro => {
+                {queues.PARTS.map(ro => {
                   const hasMissingOrSO = ro.parts.some(p => p.status === PartStatus.MISSING || p.status === PartStatus.SPECIAL_ORDER);
 
                   return (
@@ -855,7 +865,7 @@ const handleROGenerated = (newRO: RepairOrder) => {
                     </ROCard>
                   );
                 })}
-                {getQueueROs('PARTS').length === 0 && <p className="text-slate-600 italic text-sm text-center py-4 font-medium">Queue empty.</p>}
+                {queues.PARTS.length === 0 && <p className="text-slate-600 italic text-sm text-center py-4 font-medium">Queue empty.</p>}
               </div>
             </div>
             )}
@@ -864,7 +874,7 @@ const handleROGenerated = (newRO: RepairOrder) => {
             <div className="glass rounded-2xl p-6 border-white/5">
               <h2 className="text-lg font-bold mb-4 neon-seafoam uppercase tracking-tighter">Deployment Deck</h2>
               <div className="space-y-4">
-                {getQueueROs('ACTIVE').map(ro => { 
+                {queues.ACTIVE.map(ro => { 
                   const hasPendingRequests = ro.requests?.some(r => r.status === 'PENDING'); 
                   
                   return (
@@ -893,7 +903,7 @@ const handleROGenerated = (newRO: RepairOrder) => {
                     </ROCard>
                   );
                 })}
-                {getQueueROs('ACTIVE').length === 0 && <p className="text-slate-600 italic text-sm text-center py-4 font-medium">Deck clear.</p>}
+                {queues.ACTIVE.length === 0 && <p className="text-slate-600 italic text-sm text-center py-4 font-medium">Deck clear.</p>}
               </div>
             </div>
             )}
@@ -902,7 +912,7 @@ const handleROGenerated = (newRO: RepairOrder) => {
             <div className="glass rounded-2xl p-6 border-white/5">
               <h2 className="text-lg font-bold mb-4 neon-crimson uppercase tracking-tighter">On Hold</h2>
               <div className="space-y-4">
-                {getQueueROs('HOLD').map(ro => (
+                {queues.HOLD.map(ro => (
                   <ROCard 
                     key={ro.id} 
                     ro={ro} 
@@ -917,7 +927,7 @@ const handleROGenerated = (newRO: RepairOrder) => {
                     </div>
                   </ROCard>
                 ))}
-                {getQueueROs('HOLD').length === 0 && <p className="text-slate-600 italic text-sm text-center py-4 font-medium">None.</p>}
+                {queues.HOLD.length === 0 && <p className="text-slate-600 italic text-sm text-center py-4 font-medium">None.</p>}
               </div>
             </div>
             )}
@@ -926,7 +936,7 @@ const handleROGenerated = (newRO: RepairOrder) => {
             <div className="glass rounded-2xl p-6 border-white/5">
               <h2 className="text-lg font-bold mb-4 neon-steel uppercase tracking-tighter">Billing Queue</h2>
               <div className="space-y-4">
-                {getQueueROs('BILLING').map(ro => (
+                {queues.BILLING.map(ro => (
                   <ROCard 
                     key={ro.id} 
                     ro={ro} 
@@ -941,7 +951,7 @@ const handleROGenerated = (newRO: RepairOrder) => {
                     <RODetail ro={ro} masterInventory={masterInventory} />
                   </ROCard>
                 ))}
-                {getQueueROs('BILLING').length === 0 && <p className="text-slate-600 italic text-sm text-center py-4 font-medium">Billing queue clear.</p>}
+                {queues.BILLING.length === 0 && <p className="text-slate-600 italic text-sm text-center py-4 font-medium">Billing queue clear.</p>}
               </div>
             </div>
             )}
