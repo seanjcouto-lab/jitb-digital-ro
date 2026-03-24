@@ -20,7 +20,7 @@ const Header: React.FC<HeaderProps> = ({
     currentRole, onCommsLinkToggle, loggedInUser, onAppLogout,
     isImpersonating, onExitImpersonation
 }) => {
-  const roleText = currentRole.replace('_', ' ');
+  const roleText = currentRole === 'DATABASE' ? 'Vessel DNA' : currentRole.replace('_', ' ');
 
   const [isFullscreen, setIsFullscreen] = useState(false);
 

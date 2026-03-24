@@ -268,7 +268,7 @@ const App: React.FC = () => {
             <button key={roleKey} onClick={() => {
               setImpersonatedRole(roleKey);
               authService.startImpersonation(roleKey);
-            }} title={roleKey.replace('_', ' ')} className={`h-11 w-11 flex items-center justify-center rounded-full transition-all ${activeRole === roleKey ? 'bg-neon-seafoam text-slate-900 shadow-[0_0_15px_rgba(45,212,191,0.5)]' : 'text-slate-500 hover:bg-white/5 hover:text-white'}`}>
+            }} title={roleKey === 'DATABASE' ? 'Vessel DNA' : roleKey.replace('_', ' ')} className={`h-11 w-11 flex items-center justify-center rounded-full transition-all ${activeRole === roleKey ? 'bg-neon-seafoam text-slate-900 shadow-[0_0_15px_rgba(45,212,191,0.5)]' : 'text-slate-500 hover:bg-white/5 hover:text-white'}`}>
               {roleIcons[roleKey]}
             </button>
           ))}

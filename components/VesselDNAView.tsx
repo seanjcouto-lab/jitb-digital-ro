@@ -79,8 +79,12 @@ const VesselDNAView: React.FC<VesselDNAViewProps> = ({ vessel, allROs, onClose }
                         <span className="text-white font-bold">{vessel.boatYear}</span>
                       </div>
                       <div className="flex justify-between border-b border-white/5 pb-1">
-                        <span className="text-slate-500 uppercase tracking-tighter">Length</span> 
+                        <span className="text-slate-500 uppercase tracking-tighter">Length</span>
                         <span className="text-white font-bold">{vessel.boatLength}</span>
+                      </div>
+                      <div className="flex justify-between border-b border-white/5 pb-1">
+                        <span className="text-slate-500 uppercase tracking-tighter">HIN</span>
+                        <span className="text-neon-steel font-mono">{vessel.vesselHIN || 'N/A'}</span>
                       </div>
                   </div>
               </section>
