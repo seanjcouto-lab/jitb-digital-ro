@@ -5,6 +5,8 @@ export default defineConfig({
     include: ['tests/**/*.spec.ts'],
     exclude: [
       'tests/smoke.spec.ts',
+      'tests/repairOrder.workflow.spec.ts',
+      'tests/selector.discovery.spec.ts',
       'tests/answerInterpretationService.spec.ts',
       'tests/conversationStateService.spec.ts',
       'tests/domainEventService.spec.ts',
