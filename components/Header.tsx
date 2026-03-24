@@ -111,8 +111,10 @@ const Header: React.FC<HeaderProps> = ({
   return (
     <header className="sticky top-0 z-40 glass border-b border-white/5 px-6 py-4 flex flex-col md:flex-row justify-between items-center">
       <div className="flex items-center gap-4 mb-4 md:mb-0">
-        <img src={config.logoUrl} alt="Logo" className="h-8 object-contain rounded" />
-        <h1 className="text-xl font-bold tracking-tighter neon-seafoam">{config.companyName}</h1>
+        {config.logoUrl
+          ? <img src={config.logoUrl} alt="Logo" className="h-20 object-contain" />
+          : <h1 className="text-xl font-bold tracking-tighter neon-seafoam">{config.companyName}</h1>
+        }
       </div>
 
       <div className="flex-1 flex justify-center items-center">

@@ -20,8 +20,8 @@ export const appConfigService = {
 
 getDefaultConfig(): AppConfig {
     return {
-      logoUrl: '/assets/logo-dark.png',
-      companyName: 'JAXTR',
+      logoUrl: 'https://raw.githubusercontent.com/seanjcouto-lab/jitb-digital-ro/main/public/assets/logo-dark.png',
+      companyName: '',
       hourlyRate: DEFAULT_HOURLY_RATE,
       taxRate: 6.25,
       overridePin: '1234',
