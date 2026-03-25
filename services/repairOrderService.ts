@@ -212,6 +212,7 @@ export const repairOrderService = {
       vesselHIN: input.vesselHIN,
       engineSerial: input.engineSerial,
       customerNotes: input.customerNotes || null,
+      jobComplaint: input.jobComplaint || null,
       customerEmails: input.customerEmails.filter((e: string) => e),
       customerPhones: input.customerPhones.filter((p: string) => p),
       vesselName: input.vesselName,
@@ -726,7 +727,8 @@ export const repairOrderService = {
 
   addManualPartToRO: (ro: RepairOrder, part: Part): RepairOrder => {
     const newPart = { ...part, status: PartStatus.REQUIRED };
-    return { ...ro, parts: [...ro.parts, newPart] };
+    const needsPartsPending = ro.status !== ROStatus.AUTHORIZED && ro.status !== ROStatus.PARTS_PENDING;
+    return { ...ro, parts: [...ro.parts, newPart], status: needsPartsPending ? ROStatus.PARTS_PENDING : ro.status };
   },
 
   updatePartDetails: (ro: RepairOrder, partIndex: number, updates: Partial<Part>): RepairOrder => {

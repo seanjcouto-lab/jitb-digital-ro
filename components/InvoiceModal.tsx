@@ -113,7 +113,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, ov
 
         <div class="section">
           <div class="section-title">Services Performed</div>
-          ${ro.directives.map(d => `
+          ${ro.directives.filter(d => d.isCompleted).map(d => `
             <div class="directive-item">
               <div class="directive-title">✓ ${d.title}</div>
               ${evidenceSummary(d) ? `<div class="evidence-note">${evidenceSummary(d)}</div>` : ''}
@@ -194,7 +194,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, ov
   const laborTotal = totalHours * effectiveRate;
   const billableParts = ro.parts
     .map((part, idx) => ({ part, idx }))
-    .filter(({ part }) => part.status !== 'DECLINED');
+    .filter(({ part }) => part.status === 'USED' || part.status === 'IN_BOX');
   const partsTotal = billableParts.reduce((acc, { part, idx }) => acc + (editedPartPrices[idx] !== undefined ? editedPartPrices[idx] : (part.msrp || 0)), 0);
   const taxAmount = isTaxExempt ? 0 : (partsTotal * (taxRate / 100));
   const grandTotal = Math.max(0, laborTotal + partsTotal + taxAmount - discount);
@@ -284,7 +284,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, ov
           <section>
             <h4 className="font-bold text-slate-300 uppercase tracking-wider mb-2">Directives & Evidence Log</h4>
              <div className="bg-slate-900/50 p-4 rounded-lg border border-white/5 space-y-3">
-              {ro.directives.map(d => (
+              {ro.directives.filter(d => d.isCompleted).map(d => (
                 <div key={d.id} className="text-sm border-b border-white/5 last:border-b-0 pb-2">
                   <p className="font-bold text-slate-200">{d.title}</p>
                   {d.evidence && d.evidence.length > 0 && (

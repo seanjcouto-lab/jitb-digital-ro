@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useLayoutEffect, useMemo } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Plus, X, Search } from 'lucide-react';
 import { RepairOrder, ROStatus, PartStatus, VesselHistory, Part, RORequest, Technician, PaymentStatus, CollectionsStatus } from '../types';
 import { TECHNICIANS } from '../constants';
@@ -379,11 +379,13 @@ const initialProfileState = {
 const SignatureCanvas = ({ onSave, onClear }: { onSave: (dataUrl: string) => void, onClear?: () => void }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const isDrawingRef = useRef(false);
+    const initializedRef = useRef(false);
     const [isSigned, setIsSigned] = useState(false);
 
-    useLayoutEffect(() => {
+    const ensureInit = () => {
+        if (initializedRef.current) return;
         const canvas = canvasRef.current;
-        if (!canvas) return;
+        if (!canvas || canvas.offsetWidth === 0) return;
         canvas.width = canvas.offsetWidth;
         canvas.height = canvas.offsetHeight;
         const ctx = canvas.getContext('2d');
@@ -393,7 +395,8 @@ const SignatureCanvas = ({ onSave, onClear }: { onSave: (dataUrl: string) => voi
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
         }
-    }, []);
+        initializedRef.current = true;
+    };
 
     const getCoords = (event: any) => {
         const canvas = canvasRef.current;
@@ -407,6 +410,7 @@ const SignatureCanvas = ({ onSave, onClear }: { onSave: (dataUrl: string) => voi
 
     const startDrawing = (e: any) => {
         e.preventDefault();
+        ensureInit();
         const { x, y } = getCoords(e);
         const ctx = canvasRef.current?.getContext('2d');
         if (!ctx) return;

@@ -241,9 +241,8 @@ if (!repairOrder) {
     return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
- const areAllDirectivesDone = repairOrder.directives.every(d => d.isCompleted);
   const hasPendingPartDecisions = repairOrder.parts.some(p => p.status === PartStatus.APPROVAL_PENDING || p.status === PartStatus.REQUESTED);
-  const isFinalizable = areAllDirectivesDone && laborNote.length > 10 && !hasPendingPartDecisions;
+  const isFinalizable = laborNote.length > 10 && !hasPendingPartDecisions;
   const handleFinalize = async () => {
     if (!repairOrder) return;
     const updatedRO = await TechnicianService.finalizeJob(repairOrder, laborNote);
@@ -430,7 +429,7 @@ if (!repairOrder) {
                 <button disabled={repairOrder.status !== ROStatus.ACTIVE} onClick={() => setIsHaltModalOpen(true)} className="flex-1 py-4 rounded-xl font-black uppercase tracking-widest text-sm transition-all shadow-2xl bg-orange-600/80 text-white hover:bg-orange-500 disabled:bg-slate-800 disabled:text-slate-500 disabled:grayscale">Halt Job</button>
                 <button disabled={!isFinalizable} onClick={handleFinalize} className={`flex-1 py-4 rounded-xl font-black uppercase tracking-widest text-sm transition-all shadow-2xl ${isFinalizable ? 'bg-neon-seafoam text-slate-900 hover:scale-105 active:scale-95' : 'bg-slate-800 text-slate-500 grayscale cursor-not-allowed'}`}>Send for Billing</button>
               </div>
-             <div className="mt-4 space-y-2">{!areAllDirectivesDone && <div className="flex items-center gap-2 text-red-500"><div className="w-1 h-1 rounded-full bg-red-500 animate-pulse"></div><span className="text-[9px] font-black uppercase tracking-widest">Incomplete Tasks Pending</span></div>}{laborNote.length <= 10 && <div className="flex items-center gap-2 text-orange-400"><div className="w-1 h-1 rounded-full bg-orange-400"></div><span className="text-[9px] font-black uppercase tracking-widest">Awaiting Conclusion Notes</span></div>}{hasPendingPartDecisions && <div className="flex items-center gap-2 text-red-500"><div className="w-1 h-1 rounded-full bg-red-500 animate-pulse"></div><span className="text-[9px] font-black uppercase tracking-widest">Part Decisions Pending SM Approval</span></div>}</div>
+             <div className="mt-4 space-y-2">{laborNote.length <= 10 && <div className="flex items-center gap-2 text-orange-400"><div className="w-1 h-1 rounded-full bg-orange-400"></div><span className="text-[9px] font-black uppercase tracking-widest">Awaiting Conclusion Notes</span></div>}{hasPendingPartDecisions && <div className="flex items-center gap-2 text-red-500"><div className="w-1 h-1 rounded-full bg-red-500 animate-pulse"></div><span className="text-[9px] font-black uppercase tracking-widest">Part Decisions Pending SM Approval</span></div>}</div>
             </section>
           </div>
         </div>
