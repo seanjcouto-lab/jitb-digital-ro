@@ -38,6 +38,7 @@ vi.mock('../services/shopContextService', () => ({
 
 import { repairOrderService } from '../services/repairOrderService';
 import { vesselService } from '../services/vesselService';
+import { inventoryService } from '../services/inventoryService';
 import { RepairOrderCreateInput } from '../types/RepairOrderCreateInput';
 
 // --- Shared fixtures ---
@@ -331,5 +332,109 @@ describe('repairOrderService.confirmMissingPart', () => {
     const { alert } = repairOrderService.confirmMissingPart(ro, 0, 'NOT_IN_STOCK', '');
     expect(alert.partNumber).toBe('P-001');
     expect(alert.roId).toBe('RO-TEST-001');
+  });
+});
+
+// ============================================================
+// Edge Case 1 — SM adds part mid-workflow, PM fulfillment chain
+// ============================================================
+
+describe('edge case: SM adds part to active RO — PM fulfillment chain', () => {
+  it('sets RO to PARTS_PENDING so PM sees it in fulfillment queue', () => {
+    const ro = makeRO({ status: ROStatus.ACTIVE });
+    const newPart = { partNumber: 'P-NEW', description: 'Fuel Filter', msrp: 25, isCustom: false, status: PartStatus.REQUIRED };
+    const result = repairOrderService.addManualPartToRO(ro, newPart);
+    expect(result.status).toBe(ROStatus.PARTS_PENDING);
+    expect(result.parts.find(p => p.partNumber === 'P-NEW')?.status).toBe(PartStatus.REQUIRED);
+  });
+
+  it('newly added part is not billable until PM marks it IN_BOX or USED', () => {
+    const ro = makeRO({ status: ROStatus.ACTIVE });
+    const newPart = { partNumber: 'P-NEW', description: 'Fuel Filter', msrp: 25, isCustom: false, status: PartStatus.REQUIRED };
+    const result = repairOrderService.addManualPartToRO(ro, newPart);
+    const billable = result.parts.filter(p => p.status === PartStatus.IN_BOX || p.status === PartStatus.USED);
+    expect(billable.find(p => p.partNumber === 'P-NEW')).toBeUndefined();
+  });
+
+  it('does not change status when RO is already AUTHORIZED or PARTS_PENDING', () => {
+    const roAuthorized = makeRO({ status: ROStatus.AUTHORIZED });
+    const roPending = makeRO({ status: ROStatus.PARTS_PENDING });
+    const part = { partNumber: 'P-X', description: 'Extra Part', msrp: 10, isCustom: false, status: PartStatus.REQUIRED };
+    expect(repairOrderService.addManualPartToRO(roAuthorized, part).status).toBe(ROStatus.AUTHORIZED);
+    expect(repairOrderService.addManualPartToRO(roPending, part).status).toBe(ROStatus.PARTS_PENDING);
+  });
+});
+
+// ============================================================
+// Edge Case 2 — Incomplete directive does not block billing
+// ============================================================
+
+describe('edge case: incomplete directive does not block billing', () => {
+  it('transitions to PENDING_INVOICE with mixed directive completion', async () => {
+    (inventoryService.bulkAddToClipboard as any).mockResolvedValue(undefined);
+    const ro = makeRO({
+      status: ROStatus.ACTIVE,
+      directives: [
+        { id: 'd-1', title: 'CHANGE OIL', isCompleted: true, isApproved: true },
+        { id: 'd-2', title: 'INSPECT BILGE PUMP', isCompleted: false, isApproved: true },
+      ],
+      workSessions: [{ startTime: Date.now() - 3600000, endTime: Date.now() }],
+    });
+    const result = await repairOrderService.completeJob(ro, 'Oil changed. Bilge pump inspection deferred per customer request.');
+    expect(result.status).toBe(ROStatus.PENDING_INVOICE);
+  });
+
+  it('both completed and incomplete directives are preserved on the RO for invoice and DNA review', async () => {
+    (inventoryService.bulkAddToClipboard as any).mockResolvedValue(undefined);
+    const ro = makeRO({
+      status: ROStatus.ACTIVE,
+      directives: [
+        { id: 'd-1', title: 'CHANGE OIL', isCompleted: true, isApproved: true },
+        { id: 'd-2', title: 'INSPECT BILGE PUMP', isCompleted: false, isApproved: true },
+      ],
+      workSessions: [{ startTime: Date.now() - 3600000, endTime: Date.now() }],
+    });
+    const result = await repairOrderService.completeJob(ro, 'Oil changed. Bilge pump deferred.');
+    expect(result.directives).toHaveLength(2);
+    expect(result.directives.find(d => d.id === 'd-1')?.isCompleted).toBe(true);
+    expect(result.directives.find(d => d.id === 'd-2')?.isCompleted).toBe(false);
+  });
+});
+
+// ============================================================
+// Edge Case 3 — Parts reassignment from stalled job
+// ============================================================
+
+describe('edge case: parts reassignment from stalled job', () => {
+  it('returning part from RO-1 and fulfilling to RO-2 leaves no invoice discrepancy on either RO', async () => {
+    (inventoryService.adjustInventory as any).mockResolvedValue(null);
+
+    const ro1 = makeRO({
+      id: 'RO-001',
+      status: ROStatus.HOLD,
+      parts: [{ partNumber: 'P-001', description: 'Water Pump', msrp: 180, dealerPrice: 140, isCustom: false, status: PartStatus.IN_BOX }],
+    });
+    const ro2 = makeRO({
+      id: 'RO-002',
+      status: ROStatus.READY_FOR_TECH,
+      parts: [{ partNumber: 'P-001', description: 'Water Pump', msrp: 180, dealerPrice: 140, isCustom: false, status: PartStatus.REQUIRED }],
+    });
+
+    // Return part from stalled RO-1 (reassignment flag)
+    const { updatedRO: updatedRO1 } = await repairOrderService.updatePartStatus(ro1, 0, PartStatus.RETURNED, []);
+    // Fulfill same part to RO-2
+    const { updatedRO: updatedRO2 } = await repairOrderService.updatePartStatus(ro2, 0, PartStatus.IN_BOX, []);
+
+    expect(updatedRO1.parts[0].status).toBe(PartStatus.RETURNED);
+    expect(updatedRO2.parts[0].status).toBe(PartStatus.IN_BOX);
+
+    // Invoice filter verification: RETURNED is not billable on RO-1
+    const billableRO1 = updatedRO1.parts.filter(p => p.status === PartStatus.IN_BOX || p.status === PartStatus.USED);
+    expect(billableRO1).toHaveLength(0);
+
+    // Invoice filter verification: IN_BOX is billable on RO-2
+    const billableRO2 = updatedRO2.parts.filter(p => p.status === PartStatus.IN_BOX || p.status === PartStatus.USED);
+    expect(billableRO2).toHaveLength(1);
+    expect(billableRO2[0].partNumber).toBe('P-001');
   });
 });
