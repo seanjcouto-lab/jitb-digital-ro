@@ -139,6 +139,7 @@ const ROGenerationView: React.FC<ROGenerationViewProps> = ({ profileData, onROGe
   const [manuallyAddedParts, setManuallyAddedParts] = useState<Part[]>([]);
   const [manualDirective, setManualDirective] = useState('');
   const [manuallyAddedDirectives, setManuallyAddedDirectives] = useState<string[]>([]);
+  const [jobComplaint, setJobComplaint] = useState('');
   const [signatureForCreate, setSignatureForCreate] = useState<string | null>(null);
   const [isVerbalCertified, setIsVerbalCertified] = useState(false);
   const [showCreateSignatureModal, setShowCreateSignatureModal] = useState(false);
@@ -184,6 +185,7 @@ const ROGenerationView: React.FC<ROGenerationViewProps> = ({ profileData, onROGe
       customerEmails: currentProfileData.customerEmails.filter((e: string) => e),
       customerAddress: currentProfileData.customerAddress,
       customerNotes: currentProfileData.customerNotes || null,
+      jobComplaint: jobComplaint || null,
       vesselHIN: currentProfileData.vesselHIN,
       vesselName: `${currentProfileData.boatMake} ${currentProfileData.boatModel}`,
       boatMake: currentProfileData.boatMake || null,
@@ -283,7 +285,7 @@ const ROGenerationView: React.FC<ROGenerationViewProps> = ({ profileData, onROGe
   const handleSaveAttachment = () => {
       if (!capturedMediaUrl || !evidenceModalMode) return;
       const noteText = `\n[Attached ${evidenceModalMode}: ${capturedMediaUrl}]`;
-      setCurrentProfileData(prev => ({...prev, customerNotes: (prev.customerNotes || '') + noteText}));
+      setJobComplaint(prev => prev + noteText);
       setCapturedMediaUrl(null); // Prevent URL from being revoked twice
       handleCloseEvidenceModal();
   };
@@ -366,14 +368,19 @@ const ROGenerationView: React.FC<ROGenerationViewProps> = ({ profileData, onROGe
           </div>
         </div>
         <div className="mt-12 border-t border-white/10 pt-8 space-y-8">
+          <div>
+              <SectionHeader title="Customer Notes" />
+              <p className="text-[10px] text-slate-600 font-bold uppercase tracking-widest mb-2">Persistent — from customer profile</p>
+              <textarea value={currentProfileData.customerNotes} onFocus={handleInputFocus} onChange={e => setCurrentProfileData(prev => ({ ...prev, customerNotes: e.target.value }))} rows={3} className="w-full bg-slate-900/50 border border-white/10 rounded-lg px-4 py-3 text-slate-300 text-sm focus:border-neon-seafoam outline-none transition-colors resize-none" />
+            </div>
           <EvidenceInputBlock
-            title="Customer Notes & Evidence for this RO"
-            notes={currentProfileData.customerNotes || ''}
-            onNotesChange={(notes) => setCurrentProfileData(prev => ({ ...prev, customerNotes: notes }))}
+            title="Job Complaint"
+            notes={jobComplaint}
+            onNotesChange={setJobComplaint}
             onTakePhoto={() => handleUploadEvidence('photo')}
             onTakeVideo={() => handleUploadEvidence('video')}
             onRecordAudio={handleOpenAudioRecorder}
-            placeholder="Describe customer request or observed issues..."
+            placeholder="Describe the customer's reported issue for this visit..."
           />
           <div className="space-y-4">
             <SectionHeader title="Authorization Gate" />

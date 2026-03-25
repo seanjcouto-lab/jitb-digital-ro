@@ -14,34 +14,216 @@ interface TechnicianPageProps {
 
 type EvidenceModalMode = 'photo' | 'video' | 'audio';
 
+// ─── HaltJobModal ─────────────────────────────────────────────────────────────
+
+interface HaltJobModalProps {
+  onClose: () => void;
+  onConfirm: (reason: string) => void;
+}
+
+const HaltJobModal: React.FC<HaltJobModalProps> = ({ onClose, onConfirm }) => {
+  const [haltReason, setHaltReason] = useState('');
+  return (
+    <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
+      <div className="glass p-8 rounded-2xl w-full max-w-lg border border-orange-500 shadow-2xl shadow-orange-500/20">
+        <h3 className="text-lg font-black uppercase tracking-widest text-orange-400 mb-4">Halt Job Protocol</h3>
+        <p className="text-sm text-slate-300 mb-6">Explain why this job cannot proceed. This will stop the clock and notify the Service Manager.</p>
+        <textarea value={haltReason} onChange={e => setHaltReason(e.target.value)} placeholder="e.g., Waiting on special tool, discovered new issue requiring authorization..." autoFocus className="w-full h-32 bg-slate-900 border border-white/10 rounded-lg p-4 text-white text-base focus:border-orange-500 outline-none transition-colors" />
+        <div className="flex justify-between items-center mt-6">
+          <button onClick={onClose} className="text-xs text-slate-500 hover:text-white">Cancel</button>
+          <button onClick={() => onConfirm(haltReason)} disabled={!haltReason.trim()} className="px-6 py-3 bg-orange-500 text-white font-bold rounded-lg hover:scale-105 disabled:opacity-50 disabled:grayscale">Confirm Halt</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ─── MissingPartModal ─────────────────────────────────────────────────────────
+
+interface MissingPartModalProps {
+  partDescription: string;
+  onClose: () => void;
+  onConfirm: (reason: string, notes: string) => void;
+}
+
+const MissingPartModal: React.FC<MissingPartModalProps> = ({ partDescription, onClose, onConfirm }) => {
+  const [missingReason, setMissingReason] = useState('Discrepancy');
+  const [missingNotes, setMissingNotes] = useState('');
+  return (
+    <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
+      <div className="glass p-8 rounded-2xl w-full max-w-lg border border-red-500 shadow-2xl shadow-red-500/20">
+        <h3 className="text-lg font-black uppercase tracking-widest text-red-400 mb-4">Report Missing Part</h3>
+        <p className="text-sm text-slate-300 mb-6">You are reporting that <span className="text-white font-bold">{partDescription}</span> is missing from the bay. This will notify the Parts Manager.</p>
+        <div className="space-y-4">
+          <div>
+            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-2">Reason</label>
+            <select value={missingReason} onChange={e => setMissingReason(e.target.value)} className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:border-red-500 outline-none">
+              <option value="Discrepancy">Inventory Discrepancy</option>
+              <option value="Damaged">Received Damaged</option>
+              <option value="Wrong Part">Wrong Part in Box</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-2">Additional Notes</label>
+            <textarea value={missingNotes} onChange={e => setMissingNotes(e.target.value)} placeholder="Provide more details..." className="w-full h-24 bg-slate-900 border border-white/10 rounded-lg p-4 text-white text-sm focus:border-red-500 outline-none transition-colors" />
+          </div>
+        </div>
+        <div className="flex justify-between items-center mt-8">
+          <button onClick={onClose} className="text-xs text-slate-500 hover:text-white">Cancel</button>
+          <button onClick={() => onConfirm(missingReason, missingNotes)} className="px-8 py-3 bg-red-500 text-white font-black rounded-lg hover:bg-red-600 transition-all uppercase tracking-widest text-xs">Report Missing</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ─── NotUsedModal ─────────────────────────────────────────────────────────────
+
+interface NotUsedModalProps {
+  partDescription: string;
+  onClose: () => void;
+  onConfirm: (reason: string, notes: string) => void;
+}
+
+const NotUsedModal: React.FC<NotUsedModalProps> = ({ partDescription, onClose, onConfirm }) => {
+  const [notUsedReason, setNotUsedReason] = useState('Not Needed');
+  const [notUsedNotes, setNotUsedNotes] = useState('');
+  return (
+    <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
+      <div className="glass p-8 rounded-2xl w-full max-w-lg border border-orange-500 shadow-2xl shadow-orange-500/20">
+        <h3 className="text-lg font-black uppercase tracking-widest text-orange-400 mb-4">Mark Part as Not Used</h3>
+        <p className="text-sm text-slate-300 mb-6">You are reporting that <span className="text-white font-bold">{partDescription}</span> was not used for this job. It will be returned to the Parts Manager for stock reconciliation.</p>
+        <div className="space-y-4">
+          <div>
+            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-2">Reason</label>
+            <select value={notUsedReason} onChange={e => setNotUsedReason(e.target.value)} className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:border-orange-500 outline-none">
+              <option value="Not Needed">Not Needed for Repair</option>
+              <option value="Customer Declined">Customer Declined Item</option>
+              <option value="Wrong Part">Wrong Part Ordered</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-2">Additional Notes</label>
+            <textarea value={notUsedNotes} onChange={e => setNotUsedNotes(e.target.value)} placeholder="Provide more details..." className="w-full h-24 bg-slate-900 border border-white/10 rounded-lg p-4 text-white text-sm focus:border-orange-500 outline-none transition-colors" />
+          </div>
+        </div>
+        <div className="flex justify-between items-center mt-8">
+          <button onClick={onClose} className="text-xs text-slate-500 hover:text-white">Cancel</button>
+          <button onClick={() => onConfirm(notUsedReason, notUsedNotes)} className="px-8 py-3 bg-orange-500 text-white font-black rounded-lg hover:bg-orange-600 transition-all uppercase tracking-widest text-xs">Confirm Not Used</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ─── EvidenceModal ────────────────────────────────────────────────────────────
+
+interface EvidenceModalProps {
+  directiveId: string | null;
+  mode: EvidenceModalMode;
+  initialMediaUrl: string | null;
+  onClose: () => void;
+  onSave: (capturedMediaUrl: string) => void;
+}
+
+const EvidenceModal: React.FC<EvidenceModalProps> = ({ mode, initialMediaUrl, onClose, onSave }) => {
+  const [capturedMediaUrl, setCapturedMediaUrl] = useState<string | null>(initialMediaUrl);
+  const [isRecording, setIsRecording] = useState(false);
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
+  const recordedChunks = useRef<Blob[]>([]);
+  const capturedUrlRef = useRef<string | null>(initialMediaUrl);
+  const urlSavedRef = useRef(false);
+
+  useEffect(() => {
+    return () => {
+      if (!urlSavedRef.current && capturedUrlRef.current) {
+        URL.revokeObjectURL(capturedUrlRef.current);
+      }
+    };
+  }, []);
+
+  const updateCapturedUrl = (url: string | null) => {
+    capturedUrlRef.current = url;
+    setCapturedMediaUrl(url);
+  };
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      setMediaRecorder(recorder);
+      recordedChunks.current = [];
+      recorder.ondataavailable = event => {
+        if (event.data.size > 0) recordedChunks.current.push(event.data);
+      };
+      recorder.onstop = () => {
+        const blob = new Blob(recordedChunks.current, { type: 'audio/webm' });
+        const url = URL.createObjectURL(blob);
+        updateCapturedUrl(url);
+        stream.getTracks().forEach(track => track.stop());
+        setIsRecording(false);
+      };
+      recorder.start();
+      setIsRecording(true);
+    } catch (err) {
+      console.error("Microphone access error:", err);
+      alert("Microphone access denied. Please check browser permissions.");
+      handleClose();
+    }
+  };
+
+  const stopRecording = () => {
+    mediaRecorder?.stop();
+  };
+
+  const handleClose = () => {
+    if (mediaRecorder && mediaRecorder.state === 'recording') {
+      mediaRecorder.onstop = null; // prevent URL creation on cancel
+      mediaRecorder.stop();
+    }
+    if (mediaRecorder?.stream) {
+      mediaRecorder.stream.getTracks().forEach(track => track.stop());
+    }
+    setIsRecording(false);
+    onClose();
+  };
+
+  const handleSave = () => {
+    if (!capturedMediaUrl) return;
+    urlSavedRef.current = true;
+    onSave(capturedMediaUrl);
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
+      <div className="glass p-6 rounded-2xl w-full max-w-2xl border-2 border-neon-seafoam shadow-2xl shadow-neon-seafoam/20">
+        <h3 className="text-lg font-black uppercase tracking-widest text-neon-seafoam mb-4">{mode === 'audio' ? 'Voice Record Command' : `Confirm ${mode} Upload`}</h3>
+        {mode === 'audio' && !capturedMediaUrl && (<div className="flex flex-col items-center justify-center p-8 space-y-4"><div className="relative h-20 w-20">{isRecording && <div className="absolute inset-0 bg-red-500 rounded-full animate-ping opacity-20"></div>}<div className={`h-20 w-20 rounded-full flex items-center justify-center border-4 ${isRecording ? 'bg-red-500/20 border-red-500' : 'bg-slate-700 border-slate-600'}`}><svg className={`w-10 h-10 ${isRecording ? 'text-red-500' : 'text-slate-400'}`} fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clipRule="evenodd" /></svg></div></div><p className="text-slate-400 text-sm font-bold uppercase tracking-widest">{isRecording ? "RECORDING HUD ACTIVE" : "MICROPHONE STANDBY"}</p><button onClick={isRecording ? stopRecording : startRecording} className={`px-10 py-4 rounded-xl font-black text-white transition-all text-xs uppercase tracking-widest ${isRecording ? 'bg-red-600 shadow-[0_0_20px_rgba(220,38,38,0.4)]' : 'bg-slate-800 hover:bg-slate-700'}`}>{isRecording ? 'Stop Recording' : 'Engage Recording'}</button></div>)}
+        {capturedMediaUrl && (<div className="aspect-video bg-slate-950 rounded-xl overflow-hidden mb-6 border border-white/10 flex items-center justify-center shadow-inner">{mode === 'photo' ? ( <img src={capturedMediaUrl} alt="Preview" className="max-w-full max-h-full object-contain" /> ) : mode === 'video' ? ( <video src={capturedMediaUrl} controls autoPlay className="w-full h-full" /> ) : mode === 'audio' ? ( <audio src={capturedMediaUrl} controls autoPlay className="w-full p-8" /> ) : null }</div>)}
+        <div className="flex justify-between items-center mt-4"><button onClick={handleClose} className="text-slate-500 font-bold text-xs uppercase tracking-widest hover:text-white transition-all">Abort Action</button><button onClick={handleSave} disabled={!capturedMediaUrl} className="px-10 py-4 bg-neon-seafoam text-slate-900 font-black rounded-xl transition-all disabled:opacity-30 uppercase text-xs tracking-widest hover:scale-105 active:scale-95 shadow-xl shadow-neon-seafoam/20">Commit to Record</button></div>
+      </div>
+    </div>
+  );
+};
+
+// ─── TechnicianPage ───────────────────────────────────────────────────────────
+
 const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs = [], updateRO, masterInventory, addInventoryAlert }) => {
   const [laborNote, setLaborNote] = useState('');
   const [newDirectiveRequest, setNewDirectiveRequest] = useState('');
   const [newPartRequestQuery, setNewPartRequestQuery] = useState('');
 
-  // State for evidence capture
-  const [evidenceModal, setEvidenceModal] = useState<{ directiveId: string | null; mode: EvidenceModalMode } | null>(null);
-  const [capturedMediaUrl, setCapturedMediaUrl] = useState<string | null>(null);
+  // Evidence modal trigger — directiveId, mode, and initialMediaUrl for photo/video uploads
+  const [evidenceModal, setEvidenceModal] = useState<{ directiveId: string | null; mode: EvidenceModalMode; initialMediaUrl: string | null } | null>(null);
   const [currentDirectiveIdForUpload, setCurrentDirectiveIdForUpload] = useState<string | null>(null);
-  
-  // State for audio recording
-  const [isRecording, setIsRecording] = useState(false);
-  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
-  const recordedChunks = useRef<Blob[]>([]);
 
-  // State for Halt Job modal
+  // Modal open triggers — form state lives inside each modal component
   const [isHaltModalOpen, setIsHaltModalOpen] = useState(false);
-  const [haltReason, setHaltReason] = useState('');
-
-  // State for Missing Part modal
   const [missingPartIndex, setMissingPartIndex] = useState<number | null>(null);
-  const [missingReason, setMissingReason] = useState('Discrepancy');
-  const [missingNotes, setMissingNotes] = useState('');
-
-  // State for Not Used modal
   const [notUsedPartIndex, setNotUsedPartIndex] = useState<number | null>(null);
-  const [notUsedReason, setNotUsedReason] = useState('Not Needed');
-  const [notUsedNotes, setNotUsedNotes] = useState('');
 
   const photoInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
@@ -50,7 +232,7 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs 
     if (newPartRequestQuery.length < 2) return [];
     const q = newPartRequestQuery.toLowerCase();
     const existingPartNumbers = repairOrder?.parts.map(p => p.partNumber) || [];
-    return masterInventory.filter(part => 
+    return masterInventory.filter(part =>
         !existingPartNumbers.includes(part.partNumber) &&
         (part.partNumber.toLowerCase().includes(q) || part.description.toLowerCase().includes(q))
     ).slice(0, 3);
@@ -81,77 +263,30 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs 
     const file = event.target.files?.[0];
     if (file) {
       const url = URL.createObjectURL(file);
-      setCapturedMediaUrl(url);
-      setEvidenceModal({ directiveId: currentDirectiveIdForUpload, mode });
+      setEvidenceModal({ directiveId: currentDirectiveIdForUpload, mode, initialMediaUrl: url });
     }
-    if (event.target) event.target.value = ''; // Allow re-selecting the same file
+    if (event.target) event.target.value = '';
   };
-  
+
   const handleOpenAudioRecorder = (directiveId: string | null) => {
     setCurrentDirectiveIdForUpload(directiveId);
-    setEvidenceModal({ directiveId, mode: 'audio' });
-  };
-
-  const startRecording = async () => {
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        const recorder = new MediaRecorder(stream);
-        setMediaRecorder(recorder);
-        recordedChunks.current = [];
-
-        recorder.ondataavailable = event => {
-            if (event.data.size > 0) recordedChunks.current.push(event.data);
-        };
-        recorder.onstop = () => {
-            const blob = new Blob(recordedChunks.current, { type: 'audio/webm' });
-            const url = URL.createObjectURL(blob);
-            setCapturedMediaUrl(url);
-            stream.getTracks().forEach(track => track.stop());
-            setIsRecording(false);
-        };
-        recorder.start();
-        setIsRecording(true);
-    } catch (err) {
-        console.error("Microphone access error:", err);
-        alert("Microphone access denied. Please check browser permissions.");
-        handleCloseEvidenceModal();
-    }
-  };
-
-  const stopRecording = () => {
-      mediaRecorder?.stop();
+    setEvidenceModal({ directiveId, mode: 'audio', initialMediaUrl: null });
   };
 
   const handleCloseEvidenceModal = () => {
-    if (mediaRecorder && mediaRecorder.state === 'recording') {
-        mediaRecorder.stop();
-    }
-    mediaRecorder?.stream?.getTracks().forEach(track => track.stop());
-    if (capturedMediaUrl) {
-      URL.revokeObjectURL(capturedMediaUrl);
-    }
     setEvidenceModal(null);
-    setCapturedMediaUrl(null);
     setCurrentDirectiveIdForUpload(null);
-    setIsRecording(false);
-    setMediaRecorder(null);
   };
 
-  const handleSaveEvidence = () => {
-    if (!repairOrder || !evidenceModal || !capturedMediaUrl) return;
-
+  const handleSaveEvidence = (capturedMediaUrl: string) => {
+    if (!repairOrder || !evidenceModal) return;
     const result = TechnicianService.saveEvidence(repairOrder, evidenceModal, capturedMediaUrl);
-
     if (result.laborNoteUpdate) {
-        setLaborNote(prev => prev + result.laborNoteUpdate);
+      setLaborNote(prev => prev + result.laborNoteUpdate);
     }
-    
     if (result.updatedRO) {
-        updateRO(result.updatedRO);
+      updateRO(result.updatedRO);
     }
-
-    setCapturedMediaUrl(null); // Prevent URL from being revoked twice
-    handleCloseEvidenceModal();
   };
 
   const handleDirectiveComplete = (directive: Directive) => {
@@ -200,7 +335,7 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs 
     }, 300);
   };
 
-if (!repairOrder) {
+  if (!repairOrder) {
     return (
       <div className="space-y-6 animate-in zoom-in duration-500">
         <div className="glass p-20 text-center rounded-2xl">
@@ -243,37 +378,33 @@ if (!repairOrder) {
 
   const hasPendingPartDecisions = repairOrder.parts.some(p => p.status === PartStatus.APPROVAL_PENDING || p.status === PartStatus.REQUESTED);
   const isFinalizable = laborNote.length > 10 && !hasPendingPartDecisions;
+
   const handleFinalize = async () => {
     if (!repairOrder) return;
     const updatedRO = await TechnicianService.finalizeJob(repairOrder, laborNote);
     updateRO(updatedRO);
   };
 
-  const handleConfirmHalt = () => {
-    if (!repairOrder || !haltReason.trim()) return;
-    const updatedRO = TechnicianService.haltJob(repairOrder, haltReason);
+  const handleConfirmHalt = (reason: string) => {
+    if (!repairOrder) return;
+    const updatedRO = TechnicianService.haltJob(repairOrder, reason);
     updateRO(updatedRO);
     setIsHaltModalOpen(false);
-    setHaltReason('');
   };
 
-  const handleConfirmMissing = () => {
+  const handleConfirmMissing = (reason: string, notes: string) => {
     if (!repairOrder || missingPartIndex === null) return;
-    const { updatedRO, alert } = TechnicianService.reportMissingPart(repairOrder, missingPartIndex, missingReason, missingNotes);
+    const { updatedRO, alert } = TechnicianService.reportMissingPart(repairOrder, missingPartIndex, reason, notes);
     updateRO(updatedRO);
     addInventoryAlert(alert);
     setMissingPartIndex(null);
-    setMissingReason('Discrepancy');
-    setMissingNotes('');
   };
 
-  const handleConfirmNotUsed = () => {
+  const handleConfirmNotUsed = (reason: string, notes: string) => {
     if (!repairOrder || notUsedPartIndex === null) return;
-    const updatedRO = TechnicianService.reportNotUsed(repairOrder, notUsedPartIndex, notUsedReason, notUsedNotes);
+    const updatedRO = TechnicianService.reportNotUsed(repairOrder, notUsedPartIndex, reason, notes);
     updateRO(updatedRO);
     setNotUsedPartIndex(null);
-    setNotUsedReason('Not Needed');
-    setNotUsedNotes('');
   };
 
   const handleStartJob = () => {
@@ -295,7 +426,7 @@ if (!repairOrder) {
           </div>
           <div className="flex items-center gap-6">
             {repairOrder.status !== ROStatus.ACTIVE && (
-              <button 
+              <button
                 onClick={handleStartJob}
                 className="px-6 py-3 bg-neon-seafoam text-slate-900 font-black rounded-xl hover:scale-105 transition-all uppercase tracking-widest text-xs shadow-lg shadow-neon-seafoam/20"
               >
@@ -318,7 +449,7 @@ if (!repairOrder) {
               {repairOrder.directives.map((directive, idx) => {
                 const isWorkflowLocked = repairOrder.status !== ROStatus.ACTIVE;
                 const isPendingApproval = directive.isApproved === false;
-                
+
                 if (isPendingApproval) {
                   return (
                     <div key={directive.id} className="p-4 rounded-xl border border-orange-500/20 bg-slate-900/40 mb-4 last:mb-0 opacity-50 cursor-not-allowed">
@@ -342,13 +473,13 @@ if (!repairOrder) {
                         </div>
                         <h3 className="text-lg font-bold text-slate-200">{directive.title}</h3>
                       </div>
-                      
+
                       {directive.isCompleted ? (
                         <div className="text-neon-seafoam bg-neon-seafoam/10 border border-neon-seafoam/20 px-3 py-1 rounded-full text-[10px] font-black">COMPLETED</div>
                       ) : (
-                       <button 
-                            disabled={isWorkflowLocked} 
-                            onClick={() => handleDirectiveComplete(directive)} 
+                       <button
+                            disabled={isWorkflowLocked}
+                            onClick={() => handleDirectiveComplete(directive)}
                             className={`px-8 py-3 rounded-lg font-black text-xs uppercase tracking-widest shadow-xl transition-all ${isWorkflowLocked ? 'bg-slate-800 text-slate-500' : 'bg-neon-seafoam text-slate-900 hover:scale-105 active:scale-95'}`}
                         >
                           {isWorkflowLocked ? 'Locked' : 'Complete Task'}
@@ -436,106 +567,36 @@ if (!repairOrder) {
       </div>
 
       {missingPartIndex !== null && (
-        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
-          <div className="glass p-8 rounded-2xl w-full max-w-lg border border-red-500 shadow-2xl shadow-red-500/20">
-            <h3 className="text-lg font-black uppercase tracking-widest text-red-400 mb-4">Report Missing Part</h3>
-            <p className="text-sm text-slate-300 mb-6">You are reporting that <span className="text-white font-bold">{repairOrder.parts[missingPartIndex].description}</span> is missing from the bay. This will notify the Parts Manager.</p>
-            
-            <div className="space-y-4">
-              <div>
-                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-2">Reason</label>
-                <select 
-                  value={missingReason} 
-                  onChange={e => setMissingReason(e.target.value)}
-                  className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:border-red-500 outline-none"
-                >
-                  <option value="Discrepancy">Inventory Discrepancy</option>
-                  <option value="Damaged">Received Damaged</option>
-                  <option value="Wrong Part">Wrong Part in Box</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-              <div>
-                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-2">Additional Notes</label>
-                <textarea 
-                  value={missingNotes} 
-                  onChange={e => setMissingNotes(e.target.value)}
-                  placeholder="Provide more details..."
-                  className="w-full h-24 bg-slate-900 border border-white/10 rounded-lg p-4 text-white text-sm focus:border-red-500 outline-none transition-colors"
-                />
-              </div>
-            </div>
-
-            <div className="flex justify-between items-center mt-8">
-              <button onClick={() => setMissingPartIndex(null)} className="text-xs text-slate-500 hover:text-white">Cancel</button>
-              <button onClick={handleConfirmMissing} className="px-8 py-3 bg-red-500 text-white font-black rounded-lg hover:bg-red-600 transition-all uppercase tracking-widest text-xs">Report Missing</button>
-            </div>
-          </div>
-        </div>
+        <MissingPartModal
+          partDescription={repairOrder.parts[missingPartIndex].description}
+          onClose={() => setMissingPartIndex(null)}
+          onConfirm={handleConfirmMissing}
+        />
       )}
 
       {notUsedPartIndex !== null && (
-        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
-          <div className="glass p-8 rounded-2xl w-full max-w-lg border border-orange-500 shadow-2xl shadow-orange-500/20">
-            <h3 className="text-lg font-black uppercase tracking-widest text-orange-400 mb-4">Mark Part as Not Used</h3>
-            <p className="text-sm text-slate-300 mb-6">You are reporting that <span className="text-white font-bold">{repairOrder.parts[notUsedPartIndex].description}</span> was not used for this job. It will be returned to the Parts Manager for stock reconciliation.</p>
-            
-            <div className="space-y-4">
-              <div>
-                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-2">Reason</label>
-                <select 
-                  value={notUsedReason} 
-                  onChange={e => setNotUsedReason(e.target.value)}
-                  className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:border-orange-500 outline-none"
-                >
-                  <option value="Not Needed">Not Needed for Repair</option>
-                  <option value="Customer Declined">Customer Declined Item</option>
-                  <option value="Wrong Part">Wrong Part Ordered</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-              <div>
-                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-2">Additional Notes</label>
-                <textarea 
-                  value={notUsedNotes} 
-                  onChange={e => setNotUsedNotes(e.target.value)}
-                  placeholder="Provide more details..."
-                  className="w-full h-24 bg-slate-900 border border-white/10 rounded-lg p-4 text-white text-sm focus:border-orange-500 outline-none transition-colors"
-                />
-              </div>
-            </div>
-
-            <div className="flex justify-between items-center mt-8">
-              <button onClick={() => setNotUsedPartIndex(null)} className="text-xs text-slate-500 hover:text-white">Cancel</button>
-              <button onClick={handleConfirmNotUsed} className="px-8 py-3 bg-orange-500 text-white font-black rounded-lg hover:bg-orange-600 transition-all uppercase tracking-widest text-xs">Confirm Not Used</button>
-            </div>
-          </div>
-        </div>
+        <NotUsedModal
+          partDescription={repairOrder.parts[notUsedPartIndex].description}
+          onClose={() => setNotUsedPartIndex(null)}
+          onConfirm={handleConfirmNotUsed}
+        />
       )}
 
       {isHaltModalOpen && (
-        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
-          <div className="glass p-8 rounded-2xl w-full max-w-lg border border-orange-500 shadow-2xl shadow-orange-500/20">
-            <h3 className="text-lg font-black uppercase tracking-widest text-orange-400 mb-4">Halt Job Protocol</h3>
-            <p className="text-sm text-slate-300 mb-6">Explain why this job cannot proceed. This will stop the clock and notify the Service Manager.</p>
-            <textarea value={haltReason} onChange={e => setHaltReason(e.target.value)} onFocus={(e) => handleInputFocus(e)} placeholder="e.g., Waiting on special tool, discovered new issue requiring authorization..." autoFocus className="w-full h-32 bg-slate-900 border border-white/10 rounded-lg p-4 text-white text-base focus:border-orange-500 outline-none transition-colors" />
-            <div className="flex justify-between items-center mt-6">
-              <button onClick={() => setIsHaltModalOpen(false)} className="text-xs text-slate-500 hover:text-white">Cancel</button>
-              <button onClick={handleConfirmHalt} disabled={!haltReason.trim()} className="px-6 py-3 bg-orange-500 text-white font-bold rounded-lg hover:scale-105 disabled:opacity-50 disabled:grayscale">Confirm Halt</button>
-            </div>
-          </div>
-        </div>
+        <HaltJobModal
+          onClose={() => setIsHaltModalOpen(false)}
+          onConfirm={handleConfirmHalt}
+        />
       )}
 
       {evidenceModal && (
-        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
-          <div className="glass p-6 rounded-2xl w-full max-w-2xl border-2 border-neon-seafoam shadow-2xl shadow-neon-seafoam/20">
-            <h3 className="text-lg font-black uppercase tracking-widest text-neon-seafoam mb-4">{evidenceModal.mode === 'audio' ? 'Voice Record Command' : `Confirm ${evidenceModal.mode} Upload`}</h3>
-            {evidenceModal.mode === 'audio' && !capturedMediaUrl && (<div className="flex flex-col items-center justify-center p-8 space-y-4"><div className="relative h-20 w-20">{isRecording && <div className="absolute inset-0 bg-red-500 rounded-full animate-ping opacity-20"></div>}<div className={`h-20 w-20 rounded-full flex items-center justify-center border-4 ${isRecording ? 'bg-red-500/20 border-red-500' : 'bg-slate-700 border-slate-600'}`}><svg className={`w-10 h-10 ${isRecording ? 'text-red-500' : 'text-slate-400'}`} fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clipRule="evenodd" /></svg></div></div><p className="text-slate-400 text-sm font-bold uppercase tracking-widest">{isRecording ? "RECORDING HUD ACTIVE" : "MICROPHONE STANDBY"}</p><button onClick={isRecording ? stopRecording : startRecording} className={`px-10 py-4 rounded-xl font-black text-white transition-all text-xs uppercase tracking-widest ${isRecording ? 'bg-red-600 shadow-[0_0_20px_rgba(220,38,38,0.4)]' : 'bg-slate-800 hover:bg-slate-700'}`}>{isRecording ? 'Stop Recording' : 'Engage Recording'}</button></div>)}
-            {capturedMediaUrl && (<div className="aspect-video bg-slate-950 rounded-xl overflow-hidden mb-6 border border-white/10 flex items-center justify-center shadow-inner">{evidenceModal.mode === 'photo' ? ( <img src={capturedMediaUrl} alt="Preview" className="max-w-full max-h-full object-contain" /> ) : evidenceModal.mode === 'video' ? ( <video src={capturedMediaUrl} controls autoPlay className="w-full h-full" /> ) : evidenceModal.mode === 'audio' ? ( <audio src={capturedMediaUrl} controls autoPlay className="w-full p-8" /> ) : null }</div>)}
-            <div className="flex justify-between items-center mt-4"><button onClick={handleCloseEvidenceModal} className="text-slate-500 font-bold text-xs uppercase tracking-widest hover:text-white transition-all">Abort Action</button><button onClick={handleSaveEvidence} disabled={!capturedMediaUrl} className="px-10 py-4 bg-neon-seafoam text-slate-900 font-black rounded-xl transition-all disabled:opacity-30 uppercase text-xs tracking-widest hover:scale-105 active:scale-95 shadow-xl shadow-neon-seafoam/20">Commit to Record</button></div>
-          </div>
-        </div>
+        <EvidenceModal
+          directiveId={evidenceModal.directiveId}
+          mode={evidenceModal.mode}
+          initialMediaUrl={evidenceModal.initialMediaUrl}
+          onClose={handleCloseEvidenceModal}
+          onSave={handleSaveEvidence}
+        />
       )}
     </>
   );

@@ -347,7 +347,7 @@ const RODetail = ({
         )}
       </div>
 
-      {ro.customerNotes && (
+      {ro.customerNotes != null && (
         <div>
           <h5 className="font-bold text-slate-400 uppercase tracking-wider text-[10px] mb-2">Internal Notes</h5>
           <p className="text-slate-300 whitespace-pre-wrap bg-slate-900/50 p-2 rounded-md border border-white/5">{ro.customerNotes}</p>
@@ -375,6 +375,50 @@ const initialProfileState = {
   engineHorsepower: '',
   engineSerial: '',
 };
+
+interface AuthorizationModalProps {
+  ro: RepairOrder;
+  onClose: () => void;
+  onAuthorize: (ro: RepairOrder, type: 'digital' | 'verbal', data: string) => void;
+}
+
+const AuthorizationModal: React.FC<AuthorizationModalProps> = React.memo(({ ro, onClose, onAuthorize }) => {
+  const [signatureForAuth, setSignatureForAuth] = useState<string | null>(null);
+  const [isVerbalCertified, setIsVerbalCertified] = useState(false);
+  const canAuthorize = !!signatureForAuth || isVerbalCertified;
+
+  return (
+    <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">
+      <div className="glass p-6 rounded-2xl w-full max-w-lg border border-neon-seafoam shadow-2xl shadow-neon-seafoam/20 overflow-y-auto max-h-[90vh]">
+        <h3 className="text-lg font-black uppercase tracking-widest text-neon-seafoam mb-4">Authorization Gate</h3>
+        <p className="text-sm text-slate-300 mb-6">Authorize RO <span className="font-bold text-white">{ro.id}</span> for <span className="font-bold text-white">{ro.customerName}</span>.</p>
+        <SignatureCanvas
+          onSave={(dataUrl) => { setSignatureForAuth(dataUrl); setIsVerbalCertified(false); }}
+          onClear={() => setSignatureForAuth(null)}
+        />
+        <div className="flex items-center my-4">
+          <div className="flex-grow h-px bg-white/10"></div>
+          <span className="px-4 text-xs font-bold text-slate-500">OR</span>
+          <div className="flex-grow h-px bg-white/10"></div>
+        </div>
+        <label htmlFor="verbalAuthModal" className={`py-4 rounded-xl font-bold text-sm transition-all border-2 flex items-center justify-center gap-3 cursor-pointer ${isVerbalCertified ? 'bg-neon-seafoam/20 border-neon-seafoam text-neon-seafoam' : 'bg-slate-800 border-slate-700 text-slate-300 hover:border-slate-500'}`}>
+          <input id="verbalAuthModal" type="checkbox" checked={isVerbalCertified} onChange={(e) => { setIsVerbalCertified(e.target.checked); if (e.target.checked) setSignatureForAuth(null); }} className="h-5 w-5 bg-slate-900 border-slate-600 text-neon-seafoam focus:ring-neon-seafoam" />
+          I Certify Verbal Authorization
+        </label>
+        <div className="flex justify-between items-center mt-6">
+          <button onClick={onClose} className="text-xs text-slate-500 hover:text-white">Cancel</button>
+          <button
+            onClick={() => onAuthorize(ro, signatureForAuth ? 'digital' : 'verbal', signatureForAuth || 'Verbally authorized.')}
+            disabled={!canAuthorize}
+            className="px-6 py-3 bg-neon-seafoam text-slate-900 font-bold rounded-lg hover:scale-105 disabled:opacity-50 disabled:grayscale disabled:hover:scale-100"
+          >
+            Authorize
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+});
 
 const SignatureCanvas = ({ onSave, onClear }: { onSave: (dataUrl: string) => void, onClear?: () => void }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -502,10 +546,6 @@ const ServiceManagerPage: React.FC<ServiceManagerPageProps> = ({
     }
   };
 
-  // State for auth modal
-  const [signatureForAuth, setSignatureForAuth] = useState<string | null>(null);
-  const [isVerbalCertifiedForAuth, setIsVerbalCertifiedForAuth] = useState(false);
-
   const roGenerationRef = useRef<HTMLDivElement>(null);
 
   // Filter Logic
@@ -621,11 +661,7 @@ const handleROGenerated = (newRO: RepairOrder) => {
   setViewMode('SEARCH');
 };
 
-  const handleAuthorize = (ro: RepairOrder) => { 
-    setSignatureForAuth(null);
-    setIsVerbalCertifiedForAuth(false);
-    setAuthorizingRO(ro); 
-  };
+  const handleAuthorize = (ro: RepairOrder) => { setAuthorizingRO(ro); };
   const handleSendToBay = (ro: RepairOrder) => { setAssignTechnicianRO(ro); };
 
   const handleHoldJob = (ro: RepairOrder) => {
@@ -938,7 +974,7 @@ const handleROGenerated = (newRO: RepairOrder) => {
       {vesselActionMenu && (<div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4"><div className="glass p-8 rounded-2xl w-full max-w-md border border-white/10"><h3 className="text-lg font-black uppercase tracking-widest text-white mb-2">{vesselActionMenu.customerName}</h3><p className="text-xs text-slate-400 mb-6">{vesselActionMenu.boatMake} {vesselActionMenu.boatModel} • S/N: {vesselActionMenu.engineSerial}</p><div className="space-y-4"><button onClick={() => { setViewingDNA(vesselActionMenu); setVesselActionMenu(null); }} className="w-full text-left px-6 py-4 bg-slate-800/50 border border-white/10 text-slate-200 hover:border-neon-steel hover:text-white transition-all rounded-lg font-bold text-sm">View Full Vessel DNA</button><button onClick={() => startNewROFromDNA(vesselActionMenu)} className="w-full text-left px-6 py-4 bg-slate-800/50 border border-white/10 text-slate-200 hover:border-neon-seafoam hover:text-white transition-all rounded-lg font-bold text-sm">Start New Repair Order</button></div><button onClick={() => setVesselActionMenu(null)} className="text-xs text-slate-500 hover:text-white mt-6 w-full text-center">Cancel</button></div></div>)}
       {historicalAlert && (<div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4"><div className="glass p-8 rounded-2xl w-full max-w-lg border-2 border-red-500 shadow-2xl shadow-red-500/20"><h3 className="text-lg font-black uppercase tracking-widest text-red-400 mb-2">Historical Alert</h3><p className="text-sm text-slate-300 mb-6">Oracle scan of <span className="font-bold text-white">{historicalAlert.vesselHIN}</span> indicates unresolved service items.</p><div className="bg-red-500/10 p-4 rounded-lg border border-red-500/30"><p className="text-xs text-red-300 font-bold uppercase mb-1">Last Recorded Note:</p><p className="text-sm text-white font-medium">{historicalAlert.unresolvedNotes}</p></div><div className="flex justify-between items-center mt-6"><button onClick={() => { setViewingDNA(historicalAlert); setHistoricalAlert(null); }} className="text-xs text-slate-300 hover:text-white">View Full DNA</button><div className="flex gap-3"><button onClick={() => { setVesselActionMenu(historicalAlert); setHistoricalAlert(null); }} className="px-4 py-3 bg-slate-800 text-slate-300 font-bold rounded-lg hover:bg-slate-700 text-xs">Cancel</button><button onClick={() => startNewROFromDNA(historicalAlert)} className="px-4 py-3 bg-slate-700 text-white font-bold rounded-lg hover:scale-105 text-xs">Start New RO</button><button onClick={() => startNewROFromDNA(historicalAlert, true)} className="px-4 py-3 bg-red-500 text-white font-bold rounded-lg hover:scale-105 text-xs">Acknowledge & Start RO</button></div></div></div></div>)}
       {viewingDNA && (<div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4"><VesselDNAView vessel={viewingDNA} allROs={repairOrders} onClose={() => { setVesselActionMenu(viewingDNA); setViewingDNA(null); }} /></div>)}
-      {authorizingRO && (<div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4"><div className="glass p-6 rounded-2xl w-full max-w-lg border border-neon-seafoam shadow-2xl shadow-neon-seafoam/20 overflow-y-auto max-h-[90vh]"><h3 className="text-lg font-black uppercase tracking-widest text-neon-seafoam mb-4">Authorization Gate</h3><p className="text-sm text-slate-300 mb-6">Authorize RO <span className="font-bold text-white">{authorizingRO.id}</span> for <span className="font-bold text-white">{authorizingRO.customerName}</span>.</p><SignatureCanvas onSave={(dataUrl) => { setSignatureForAuth(dataUrl); setIsVerbalCertifiedForAuth(false); }} onClear={() => setSignatureForAuth(null)} /><div className="flex items-center my-4"><div className="flex-grow h-px bg-white/10"></div><span className="px-4 text-xs font-bold text-slate-500">OR</span><div className="flex-grow h-px bg-white/10"></div></div><label htmlFor="verbalAuthModal" className={`py-4 rounded-xl font-bold text-sm transition-all border-2 flex items-center justify-center gap-3 cursor-pointer ${isVerbalCertifiedForAuth ? 'bg-neon-seafoam/20 border-neon-seafoam text-neon-seafoam' : 'bg-slate-800 border-slate-700 text-slate-300 hover:border-slate-500'}`}><input id="verbalAuthModal" type="checkbox" checked={isVerbalCertifiedForAuth} onChange={(e) => { setIsVerbalCertifiedForAuth(e.target.checked); if(e.target.checked) setSignatureForAuth(null); }} className="h-5 w-5 bg-slate-900 border-slate-600 text-neon-seafoam focus:ring-neon-seafoam" />I Certify Verbal Authorization</label><div className="flex justify-between items-center mt-6"><button onClick={() => setAuthorizingRO(null)} className="text-xs text-slate-500 hover:text-white">Cancel</button><button onClick={() => handleFinalizeAuthorization(authorizingRO, signatureForAuth ? 'digital' : 'verbal', signatureForAuth || 'Verbally authorized.')} disabled={!signatureForAuth && !isVerbalCertifiedForAuth} className="px-6 py-3 bg-neon-seafoam text-slate-900 font-bold rounded-lg hover:scale-105 disabled:opacity-50 disabled:grayscale disabled:hover:scale-100">Authorize</button></div></div></div>)}
+      {authorizingRO && <AuthorizationModal ro={authorizingRO} onClose={() => setAuthorizingRO(null)} onAuthorize={handleFinalizeAuthorization} />}
       {assignTechnicianRO && (<div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4"><div className="glass p-8 rounded-2xl w-full max-w-md border border-neon-steel shadow-2xl shadow-neon-steel/20"><h3 className="text-lg font-black uppercase tracking-widest text-neon-steel mb-4">Assign Technician</h3><p className="text-sm text-slate-300 mb-6">Assign an available technician to RO <span className="font-bold text-white">{assignTechnicianRO.id}</span>.</p><div className="grid grid-cols-2 gap-4">{TECHNICIANS.map(tech => (<button key={tech.id} onClick={() => handleAssignTechnician(assignTechnicianRO, tech)} className="p-6 bg-slate-800/50 hover:bg-slate-700/50 border border-white/10 hover:border-neon-steel transition-all rounded-lg text-lg font-bold">{tech.name}</button>))}</div><button onClick={() => setAssignTechnicianRO(null)} className="text-xs text-slate-500 hover:text-white mt-6 w-full text-center">Cancel</button></div></div>)}
       {reviewRequestRO && (<div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4"><div className="glass p-8 rounded-2xl w-full max-w-lg border border-red-500 shadow-2xl shadow-red-500/20"><h3 className="text-lg font-black uppercase tracking-widest text-red-400 mb-4">Technician Requisition Review</h3><p className="text-sm text-slate-300 mb-6">Reviewing {pendingRequests.length} pending request(s) for RO <span className="font-bold text-white">{reviewRequestRO.id}</span>.</p><div className="space-y-4 max-h-64 overflow-y-auto pr-2">{pendingRequests.map(request => (<div key={request.id} className="p-4 bg-slate-900/50 border border-white/10 rounded-lg"><div className="flex justify-between items-start"><div><span className="text-xs font-bold text-slate-400 uppercase">{request.type} REQUEST</span>{request.type === 'DIRECTIVE' && <p className="text-sm font-bold text-white">{(request.payload as {title: string}).title}</p>}{request.type === 'PART' && (
   <div className="space-y-1">

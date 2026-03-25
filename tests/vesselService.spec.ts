@@ -230,3 +230,65 @@ describe('vesselService.initializeProfileFromDNA', () => {
     expect(profile.customerNotes).not.toContain('HISTORICAL ALERT');
   });
 });
+
+// ============================================================
+// Vessel DNA — incomplete directive visibility
+// ============================================================
+
+describe('Vessel DNA surfaces incomplete directives in history', () => {
+  it('archives the RO in vessel history and flags the incomplete directive so future SMs see unfinished work on next visit', async () => {
+    // Scenario: boat comes in, three directives scoped
+    //   1. Replace impeller            → completed
+    //   2. Inspect and grease trim tabs → completed
+    //   3. Investigate raw water leak   → NOT completed (found but not resolved)
+    // SM closes the job. Six months later the boat returns. The SM needs to see
+    // at a glance that the leak was never resolved.
+
+    const vessel = makeVessel();
+
+    const archivedEntry = {
+      id: 'RO-2026-0325',
+      date: '3/25/2026',
+      // Summary captures the two completed directives; the third was left open
+      summary: 'Replaced impeller. Inspected and greased trim tabs. Raw water leak identified — source not resolved.',
+      partsUsed: [{ partNumber: 'IMP-001', description: 'Impeller Kit' }],
+    };
+
+    // addPastRO and flagUnresolvedIssues each call get() once
+    mockVesselDnaHistory.get
+      .mockResolvedValueOnce(vessel)                                          // read for addPastRO
+      .mockResolvedValueOnce({ ...vessel, pastROs: [archivedEntry] });        // read for flagUnresolvedIssues
+
+    mockVesselDnaHistory.put.mockResolvedValue(undefined);
+
+    // Step 1: Close the job — archive the RO into vessel history
+    await vesselService.addPastRO('HIN-001', archivedEntry);
+
+    // Step 2: Flag the vessel INCOMPLETE because directive 3 was not finished
+    const incompleteSummary = 'Incomplete from RO RO-2026-0325: Investigate raw water leak';
+    await vesselService.flagUnresolvedIssues('HIN-001', incompleteSummary);
+
+    // --- Assertions ---
+
+    // The archived RO appears in vessel history
+    const putAfterArchive = mockVesselDnaHistory.put.mock.calls[0][0];
+    expect(putAfterArchive.pastROs).toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: 'RO-2026-0325' })])
+    );
+
+    // The summary on the archived entry covers all three directive outcomes
+    // (completed work is described; the open item is noted as unresolved)
+    const savedSummary = putAfterArchive.pastROs.find((r: any) => r.id === 'RO-2026-0325').summary;
+    expect(savedSummary).toContain('Replaced impeller');
+    expect(savedSummary).toContain('trim tabs');
+    expect(savedSummary).toContain('Raw water leak');
+
+    // The vessel is now INCOMPLETE — Oracle Search will alert the SM on next visit
+    const putAfterFlag = mockVesselDnaHistory.put.mock.calls[1][0];
+    expect(putAfterFlag.status).toBe('INCOMPLETE');
+
+    // The unresolved notes name the specific incomplete directive
+    // so the SM knows exactly what was left unfinished
+    expect(putAfterFlag.unresolvedNotes).toContain('Investigate raw water leak');
+  });
+});

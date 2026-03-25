@@ -226,7 +226,7 @@ const RODetail = ({ ro }: { ro: RepairOrder }) => (
           {ro.directives.map(d => <li key={d.id}>{d.title}</li>)}
         </ul>
       </div>
-      {ro.customerNotes && (
+      {ro.customerNotes != null && (
         <div>
           <h5 className="font-bold text-slate-400 uppercase tracking-wider text-[10px]">Customer Notes</h5>
           <p className="text-slate-300 mt-1 whitespace-pre-wrap bg-slate-900/50 p-2 rounded-md">{ro.customerNotes}</p>

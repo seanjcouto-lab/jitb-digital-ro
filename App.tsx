@@ -278,7 +278,7 @@ const App: React.FC = () => {
       )}
 
       <Header
-        activeRO={activeROForTech}
+        activeRO={activeRole === UserRole.TECHNICIAN ? activeROForTech : undefined}
         config={config}
         currentTechnician={currentTechnician}
         onTechViewExit={() => setCurrentTechnicianId(null)}
