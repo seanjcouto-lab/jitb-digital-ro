@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useRef, useEffect, useLayoutEffect, useMemo } from 'react';
 import { Plus, X, Search } from 'lucide-react';
 import { RepairOrder, ROStatus, PartStatus, VesselHistory, Part, RORequest, Technician, PaymentStatus, CollectionsStatus } from '../types';
 import { TECHNICIANS } from '../constants';
@@ -378,8 +378,22 @@ const initialProfileState = {
 
 const SignatureCanvas = ({ onSave, onClear }: { onSave: (dataUrl: string) => void, onClear?: () => void }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const [isDrawing, setIsDrawing] = useState(false);
+    const isDrawingRef = useRef(false);
     const [isSigned, setIsSigned] = useState(false);
+
+    useLayoutEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+            ctx.strokeStyle = '#FFFFFF';
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+        }
+    }, []);
 
     const getCoords = (event: any) => {
         const canvas = canvasRef.current;
@@ -389,7 +403,7 @@ const SignatureCanvas = ({ onSave, onClear }: { onSave: (dataUrl: string) => voi
             return { x: event.touches[0].clientX - rect.left, y: event.touches[0].clientY - rect.top };
         }
         return { x: event.clientX - rect.left, y: event.clientY - rect.top };
-    }
+    };
 
     const startDrawing = (e: any) => {
         e.preventDefault();
@@ -398,12 +412,12 @@ const SignatureCanvas = ({ onSave, onClear }: { onSave: (dataUrl: string) => voi
         if (!ctx) return;
         ctx.beginPath();
         ctx.moveTo(x, y);
-        setIsDrawing(true);
+        isDrawingRef.current = true;
         setIsSigned(true);
     };
 
     const draw = (e: any) => {
-        if (!isDrawing) return;
+        if (!isDrawingRef.current) return;
         e.preventDefault();
         const { x, y } = getCoords(e);
         const ctx = canvasRef.current?.getContext('2d');
@@ -412,9 +426,7 @@ const SignatureCanvas = ({ onSave, onClear }: { onSave: (dataUrl: string) => voi
         ctx.stroke();
     };
 
-    const stopDrawing = () => {
-        setIsDrawing(false);
-    };
+    const stopDrawing = () => { isDrawingRef.current = false; };
 
     const clearCanvas = () => {
         const canvas = canvasRef.current;
@@ -425,38 +437,18 @@ const SignatureCanvas = ({ onSave, onClear }: { onSave: (dataUrl: string) => voi
             if (onClear) onClear();
         }
     };
-    
-    const saveSignature = () => {
-      const canvas = canvasRef.current;
-      if(canvas && isSigned) {
-        onSave(canvas.toDataURL('image/png'));
-      }
-    }
 
-    useEffect(() => {
+    const saveSignature = () => {
         const canvas = canvasRef.current;
-        if (!canvas) return;
-        const resizeCanvas = () => {
-            const ctx = canvas.getContext('2d');
-            if(ctx) {
-                const ratio = Math.max(window.devicePixelRatio || 1, 1);
-                canvas.width = canvas.offsetWidth * ratio;
-                canvas.height = canvas.offsetHeight * ratio;
-                ctx.scale(ratio, ratio);
-                ctx.strokeStyle = '#FFFFFF';
-                ctx.lineWidth = 2;
-            }
-        };
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-        return () => window.removeEventListener('resize', resizeCanvas);
-    }, []);
+        if (canvas && isSigned) onSave(canvas.toDataURL('image/png'));
+    };
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-3">
+            <p className="text-xs text-slate-400 uppercase font-bold tracking-widest">Customer Signature</p>
             <canvas
                 ref={canvasRef}
-                className="w-full h-48 bg-slate-900 rounded-lg border border-white/10 touch-none"
+                className="w-full h-36 bg-slate-900 rounded-lg border border-white/20 touch-none block"
                 onMouseDown={startDrawing}
                 onMouseMove={draw}
                 onMouseUp={stopDrawing}
@@ -942,7 +934,7 @@ const handleROGenerated = (newRO: RepairOrder) => {
       {vesselActionMenu && (<div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4"><div className="glass p-8 rounded-2xl w-full max-w-md border border-white/10"><h3 className="text-lg font-black uppercase tracking-widest text-white mb-2">{vesselActionMenu.customerName}</h3><p className="text-xs text-slate-400 mb-6">{vesselActionMenu.boatMake} {vesselActionMenu.boatModel} • S/N: {vesselActionMenu.engineSerial}</p><div className="space-y-4"><button onClick={() => { setViewingDNA(vesselActionMenu); setVesselActionMenu(null); }} className="w-full text-left px-6 py-4 bg-slate-800/50 border border-white/10 text-slate-200 hover:border-neon-steel hover:text-white transition-all rounded-lg font-bold text-sm">View Full Vessel DNA</button><button onClick={() => startNewROFromDNA(vesselActionMenu)} className="w-full text-left px-6 py-4 bg-slate-800/50 border border-white/10 text-slate-200 hover:border-neon-seafoam hover:text-white transition-all rounded-lg font-bold text-sm">Start New Repair Order</button></div><button onClick={() => setVesselActionMenu(null)} className="text-xs text-slate-500 hover:text-white mt-6 w-full text-center">Cancel</button></div></div>)}
       {historicalAlert && (<div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4"><div className="glass p-8 rounded-2xl w-full max-w-lg border-2 border-red-500 shadow-2xl shadow-red-500/20"><h3 className="text-lg font-black uppercase tracking-widest text-red-400 mb-2">Historical Alert</h3><p className="text-sm text-slate-300 mb-6">Oracle scan of <span className="font-bold text-white">{historicalAlert.vesselHIN}</span> indicates unresolved service items.</p><div className="bg-red-500/10 p-4 rounded-lg border border-red-500/30"><p className="text-xs text-red-300 font-bold uppercase mb-1">Last Recorded Note:</p><p className="text-sm text-white font-medium">{historicalAlert.unresolvedNotes}</p></div><div className="flex justify-between items-center mt-6"><button onClick={() => { setViewingDNA(historicalAlert); setHistoricalAlert(null); }} className="text-xs text-slate-300 hover:text-white">View Full DNA</button><div className="flex gap-3"><button onClick={() => { setVesselActionMenu(historicalAlert); setHistoricalAlert(null); }} className="px-4 py-3 bg-slate-800 text-slate-300 font-bold rounded-lg hover:bg-slate-700 text-xs">Cancel</button><button onClick={() => startNewROFromDNA(historicalAlert)} className="px-4 py-3 bg-slate-700 text-white font-bold rounded-lg hover:scale-105 text-xs">Start New RO</button><button onClick={() => startNewROFromDNA(historicalAlert, true)} className="px-4 py-3 bg-red-500 text-white font-bold rounded-lg hover:scale-105 text-xs">Acknowledge & Start RO</button></div></div></div></div>)}
       {viewingDNA && (<div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4"><VesselDNAView vessel={viewingDNA} allROs={repairOrders} onClose={() => { setVesselActionMenu(viewingDNA); setViewingDNA(null); }} /></div>)}
-      {authorizingRO && (<div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4"><div className="glass p-8 rounded-2xl w-full max-w-lg border border-neon-seafoam shadow-2xl shadow-neon-seafoam/20"><h3 className="text-lg font-black uppercase tracking-widest text-neon-seafoam mb-4">Authorization Gate</h3><p className="text-sm text-slate-300 mb-6">Authorize RO <span className="font-bold text-white">{authorizingRO.id}</span> for <span className="font-bold text-white">{authorizingRO.customerName}</span>.</p><SignatureCanvas onSave={(dataUrl) => { setSignatureForAuth(dataUrl); setIsVerbalCertifiedForAuth(false); }} onClear={() => setSignatureForAuth(null)} /><div className="flex items-center my-4"><div className="flex-grow h-px bg-white/10"></div><span className="px-4 text-xs font-bold text-slate-500">OR</span><div className="flex-grow h-px bg-white/10"></div></div><label htmlFor="verbalAuthModal" className={`py-4 rounded-xl font-bold text-sm transition-all border-2 flex items-center justify-center gap-3 cursor-pointer ${isVerbalCertifiedForAuth ? 'bg-neon-seafoam/20 border-neon-seafoam text-neon-seafoam' : 'bg-slate-800 border-slate-700 text-slate-300 hover:border-slate-500'}`}><input id="verbalAuthModal" type="checkbox" checked={isVerbalCertifiedForAuth} onChange={(e) => { setIsVerbalCertifiedForAuth(e.target.checked); if(e.target.checked) setSignatureForAuth(null); }} className="h-5 w-5 bg-slate-900 border-slate-600 text-neon-seafoam focus:ring-neon-seafoam" />I Certify Verbal Authorization</label><div className="flex justify-between items-center mt-6"><button onClick={() => setAuthorizingRO(null)} className="text-xs text-slate-500 hover:text-white">Cancel</button><button onClick={() => handleFinalizeAuthorization(authorizingRO, signatureForAuth ? 'digital' : 'verbal', signatureForAuth || 'Verbally authorized.')} disabled={!signatureForAuth && !isVerbalCertifiedForAuth} className="px-6 py-3 bg-neon-seafoam text-slate-900 font-bold rounded-lg hover:scale-105 disabled:opacity-50 disabled:grayscale disabled:hover:scale-100">Authorize</button></div></div></div>)}
+      {authorizingRO && (<div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4"><div className="glass p-6 rounded-2xl w-full max-w-lg border border-neon-seafoam shadow-2xl shadow-neon-seafoam/20 overflow-y-auto max-h-[90vh]"><h3 className="text-lg font-black uppercase tracking-widest text-neon-seafoam mb-4">Authorization Gate</h3><p className="text-sm text-slate-300 mb-6">Authorize RO <span className="font-bold text-white">{authorizingRO.id}</span> for <span className="font-bold text-white">{authorizingRO.customerName}</span>.</p><SignatureCanvas onSave={(dataUrl) => { setSignatureForAuth(dataUrl); setIsVerbalCertifiedForAuth(false); }} onClear={() => setSignatureForAuth(null)} /><div className="flex items-center my-4"><div className="flex-grow h-px bg-white/10"></div><span className="px-4 text-xs font-bold text-slate-500">OR</span><div className="flex-grow h-px bg-white/10"></div></div><label htmlFor="verbalAuthModal" className={`py-4 rounded-xl font-bold text-sm transition-all border-2 flex items-center justify-center gap-3 cursor-pointer ${isVerbalCertifiedForAuth ? 'bg-neon-seafoam/20 border-neon-seafoam text-neon-seafoam' : 'bg-slate-800 border-slate-700 text-slate-300 hover:border-slate-500'}`}><input id="verbalAuthModal" type="checkbox" checked={isVerbalCertifiedForAuth} onChange={(e) => { setIsVerbalCertifiedForAuth(e.target.checked); if(e.target.checked) setSignatureForAuth(null); }} className="h-5 w-5 bg-slate-900 border-slate-600 text-neon-seafoam focus:ring-neon-seafoam" />I Certify Verbal Authorization</label><div className="flex justify-between items-center mt-6"><button onClick={() => setAuthorizingRO(null)} className="text-xs text-slate-500 hover:text-white">Cancel</button><button onClick={() => handleFinalizeAuthorization(authorizingRO, signatureForAuth ? 'digital' : 'verbal', signatureForAuth || 'Verbally authorized.')} disabled={!signatureForAuth && !isVerbalCertifiedForAuth} className="px-6 py-3 bg-neon-seafoam text-slate-900 font-bold rounded-lg hover:scale-105 disabled:opacity-50 disabled:grayscale disabled:hover:scale-100">Authorize</button></div></div></div>)}
       {assignTechnicianRO && (<div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4"><div className="glass p-8 rounded-2xl w-full max-w-md border border-neon-steel shadow-2xl shadow-neon-steel/20"><h3 className="text-lg font-black uppercase tracking-widest text-neon-steel mb-4">Assign Technician</h3><p className="text-sm text-slate-300 mb-6">Assign an available technician to RO <span className="font-bold text-white">{assignTechnicianRO.id}</span>.</p><div className="grid grid-cols-2 gap-4">{TECHNICIANS.map(tech => (<button key={tech.id} onClick={() => handleAssignTechnician(assignTechnicianRO, tech)} className="p-6 bg-slate-800/50 hover:bg-slate-700/50 border border-white/10 hover:border-neon-steel transition-all rounded-lg text-lg font-bold">{tech.name}</button>))}</div><button onClick={() => setAssignTechnicianRO(null)} className="text-xs text-slate-500 hover:text-white mt-6 w-full text-center">Cancel</button></div></div>)}
       {reviewRequestRO && (<div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4"><div className="glass p-8 rounded-2xl w-full max-w-lg border border-red-500 shadow-2xl shadow-red-500/20"><h3 className="text-lg font-black uppercase tracking-widest text-red-400 mb-4">Technician Requisition Review</h3><p className="text-sm text-slate-300 mb-6">Reviewing {pendingRequests.length} pending request(s) for RO <span className="font-bold text-white">{reviewRequestRO.id}</span>.</p><div className="space-y-4 max-h-64 overflow-y-auto pr-2">{pendingRequests.map(request => (<div key={request.id} className="p-4 bg-slate-900/50 border border-white/10 rounded-lg"><div className="flex justify-between items-start"><div><span className="text-xs font-bold text-slate-400 uppercase">{request.type} REQUEST</span>{request.type === 'DIRECTIVE' && <p className="text-sm font-bold text-white">{(request.payload as {title: string}).title}</p>}{request.type === 'PART' && (
   <div className="space-y-1">
