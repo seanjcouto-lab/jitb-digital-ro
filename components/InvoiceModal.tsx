@@ -200,8 +200,8 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, ov
   const grandTotal = Math.max(0, laborTotal + partsTotal + taxAmount - discount);
 
   return (
-    <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
-      <div className="glass p-6 rounded-2xl w-full max-w-4xl border-2 border-neon-steel shadow-2xl shadow-neon-steel/20 flex flex-col">
+    <div className="fixed inset-0 bg-black/80 z-50 overflow-y-auto p-4 animate-in fade-in duration-300">
+      <div className="glass p-6 rounded-2xl w-full max-w-4xl mx-auto border-2 border-neon-steel shadow-2xl shadow-neon-steel/20">
         <div className="flex justify-between items-center mb-4 border-b border-white/10 pb-4">
             <div>
               <h3 className="text-xl font-black uppercase tracking-widest text-neon-steel">Final Review & Invoice Generation</h3>
@@ -209,8 +209,8 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, ov
             </div>
             <button onClick={onClose} className="text-slate-400 font-bold text-2xl hover:text-white transition-colors">&times;</button>
         </div>
-        
-        <div className="flex-grow overflow-y-auto max-h-[75vh] pr-4 space-y-6">
+
+        <div className="space-y-6">
           {/* Labor Section */}
           <section>
             <h4 className="font-bold text-slate-300 uppercase tracking-wider mb-2">Labor Summary</h4>

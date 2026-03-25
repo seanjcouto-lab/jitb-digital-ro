@@ -126,11 +126,19 @@ const VesselDNAView: React.FC<VesselDNAViewProps> = ({ vessel, allROs, onClose }
                                 </div>
                                 <div className="text-[9px] font-black px-2 py-0.5 rounded bg-slate-800 text-slate-400">ARCHIVED</div>
                             </div>
-                            {fullRO && fullRO.directives.length > 0 && (
+                            {fullRO && fullRO.directives.filter(d => d.isCompleted).length > 0 && (
                               <div className="mt-3 border-t border-white/5 pt-3">
                                   <p className="text-[9px] text-slate-500 font-black uppercase mb-2">Directives Executed</p>
                                   <div className="flex flex-wrap gap-1">
-                                      {fullRO.directives.map(d => <span key={d.id} className="text-[8px] bg-slate-800 border border-white/5 text-slate-300 px-2 py-0.5 rounded uppercase tracking-tighter">{d.title}</span>)}
+                                      {fullRO.directives.filter(d => d.isCompleted).map(d => <span key={d.id} className="text-[8px] bg-slate-800 border border-white/5 text-slate-300 px-2 py-0.5 rounded uppercase tracking-tighter">{d.title}</span>)}
+                                  </div>
+                              </div>
+                            )}
+                            {fullRO && fullRO.directives.filter(d => !d.isCompleted).length > 0 && (
+                              <div className="mt-3 border-t border-white/5 pt-3">
+                                  <p className="text-[9px] text-orange-400 font-black uppercase mb-2">Follow-Up Required</p>
+                                  <div className="flex flex-wrap gap-1">
+                                      {fullRO.directives.filter(d => !d.isCompleted).map(d => <span key={d.id} className="text-[8px] bg-orange-500/10 border border-orange-500/30 text-orange-300 px-2 py-0.5 rounded uppercase tracking-tighter">{d.title}</span>)}
                                   </div>
                               </div>
                             )}
