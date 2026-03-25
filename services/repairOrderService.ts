@@ -345,6 +345,13 @@ export const repairOrderService = {
       await vesselService.createVessel(newVesselDNA);
     }
 
+    // Flag vessel as INCOMPLETE if any directives were not finished — triggers alert on next Oracle Search
+    const incompleteDirectives = ro.directives.filter(d => !d.isCompleted);
+    if (incompleteDirectives.length > 0) {
+      const unresolvedSummary = `Incomplete from RO ${ro.id}: ${incompleteDirectives.map(d => d.title).join(', ')}`;
+      await vesselService.flagUnresolvedIssues(vesselKey, unresolvedSummary);
+    }
+
     domainEventService.publish('repair-order:completed', updatedRO);
     return updatedRO;
   },

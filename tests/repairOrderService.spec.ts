@@ -438,3 +438,120 @@ describe('edge case: parts reassignment from stalled job', () => {
     expect(billableRO2[0].partNumber).toBe('P-001');
   });
 });
+
+// ============================================================
+// Edge Case 4 — Customer declines expensive part, partial invoice
+// ============================================================
+
+describe('edge case: customer declines expensive part — partial invoice', () => {
+  it('DECLINED part is excluded from billable parts, fulfilled part is included', () => {
+    const ro = makeRO({
+      parts: [
+        { partNumber: 'P-CHEAP', description: 'Oil Filter', msrp: 15, isCustom: false, status: PartStatus.IN_BOX },
+        { partNumber: 'P-EXPENSIVE', description: 'Engine Rebuild Kit', msrp: 2800, isCustom: false, status: PartStatus.DECLINED },
+      ],
+    });
+    const billable = ro.parts.filter(p => p.status === PartStatus.IN_BOX || p.status === PartStatus.USED);
+    expect(billable).toHaveLength(1);
+    expect(billable[0].partNumber).toBe('P-CHEAP');
+    expect(billable.find(p => p.partNumber === 'P-EXPENSIVE')).toBeUndefined();
+  });
+
+  it('job transitions to PENDING_INVOICE after SM rejects the expensive part request', async () => {
+    (inventoryService.bulkAddToClipboard as any).mockResolvedValue(undefined);
+    const declineRequest = {
+      id: 'req-decline',
+      roId: 'RO-TEST-001',
+      type: 'PART' as const,
+      payload: { partNumber: 'P-EXPENSIVE', description: 'Engine Rebuild Kit', msrp: 2800 },
+      status: 'PENDING' as const,
+      requestedBy: 'TECHNICIAN' as const,
+      timestamp: Date.now(),
+    };
+    const ro = makeRO({
+      status: ROStatus.ACTIVE,
+      parts: [
+        { partNumber: 'P-CHEAP', description: 'Oil Filter', msrp: 15, isCustom: false, status: PartStatus.IN_BOX },
+        { partNumber: 'P-EXPENSIVE', description: 'Engine Rebuild Kit', msrp: 2800, isCustom: false, status: PartStatus.APPROVAL_PENDING },
+      ],
+      requests: [declineRequest],
+      workSessions: [{ startTime: Date.now() - 3600000, endTime: Date.now() }],
+    });
+
+    const afterDecline = repairOrderService.processReviewRequest(ro, declineRequest, 'REJECTED');
+    expect(afterDecline.parts.find(p => p.partNumber === 'P-EXPENSIVE')?.status).toBe(PartStatus.DECLINED);
+
+    const billed = await repairOrderService.completeJob(afterDecline, 'Oil change completed. Engine rebuild declined by customer.');
+    expect(billed.status).toBe(ROStatus.PENDING_INVOICE);
+
+    const billable = billed.parts.filter(p => p.status === PartStatus.IN_BOX || p.status === PartStatus.USED);
+    expect(billable).toHaveLength(1);
+    expect(billable[0].partNumber).toBe('P-CHEAP');
+  });
+});
+
+// ============================================================
+// Edge Case 5 — Core return disposition
+// ============================================================
+
+describe('edge case: core return disposition', () => {
+  it('RETURNED core part is excluded from customer invoice, new part is included', async () => {
+    (inventoryService.bulkAddToClipboard as any).mockResolvedValue(undefined);
+    const ro = makeRO({
+      status: ROStatus.ACTIVE,
+      parts: [
+        { partNumber: 'P-CORE', description: 'Starter Motor (Core)', msrp: 120, isCustom: false, status: PartStatus.RETURNED },
+        { partNumber: 'P-NEW', description: 'Starter Motor (New)', msrp: 340, isCustom: false, status: PartStatus.USED },
+      ],
+      workSessions: [{ startTime: Date.now() - 7200000, endTime: Date.now() }],
+    });
+
+    const result = await repairOrderService.completeJob(ro, 'Starter motor replaced. Core returned to shop stock — Option B shop credit.');
+    expect(result.status).toBe(ROStatus.PENDING_INVOICE);
+
+    const billable = result.parts.filter(p => p.status === PartStatus.IN_BOX || p.status === PartStatus.USED);
+    expect(billable.find(p => p.partNumber === 'P-CORE')).toBeUndefined();
+    expect(billable.find(p => p.partNumber === 'P-NEW')).toBeDefined();
+  });
+
+  it('core disposition is captured in labor description for audit trail', async () => {
+    (inventoryService.bulkAddToClipboard as any).mockResolvedValue(undefined);
+    const ro = makeRO({
+      status: ROStatus.ACTIVE,
+      parts: [{ partNumber: 'P-CORE', description: 'Alternator (Core)', msrp: 80, isCustom: false, status: PartStatus.RETURNED }],
+      workSessions: [{ startTime: Date.now() - 3600000, endTime: Date.now() }],
+    });
+
+    const result = await repairOrderService.completeJob(ro, 'Alternator replaced. Core retained as shop credit — Option B.');
+    expect(result.laborDescription).toContain('Core retained as shop credit');
+  });
+});
+
+// ============================================================
+// Edge Case 6 — Unmatched receipt blocks inventory fulfillment
+// ============================================================
+
+describe('edge case: unmatched receipt blocks inventory fulfillment', () => {
+  it('addPartToRO returns null when part has no matching inventory entry', async () => {
+    (inventoryService.addToClipboard as any).mockResolvedValue(undefined);
+    const ro = makeRO({ status: ROStatus.AUTHORIZED });
+    const unmatchedPart = { partNumber: 'P-UNKNOWN', description: 'Unmatched Shipment Item', msrp: 50, isCustom: false };
+
+    const result = await repairOrderService.addPartToRO(ro, unmatchedPart, []);
+    expect(result).toBeNull();
+  });
+
+  it('RO parts list is unchanged when unmatched item cannot be resolved', async () => {
+    (inventoryService.addToClipboard as any).mockResolvedValue(undefined);
+    const ro = makeRO({
+      status: ROStatus.AUTHORIZED,
+      parts: [{ partNumber: 'P-KNOWN', description: 'Known Part', msrp: 30, isCustom: false, status: PartStatus.REQUIRED }],
+    });
+    const unmatchedPart = { partNumber: 'P-UNKNOWN', description: 'Unmatched Shipment Item', msrp: 50, isCustom: false };
+
+    const result = await repairOrderService.addPartToRO(ro, unmatchedPart, []);
+    expect(result).toBeNull();
+    expect(ro.parts).toHaveLength(1);
+    expect(ro.parts[0].partNumber).toBe('P-KNOWN');
+  });
+});
