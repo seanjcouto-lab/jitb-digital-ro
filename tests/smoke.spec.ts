@@ -2,57 +2,38 @@ import { test, expect } from '@playwright/test';
 
 test('Smoke Test: Service Manager Login', async ({ page }) => {
   await page.goto('/');
-  
+
   // Verify login screen loads
-  await expect(page.getByText('Personnel Authentication')).toBeVisible();
-  
-  // Click Service Manager (Danny)
-  await page.getByRole('button', { name: 'Danny Service Manager' }).click();
-  
-  // Verify modal opens
-  await expect(page.getByText('Auth Required')).toBeVisible();
-  
-  // Enter password
-  await page.fill('input[type="password"]', 'Danny');
-  
-  // Click Login
-  await page.getByRole('button', { name: 'Login' }).click();
-  
+  await expect(page.getByRole('heading', { name: 'Sign In' })).toBeVisible();
+
+  // Click the Danny (SM) dev shortcut button
+  await page.getByRole('button', { name: 'Danny (SM)' }).click();
+
   // Verify Service Manager page renders
   await expect(page.getByText('Service Manager Command Console')).toBeVisible();
 });
 
 test('Smoke Test: Technician Login', async ({ page }) => {
   await page.goto('/');
-  
-  // Click Technician (Pierre)
-  // Note: The button text contains "Pierre" and "Technician" in spans.
-  // Playwright's getByRole('button', { name: ... }) matches accessible name which usually concatenates text content.
-  await page.getByRole('button', { name: 'Pierre Technician' }).click();
-  
-  // Enter password
-  await page.fill('input[type="password"]', 'Pierre');
-  
-  // Click Login
-  await page.getByRole('button', { name: 'Login' }).click();
-  
+
+  // Click the Pierre (Tech) dev shortcut button
+  await page.getByRole('button', { name: 'Pierre (Tech)' }).click();
+
   // Verify Technician page renders
-  // It might show "Active Bay Deck" or "No Active Job" depending on state
-  await expect(page.getByText('Active Bay Deck').or(page.getByText('No Active Job'))).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Active Bay Deck' })
+    .or(page.getByText('No Active Job'))).toBeVisible();
 });
 
 test('Smoke Test: Parts Manager Login', async ({ page }) => {
   await page.goto('/');
-  
-  // Click Parts Manager (Sean)
-  await page.getByRole('button', { name: 'Sean Parts Manager' }).click();
-  
-  // Enter password
-  await page.fill('input[type="password"]', 'Sean');
-  
-  // Click Login
-  await page.getByRole('button', { name: 'Login' }).click();
-  
+
+  // No Parts Manager dev button — login as Admin (Danny) then impersonate via role switcher
+  await page.getByRole('button', { name: 'Danny (Admin)' }).click();
+  await expect(page.getByText('White-Label Configuration')).toBeVisible();
+
+  // Click the Parts Manager button in the dev role switcher at the bottom
+  await page.getByTitle('PARTS MANAGER').click();
+
   // Verify Parts Manager page renders
   await expect(page.getByText('Parts Command')).toBeVisible();
 });
@@ -60,31 +41,21 @@ test('Smoke Test: Parts Manager Login', async ({ page }) => {
 test('Smoke Test: Admin Login & Page Render', async ({ page }) => {
   await page.goto('/');
 
-  // Click Executive Command (Mike)
-  await page.getByRole('button', { name: 'Mike Owner' }).click();
+  // Click the Danny (Admin) dev shortcut button
+  await page.getByRole('button', { name: 'Danny (Admin)' }).click();
 
-  // Enter password
-  await page.fill('input[type="password"]', 'Mike');
-
-  // Click Login
-  await page.getByRole('button', { name: 'Login' }).click();
-
-  // Verify Admin page renders (default for Admin role)
+  // Verify Admin page renders
   await expect(page.getByText('White-Label Configuration')).toBeVisible();
 });
 
 test('Smoke Test: Billing Page Render (via Impersonation)', async ({ page }) => {
   await page.goto('/');
 
-  // Login as Admin (Mike) who has Developer privileges
-  await page.getByRole('button', { name: 'Mike Owner' }).click();
-  await page.fill('input[type="password"]', 'Mike');
-  await page.getByRole('button', { name: 'Login' }).click();
-
-  // Wait for Admin page to load first
+  // Login as Admin (Danny) who has Developer privileges
+  await page.getByRole('button', { name: 'Danny (Admin)' }).click();
   await expect(page.getByText('White-Label Configuration')).toBeVisible();
 
-  // Click Billing Impersonation Button
+  // Click the Billing button in the dev role switcher at the bottom
   await page.getByTitle('BILLING').click();
 
   // Verify Billing page renders
@@ -94,15 +65,11 @@ test('Smoke Test: Billing Page Render (via Impersonation)', async ({ page }) => 
 test('Smoke Test: Inventory Page Render (via Impersonation)', async ({ page }) => {
   await page.goto('/');
 
-  // Login as Admin (Mike)
-  await page.getByRole('button', { name: 'Mike Owner' }).click();
-  await page.fill('input[type="password"]', 'Mike');
-  await page.getByRole('button', { name: 'Login' }).click();
-
-  // Wait for Admin page
+  // Login as Admin (Danny)
+  await page.getByRole('button', { name: 'Danny (Admin)' }).click();
   await expect(page.getByText('White-Label Configuration')).toBeVisible();
 
-  // Click Inventory Manager Impersonation Button
+  // Click the Inventory Manager button in the dev role switcher at the bottom
   await page.getByTitle('INVENTORY MANAGER').click();
 
   // Verify Inventory page renders
@@ -112,15 +79,11 @@ test('Smoke Test: Inventory Page Render (via Impersonation)', async ({ page }) =
 test('Smoke Test: Metrics Page Render (via Impersonation)', async ({ page }) => {
   await page.goto('/');
 
-  // Login as Admin (Mike)
-  await page.getByRole('button', { name: 'Mike Owner' }).click();
-  await page.fill('input[type="password"]', 'Mike');
-  await page.getByRole('button', { name: 'Login' }).click();
-
-  // Wait for Admin page
+  // Login as Admin (Danny)
+  await page.getByRole('button', { name: 'Danny (Admin)' }).click();
   await expect(page.getByText('White-Label Configuration')).toBeVisible();
 
-  // Click Metrics Impersonation Button
+  // Click the Metrics button in the dev role switcher at the bottom
   await page.getByTitle('METRICS').click();
 
   // Verify Metrics page renders
