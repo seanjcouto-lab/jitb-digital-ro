@@ -27,6 +27,7 @@ export interface RepairOrderCreateInput {
     zip: string;
   };
   customerNotes: string | null;
+  jobComplaint: string | null;
 
   // --- Vessel ---
   vesselHIN: string;

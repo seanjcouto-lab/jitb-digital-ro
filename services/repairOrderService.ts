@@ -495,14 +495,6 @@ export const repairOrderService = {
     const partFromInventory = masterInventory.find(p => p.partNumber === partData.partNumber);
     if (!partFromInventory) return null;
 
-    await inventoryService.addToClipboard({
-      partNumber: partData.partNumber,
-      description: partData.description,
-      quantity: 1,
-      timestamp: Date.now(),
-      roId: ro.id,
-    });
-
     const updatedParts = [...ro.parts, { ...partFromInventory, status: PartStatus.REQUIRED }];
     return { ...ro, parts: updatedParts };
   },
@@ -578,6 +570,16 @@ export const repairOrderService = {
                 alertToAdd = invResult.alertToAdd;
             }
         }
+    }
+    else if (status === PartStatus.USED && originalStatus !== PartStatus.USED) {
+        await inventoryService.addToClipboard({
+            partNumber: part.partNumber,
+            description: part.description,
+            quantity: 1,
+            timestamp: Date.now(),
+            roId: ro.id,
+            technicianName: ro.technicianName || undefined,
+        });
     }
 
     return { updatedRO: finalRO, updatedInventory, alertToAdd };

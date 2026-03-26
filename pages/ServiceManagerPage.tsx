@@ -513,7 +513,40 @@ const SignatureCanvas = ({ onSave, onClear }: { onSave: (dataUrl: string) => voi
     );
 };
 
-const ServiceManagerPage: React.FC<ServiceManagerPageProps> = ({ 
+// ─── DeferralModal ────────────────────────────────────────────────────────────
+
+interface DeferralModalProps {
+  ro: RepairOrder;
+  onClose: () => void;
+  onConfirm: (summary: string) => void;
+}
+
+const DeferralModal: React.FC<DeferralModalProps> = ({ ro, onClose, onConfirm }) => {
+  const [deferralSummary, setDeferralSummary] = useState('');
+  return (
+    <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">
+      <div className="glass p-8 rounded-2xl w-full max-w-2xl border border-orange-500 shadow-2xl shadow-orange-500/20">
+        <h3 className="text-lg font-black uppercase tracking-widest text-orange-400 mb-4">Defer Items & Finalize Job</h3>
+        <p className="text-sm text-slate-300 mb-6">Log unresolved items to the Vessel's DNA for the next service and move this RO to billing for completed work.</p>
+        <div className="space-y-4 max-h-48 overflow-y-auto bg-slate-900/50 p-4 rounded-lg border border-white/10">
+            <h4 className="text-xs text-slate-400 font-bold uppercase">Incomplete Items:</h4>
+            {ro.directives.filter(d => !d.isCompleted).map(d => <p key={d.id} className="text-sm text-slate-300">- (Directive) {d.title}</p>)}
+            {ro.parts.filter(p => ![PartStatus.IN_BOX, PartStatus.USED, PartStatus.RETURNED].includes(p.status!)).map(p => <p key={p.partNumber} className="text-sm text-slate-300">- (Part) {p.description} [{p.status}]</p>)}
+        </div>
+        <div className="mt-4">
+            <label className="block text-xs text-slate-400 uppercase font-bold mb-2">Summary for Next Service</label>
+            <textarea value={deferralSummary} onChange={e => setDeferralSummary(e.target.value)} placeholder="e.g., Recommend replacing port trim tab seals at next 100-hour service." autoFocus className="w-full h-24 bg-slate-900 border border-white/10 rounded-lg p-4 text-white text-base focus:border-orange-500 outline-none transition-colors" />
+        </div>
+        <div className="flex justify-between items-center mt-6">
+          <button onClick={onClose} className="text-xs text-slate-500 hover:text-white">Cancel</button>
+          <button onClick={() => onConfirm(deferralSummary)} disabled={!deferralSummary.trim()} className="px-6 py-3 bg-orange-500 text-white font-bold rounded-lg hover:scale-105 disabled:opacity-50 disabled:grayscale">Confirm Deferral & Finalize</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const ServiceManagerPage: React.FC<ServiceManagerPageProps> = ({
   addRO, repairOrders, updateRO, deleteRO, hourlyRate, taxRate, overridePin, masterInventory
 }) => {
   const [viewMode, setViewMode] = useState<ViewMode>('SEARCH');
@@ -528,7 +561,6 @@ const ServiceManagerPage: React.FC<ServiceManagerPageProps> = ({
   const [expandedROId, setExpandedROId] = useState<string | null>(null);
   const [authorizingRO, setAuthorizingRO] = useState<RepairOrder | null>(null);
   const [deferralRO, setDeferralRO] = useState<RepairOrder | null>(null);
-  const [deferralSummary, setDeferralSummary] = useState('');
   const [deletingRO, setDeletingRO] = useState<RepairOrder | null>(null);
   const [showDeferralError, setShowDeferralError] = useState(false);
 
@@ -704,17 +736,15 @@ const handleROGenerated = (newRO: RepairOrder) => {
     }
   };
   
-  const handleConfirmDeferral = async () => {
-    if (!deferralRO || !deferralSummary.trim()) {
+  const handleConfirmDeferral = async (summary: string) => {
+    if (!deferralRO || !summary.trim()) {
         setShowDeferralError(true);
         return;
     }
-    
-    const updatedRO = await repairOrderService.confirmDeferral(deferralRO, deferralSummary);
-    updateRO(updatedRO);
 
+    const updatedRO = await repairOrderService.confirmDeferral(deferralRO, summary);
+    updateRO(updatedRO);
     setDeferralRO(null);
-    setDeferralSummary('');
   };
 
   const handleRemoveDirective = (roId: string, directiveId: string) => {
@@ -985,25 +1015,11 @@ const handleROGenerated = (newRO: RepairOrder) => {
   </div>
 )}</div><div className="flex gap-2"><button onClick={() => handleRequestReview(request, 'APPROVED')} className="px-4 py-2 bg-green-500/20 hover:bg-green-500/30 rounded-lg text-green-400 text-xs font-black uppercase tracking-widest">Approve</button><button onClick={() => handleRequestReview(request, 'REJECTED')} className="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg text-red-400 text-xs font-black uppercase tracking-widest">Reject</button></div></div></div>))}</div><button onClick={() => setReviewRequestRO(null)} className="text-xs text-slate-500 hover:text-white mt-6 w-full text-center">Close</button></div></div>)}
       {deferralRO && (
-        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">
-          <div className="glass p-8 rounded-2xl w-full max-w-2xl border border-orange-500 shadow-2xl shadow-orange-500/20">
-            <h3 className="text-lg font-black uppercase tracking-widest text-orange-400 mb-4">Defer Items & Finalize Job</h3>
-            <p className="text-sm text-slate-300 mb-6">Log unresolved items to the Vessel's DNA for the next service and move this RO to billing for completed work.</p>
-            <div className="space-y-4 max-h-48 overflow-y-auto bg-slate-900/50 p-4 rounded-lg border border-white/10">
-                <h4 className="text-xs text-slate-400 font-bold uppercase">Incomplete Items:</h4>
-                {deferralRO.directives.filter(d => !d.isCompleted).map(d => <p key={d.id} className="text-sm text-slate-300">- (Directive) {d.title}</p>)}
-                {deferralRO.parts.filter(p => ![PartStatus.IN_BOX, PartStatus.USED, PartStatus.RETURNED].includes(p.status!)).map(p => <p key={p.partNumber} className="text-sm text-slate-300">- (Part) {p.description} [{p.status}]</p>)}
-            </div>
-            <div className="mt-4">
-                <label className="block text-xs text-slate-400 uppercase font-bold mb-2">Summary for Next Service</label>
-                <textarea value={deferralSummary} onChange={e => setDeferralSummary(e.target.value)} placeholder="e.g., Recommend replacing port trim tab seals at next 100-hour service." autoFocus className="w-full h-24 bg-slate-900 border border-white/10 rounded-lg p-4 text-white text-base focus:border-orange-500 outline-none transition-colors" />
-            </div>
-            <div className="flex justify-between items-center mt-6">
-              <button onClick={() => setDeferralRO(null)} className="text-xs text-slate-500 hover:text-white">Cancel</button>
-              <button onClick={handleConfirmDeferral} disabled={!deferralSummary.trim()} className="px-6 py-3 bg-orange-500 text-white font-bold rounded-lg hover:scale-105 disabled:opacity-50 disabled:grayscale">Confirm Deferral & Finalize</button>
-            </div>
-          </div>
-        </div>
+        <DeferralModal
+          ro={deferralRO}
+          onClose={() => setDeferralRO(null)}
+          onConfirm={handleConfirmDeferral}
+        />
       )}
      {invoicingRO && <InvoiceModal ro={repairOrders.find(r => r.id === invoicingRO.id) || invoicingRO} hourlyRate={hourlyRate} taxRate={taxRate} overridePin={overridePin} onClose={() => setInvoicingRO(null)} onFinalize={handleFinalizeInvoice} />}
       

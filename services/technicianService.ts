@@ -68,13 +68,6 @@ export const TechnicianService = {
   },
 
   requestPart: async (repairOrder: RepairOrder, part: Part): Promise<RepairOrder> => {
-    await inventoryService.addToClipboard({
-      partNumber: part.partNumber,
-      description: part.description,
-      quantity: 1,
-      timestamp: Date.now(),
-      roId: repairOrder.id
-    });
     return repairOrderService.createPartRequest(repairOrder, part);
   },
 

@@ -32,17 +32,6 @@ export const PartsManagerService = {
         .filter((p): p is Part => !!p && !ro.parts.some(existing => existing.partNumber === p.partNumber))
         .map(p => ({ ...p, status: PartStatus.REQUIRED }));
     
-    const clipboardEntriesToAdd = newParts.map(p => ({
-        partNumber: p.partNumber,
-        description: p.description,
-        quantity: 1,
-        timestamp: Date.now(),
-        roId: ro.id,
-    }));
-    if (clipboardEntriesToAdd.length > 0) {
-        await inventoryService.bulkAddToClipboard(clipboardEntriesToAdd);
-    }
-    
     const updatedParts = [...ro.parts, ...newParts];
     return { ...ro, parts: updatedParts };
   },
@@ -64,14 +53,6 @@ export const PartsManagerService = {
       status: PartStatus.REQUIRED,
       shopId: shopContextService.getActiveShopId(),
     };
-
-    await inventoryService.addToClipboard({
-        partNumber: newCustomPart.partNumber,
-        description: newCustomPart.description,
-        quantity: 1,
-        timestamp: Date.now(),
-        roId: ro.id
-    });
 
     const updatedParts = [...ro.parts, newCustomPart];
     return { ...ro, parts: updatedParts };

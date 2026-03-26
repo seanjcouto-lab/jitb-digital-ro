@@ -254,7 +254,7 @@ describe('TechnicianService.requestPart', () => {
     expect(added?.status).toBe(PartStatus.APPROVAL_PENDING);
   });
 
-  it('calls inventoryService.addToClipboard', async () => {
+  it('does not write to clipboard on request (clipboard only written on USED)', async () => {
     const ro = makeRO({ parts: [], requests: [] });
     const part = {
       partNumber: 'P-002', description: 'Fuel Filter', category: 'Filters',
@@ -264,8 +264,6 @@ describe('TechnicianService.requestPart', () => {
       shopId: '00000000-0000-0000-0000-000000000001',
     };
     await TechnicianService.requestPart(ro, part);
-    expect(inventoryService.addToClipboard).toHaveBeenCalledWith(
-      expect.objectContaining({ partNumber: 'P-002', roId: ro.id })
-    );
+    expect(inventoryService.addToClipboard).not.toHaveBeenCalled();
   });
 });

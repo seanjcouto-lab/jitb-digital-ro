@@ -483,11 +483,48 @@ const ReturnsROCard: React.FC<ReturnsROCardProps> = ({ ro, onReturnPart, onMarkN
     );
 };
 
+// ─── MissingPartModal ─────────────────────────────────────────────────────────
 
-const PartsManagerPage: React.FC<PartsManagerPageProps> = ({ 
-  repairOrders, 
-  updateRO, 
-  masterInventory, 
+interface MissingPartModalProps {
+  partDescription: string;
+  onClose: () => void;
+  onConfirm: (reason: string, notes: string) => void;
+}
+
+const MissingPartModal: React.FC<MissingPartModalProps> = ({ partDescription, onClose, onConfirm }) => {
+  const [missingReason, setMissingReason] = useState('');
+  const [missingReasonNotes, setMissingReasonNotes] = useState('');
+  return (
+    <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">
+      <div className="glass p-8 rounded-2xl w-full max-w-lg border border-red-500 shadow-2xl shadow-red-500/20">
+        <h3 className="text-lg font-black uppercase tracking-widest text-red-400 mb-2">Accountability Gate: Missing Part</h3>
+        <p className="text-sm text-slate-400 mb-6">Provide a reason for marking "{partDescription}" as missing.</p>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-xs text-slate-400 uppercase font-bold mb-2">Reason Code</label>
+            <select value={missingReason} onChange={e => setMissingReason(e.target.value)} className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-white text-base focus:border-red-500 outline-none">
+              <option value="" disabled>Select a reason...</option>
+              {MISSING_REASON_CODES.map(reason => (<option key={reason} value={reason}>{reason}</option>))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs text-slate-400 uppercase font-bold mb-2">Notes (Optional)</label>
+            <textarea value={missingReasonNotes} onChange={e => setMissingReasonNotes(e.target.value)} placeholder="Add any relevant details..." className="w-full h-24 bg-slate-900 border border-white/10 rounded-lg p-4 text-white text-sm focus:border-red-500 outline-none transition-colors" />
+          </div>
+        </div>
+        <div className="flex justify-between items-center mt-6">
+          <button onClick={onClose} className="text-xs text-slate-500 hover:text-white transition-all">Cancel</button>
+          <button onClick={() => onConfirm(missingReason, missingReasonNotes)} disabled={!missingReason} className="px-6 py-3 bg-red-500 text-white font-bold rounded-lg hover:scale-105 disabled:opacity-50 disabled:grayscale disabled:hover:scale-100 transition-all">Confirm Missing</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const PartsManagerPage: React.FC<PartsManagerPageProps> = ({
+  repairOrders,
+  updateRO,
+  masterInventory,
   updateInventory, 
   addInventoryAlert,
   setMasterInventory,
@@ -500,8 +537,6 @@ const PartsManagerPage: React.FC<PartsManagerPageProps> = ({
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
   const [missingPartInfo, setMissingPartInfo] = useState<{ ro: RepairOrder; partIndex: number } | null>(null);
-  const [missingReason, setMissingReason] = useState('');
-  const [missingReasonNotes, setMissingReasonNotes] = useState('');
 
   const [notUsedPartInfo, setNotUsedPartInfo] = useState<{ ro: RepairOrder; partIndex: number } | null>(null);
   
@@ -604,17 +639,13 @@ if (allPartsProcessed && result.updatedRO.parts.length > 0 && ![ROStatus.ACTIVE,
 }
   };
   
-  const handleConfirmMissingPart = () => {
-    if (!missingPartInfo || !missingReason) return;
+  const handleConfirmMissingPart = (reason: string, notes: string) => {
+    if (!missingPartInfo || !reason) return;
     const { ro, partIndex } = missingPartInfo;
-    
-    const { updatedRO, alert } = PartsManagerService.confirmMissingPart(ro, partIndex, missingReason, missingReasonNotes);
+    const { updatedRO, alert } = PartsManagerService.confirmMissingPart(ro, partIndex, reason, notes);
     updateRO(updatedRO);
     addInventoryAlert(alert);
-    
-   setMissingPartInfo(null);
-    setMissingReason('');
-    setMissingReasonNotes('');
+    setMissingPartInfo(null);
   };
   
   const handleRemovePart = async (ro: RepairOrder, partIndex: number) => {
@@ -768,29 +799,11 @@ if (allPartsProcessed && result.updatedRO.parts.length > 0 && ![ROStatus.ACTIVE,
       </div>
 
       {missingPartInfo && (
-        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">
-          <div className="glass p-8 rounded-2xl w-full max-w-lg border border-red-500 shadow-2xl shadow-red-500/20">
-            <h3 className="text-lg font-black uppercase tracking-widest text-red-400 mb-2">Accountability Gate: Missing Part</h3>
-            <p className="text-sm text-slate-400 mb-6">Provide a reason for marking "{missingPartInfo.ro.parts[missingPartInfo.partIndex].description}" as missing.</p>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-xs text-slate-400 uppercase font-bold mb-2">Reason Code</label>
-                <select value={missingReason} onChange={e => setMissingReason(e.target.value)} className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-white text-base focus:border-red-500 outline-none">
-                  <option value="" disabled>Select a reason...</option>
-                  {MISSING_REASON_CODES.map(reason => (<option key={reason} value={reason}>{reason}</option>))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs text-slate-400 uppercase font-bold mb-2">Notes (Optional)</label>
-                <textarea value={missingReasonNotes} onChange={e => setMissingReasonNotes(e.target.value)} onFocus={handleInputFocus} placeholder="Add any relevant details..." className="w-full h-24 bg-slate-900 border border-white/10 rounded-lg p-4 text-white text-sm focus:border-red-500 outline-none transition-colors" />
-              </div>
-            </div>
-            <div className="flex justify-between items-center mt-6">
-              <button onClick={() => { setMissingPartInfo(null); setMissingReason(''); setMissingReasonNotes(''); }} className="text-xs text-slate-500 hover:text-white transition-all">Cancel</button>
-              <button onClick={handleConfirmMissingPart} disabled={!missingReason} className="px-6 py-3 bg-red-500 text-white font-bold rounded-lg hover:scale-105 disabled:opacity-50 disabled:grayscale disabled:hover:scale-100 transition-all">Confirm Missing</button>
-            </div>
-          </div>
-        </div>
+        <MissingPartModal
+          partDescription={missingPartInfo.ro.parts[missingPartInfo.partIndex].description}
+          onClose={() => setMissingPartInfo(null)}
+          onConfirm={handleConfirmMissingPart}
+        />
       )}
 
       {specialOrderSession && (

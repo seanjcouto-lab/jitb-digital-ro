@@ -141,6 +141,7 @@ export interface RepairOrder {
     zip: string;
   };
   customerNotes: string | null;
+  jobComplaint: string | null;
   vesselName: string;
   vesselHIN: string;
   engineSerial: string;
@@ -237,4 +238,5 @@ export interface ClipboardEntry {
   quantity: number;
   timestamp: number;
   roId: string;
+  technicianName?: string;
 }
