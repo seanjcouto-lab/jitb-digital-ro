@@ -161,6 +161,8 @@ export interface RepairOrder {
   dateInvoiced: number | null;
   datePaid: number | null;
   collectionsStatus: CollectionsStatus | null;
+  taxExempt: boolean | null;
+  taxExemptId: string | null;
 
   // Added for richer data
   boatMake: string | null;
@@ -206,6 +208,10 @@ export interface VesselHistory {
     date: string;
     summary: string;
     partsUsed: { partNumber: string; description: string }[];
+    technicianName: string | null;
+    laborHours: number | null;
+    invoiceTotal: number | null;
+    completedDirectives: { id: string; description: string }[];
   }[];
 }
 

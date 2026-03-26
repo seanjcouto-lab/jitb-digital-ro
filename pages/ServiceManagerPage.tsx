@@ -706,8 +706,13 @@ const handleROGenerated = (newRO: RepairOrder) => {
     updateRO(updatedRO);
   };
 
+  const handleUnassignTech = (ro: RepairOrder) => {
+    const updated = repairOrderService.unassignTechnician(ro);
+    updateRO(updated);
+  };
+
   const handleFinalizeInvoice = async (ro: RepairOrder, isTaxExempt: boolean, taxExemptId: string, invoiceTotal: number) => {
-    const updatedRO = await repairOrderService.finalizeInvoice(ro, hourlyRate, invoiceTotal);
+    const updatedRO = await repairOrderService.finalizeInvoice(ro, hourlyRate, invoiceTotal, isTaxExempt, taxExemptId);
     updateRO(updatedRO);
     setInvoicingRO(null);
   };
@@ -963,6 +968,9 @@ const handleROGenerated = (newRO: RepairOrder) => {
                     <RODetail ro={ro} masterInventory={masterInventory} />
                    <div className="flex gap-2 mt-2">
                       <button onClick={(e) => { e.stopPropagation(); handleReactivateJob(ro); }} className="flex-1 px-4 py-2 rounded-lg bg-slate-800 text-[10px] font-black border border-white/10 hover:bg-neon-seafoam hover:text-slate-900 transition-all uppercase tracking-widest">Resume</button>
+                      {ro.technicianId && (
+                        <button onClick={(e) => { e.stopPropagation(); handleUnassignTech(ro); }} className="px-3 py-1 rounded-lg text-xs font-bold bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 hover:bg-yellow-500/30">Unassign Tech</button>
+                      )}
                       {!ro.technicianId && <button onClick={(e) => { e.stopPropagation(); setDeferralRO(ro); }} className="flex-1 px-4 py-2 rounded-lg bg-slate-800 text-[10px] font-black border border-white/10 hover:bg-slate-700 hover:text-white transition-all uppercase tracking-widest">Finalize...</button>}
                       {ro.requests?.some(r => r.status === 'PENDING') && <button onClick={(e) => { e.stopPropagation(); setReviewRequestRO(ro); }} className="flex-1 px-4 py-2 rounded-lg bg-red-500/20 text-red-400 text-[10px] font-black border border-red-500/30 hover:bg-red-500/30 transition-all uppercase tracking-widest">REVIEW</button>}
                     </div>

@@ -279,7 +279,7 @@ export const repairOrderService = {
     return updatedRO;
   },
 
-  finalizeInvoice: async (ro: RepairOrder, hourlyRate: number, invoiceTotal?: number): Promise<RepairOrder> => {
+  finalizeInvoice: async (ro: RepairOrder, hourlyRate: number, invoiceTotal?: number, taxExempt?: boolean, taxExemptId?: string): Promise<RepairOrder> => {
     let grandTotal: number;
     if (invoiceTotal !== undefined) {
       grandTotal = invoiceTotal;
@@ -303,6 +303,8 @@ export const repairOrderService = {
       paymentStatus: PaymentStatus.UNPAID,
       payments: [],
       collectionsStatus: CollectionsStatus.NONE,
+      taxExempt: taxExempt ?? null,
+      taxExemptId: taxExemptId ?? null,
     };
 
    // Update Vessel DNA
@@ -316,7 +318,15 @@ export const repairOrderService = {
       id: ro.id,
       date: new Date(dateInvoiced).toLocaleDateString(),
       summary: ro.laborDescription || 'No summary provided.',
-      partsUsed: partsUsed
+      partsUsed: partsUsed,
+      technicianName: ro.technicianName ?? null,
+      laborHours: ro.workSessions
+        .filter(s => s.endTime)
+        .reduce((acc, s) => acc + (s.endTime! - s.startTime) / 3600000, 0),
+      invoiceTotal: grandTotal,
+      completedDirectives: ro.directives
+        .filter(d => d.isCompleted)
+        .map(d => ({ id: d.id, description: d.title })),
     };
 
     if (vessel) {
@@ -381,6 +391,10 @@ export const repairOrderService = {
     return updatedRO;
   },
 
+  unassignTechnician: (ro: RepairOrder): RepairOrder => {
+    return { ...ro, technicianId: null, technicianName: null };
+  },
+
   processReviewRequest: (ro: RepairOrder, request: RORequest, decision: 'APPROVED' | 'REJECTED'): RepairOrder => {
     let updatedRO = { ...ro };
     const updatedRequests = (updatedRO.requests || []).map(r =>
@@ -435,6 +449,12 @@ export const repairOrderService = {
   },
 
   confirmDeferral: async (ro: RepairOrder, summary: string): Promise<RepairOrder> => {
+    const hasPendingRequests = ro.requests?.some(r => r.status === 'PENDING') ?? false;
+    const hasUnapprovedDirectives = ro.directives.some(d => d.isApproved === false);
+    if (hasPendingRequests || hasUnapprovedDirectives) {
+      throw new Error('Cannot move to billing: job has pending part requests or unapproved directives.');
+    }
+
     await vesselService.flagUnresolvedIssues(ro.vesselHIN, summary);
 
     const deferredNote = `**JOB FINALIZED WITH DEFERRED ITEMS [${new Date().toLocaleString()}]:** ${summary}`;
@@ -465,6 +485,12 @@ export const repairOrderService = {
   },
 
   completeJob: async (ro: RepairOrder, laborNote: string): Promise<RepairOrder> => {
+    const hasPendingRequests = ro.requests?.some(r => r.status === 'PENDING') ?? false;
+    const hasUnapprovedDirectives = ro.directives.some(d => d.isApproved === false);
+    if (hasPendingRequests || hasUnapprovedDirectives) {
+      throw new Error('Cannot move to billing: job has pending part requests or unapproved directives.');
+    }
+
     const unusedParts = ro.parts.filter(p => p.status === PartStatus.IN_BOX);
     if (unusedParts.length > 0) {
       const clipboardSubtractions: ClipboardEntry[] = unusedParts.map(part => ({
