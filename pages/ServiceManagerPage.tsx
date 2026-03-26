@@ -154,10 +154,11 @@ const RODetail = ({
   ro, 
   canEdit = false, 
   masterInventory = [],
-  onRemoveDirective, 
-  onRemovePart, 
-  onAddDirective, 
-  onAddPart 
+  onRemoveDirective,
+  onRemovePart,
+  onAddDirective,
+  onAddPart,
+  onSendToParts
 }: { 
   ro: RepairOrder, 
   canEdit?: boolean,
@@ -165,7 +166,8 @@ const RODetail = ({
   onRemoveDirective?: (roId: string, directiveId: string) => void,
   onRemovePart?: (roId: string, partIndex: number) => void,
   onAddDirective?: (roId: string, title: string) => void,
-  onAddPart?: (roId: string, part: Part) => void
+  onAddPart?: (roId: string, part: Part) => void,
+  onSendToParts?: (ro: RepairOrder) => void
 }) => {
   const [newDirective, setNewDirective] = useState('');
   const [partSearchQuery, setPartSearchQuery] = useState('');
@@ -344,6 +346,9 @@ const RODetail = ({
               <Plus className="h-3 w-3" />
             </button>
           </div>
+        )}
+        {onSendToParts && ro.parts.some(p => p.status === PartStatus.REQUIRED) && (
+          <button onClick={(e) => { e.stopPropagation(); onSendToParts(ro); }} className="w-full mt-2 px-4 py-2 rounded-lg bg-amber-500/20 text-amber-400 text-[10px] font-black border border-amber-500/30 uppercase tracking-widest hover:bg-amber-500/30 transition-all">Send to Parts Dept</button>
         )}
       </div>
 
@@ -781,7 +786,12 @@ const handleROGenerated = (newRO: RepairOrder) => {
     if (ro) {
       const updatedRO = repairOrderService.addManualPartToRO(ro, part);
       updateRO(updatedRO);
+      setExpandedROId(roId);
     }
+  };
+
+  const handleSendToParts = (ro: RepairOrder) => {
+    updateRO({ ...ro, status: ROStatus.PARTS_PENDING });
   };
 
   const handleDeleteRO = (roId: string) => {
@@ -860,14 +870,15 @@ const handleROGenerated = (newRO: RepairOrder) => {
                       </div>
                     }
                   >
-                    <RODetail 
-                      ro={ro} 
+                    <RODetail
+                      ro={ro}
                       canEdit={true}
                       masterInventory={masterInventory}
                       onRemoveDirective={handleRemoveDirective}
                       onRemovePart={handleRemovePart}
                       onAddDirective={handleAddDirective}
                       onAddPart={handleAddPart}
+                      onSendToParts={handleSendToParts}
                     />
                    <div className="flex gap-2 mt-2">
                       <button onClick={(e) => { e.stopPropagation(); handleSendToBay(ro); }} className="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black border border-neon-seafoam/20 hover:scale-105 transition-all uppercase tracking-widest">ASSIGN TECH</button>

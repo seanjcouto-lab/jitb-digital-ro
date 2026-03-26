@@ -340,11 +340,11 @@ describe('repairOrderService.confirmMissingPart', () => {
 // ============================================================
 
 describe('edge case: SM adds part to active RO — PM fulfillment chain', () => {
-  it('sets RO to PARTS_PENDING so PM sees it in fulfillment queue', () => {
+  it('adds part without changing RO status — SM controls status transitions explicitly', () => {
     const ro = makeRO({ status: ROStatus.ACTIVE });
     const newPart = { partNumber: 'P-NEW', description: 'Fuel Filter', msrp: 25, isCustom: false, status: PartStatus.REQUIRED };
     const result = repairOrderService.addManualPartToRO(ro, newPart);
-    expect(result.status).toBe(ROStatus.PARTS_PENDING);
+    expect(result.status).toBe(ROStatus.ACTIVE);
     expect(result.parts.find(p => p.partNumber === 'P-NEW')?.status).toBe(PartStatus.REQUIRED);
   });
 

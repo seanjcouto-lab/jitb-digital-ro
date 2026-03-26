@@ -755,8 +755,7 @@ export const repairOrderService = {
 
   addManualPartToRO: (ro: RepairOrder, part: Part): RepairOrder => {
     const newPart = { ...part, status: PartStatus.REQUIRED };
-    const needsPartsPending = ro.status !== ROStatus.AUTHORIZED && ro.status !== ROStatus.PARTS_PENDING;
-    return { ...ro, parts: [...ro.parts, newPart], status: needsPartsPending ? ROStatus.PARTS_PENDING : ro.status };
+    return { ...ro, parts: [...ro.parts, newPart] };
   },
 
   updatePartDetails: (ro: RepairOrder, partIndex: number, updates: Partial<Part>): RepairOrder => {
