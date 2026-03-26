@@ -74,7 +74,7 @@ test.describe('IntakeWorkflowService', () => {
     const payload = intakeWorkflowService.prepareRepairOrderPayload(validSession);
     
     expect(payload.profileData.customerName).toBe('John Doe');
-    expect(payload.profileData.vesselMake).toBe('Sea Ray');
+    expect(payload.profileData.boatMake).toBe('Sea Ray');
     expect(payload.selectedPackages).toEqual(['Oil Change']);
     expect(payload.manualDirectives).toEqual(['Engine noise']);
     expect(payload.authInfo.type).toBe('verbal');

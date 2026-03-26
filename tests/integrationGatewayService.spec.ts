@@ -69,7 +69,7 @@ test.describe('IntegrationGatewayService', () => {
     expect(newRO).toBeDefined();
     expect(newRO.customerName).toBe('Test Customer');
     expect(newRO.vesselHIN).toBe('TESTHIN123');
-    expect(newRO.status).toBe(ROStatus.STAGED);
+    expect(newRO.status).toBe(ROStatus.AUTHORIZED);
     expect(addedRO).toBe(newRO);
 
     // Restore mocks

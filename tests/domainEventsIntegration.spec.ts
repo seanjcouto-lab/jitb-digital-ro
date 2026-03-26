@@ -15,6 +15,7 @@ test.describe('Domain Events Integration', () => {
     vesselService.getVesselByHIN = async () => undefined;
     vesselService.createVessel = async () => {};
     vesselService.addPastRO = async () => {};
+    vesselService.flagUnresolvedIssues = async () => {};
     inventoryStore.updateQuantity = async () => {};
   });
 

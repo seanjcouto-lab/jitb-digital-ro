@@ -39,20 +39,21 @@ test('Selector Discovery: Service Manager flow', async ({ page }) => {
   
   // Authorize
   await page.getByLabel('I Certify Verbal Authorization').check();
-  await page.getByRole('button', { name: 'Generate & Authorize RO' }).click();
+  await page.getByRole('button', { name: 'Authorize & Stage Job' }).click();
   
   // Wait for the RO to appear in the Staged Queue (it might go to Staged first if no tech assigned)
   console.log('RO Created. Waiting for it to appear in Staged Queue...');
   await page.waitForTimeout(2000); // Give it a moment to sync and render
   
   console.log('=== STAGED QUEUE CONTENT ===');
-  console.log(await page.locator('section').filter({ hasText: 'Staged Queue' }).innerText());
+  console.log(await page.locator('section').filter({ hasText: 'STAGED' }).innerText());
 
   // Assign Technician
-  const assignButton = page.getByRole('button', { name: 'Assign Technician' }).first();
+  const assignButton = page.getByText(/Assign Tech/i).last();
   await expect(assignButton).toBeVisible({ timeout: 15000 });
   await assignButton.click();
-  await page.getByRole('button', { name: 'Pierre' }).click();
+  const modal = page.locator('div.fixed.inset-0').filter({ hasText: 'Assign Technician' });
+  await modal.getByRole('button', { name: 'Pierre' }).click();
   
   console.log('=== SERVICE MANAGER PAGE AFTER ASSIGNMENT ===');
   console.log(await page.locator('body').innerText());

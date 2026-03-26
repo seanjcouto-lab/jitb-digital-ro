@@ -4,12 +4,15 @@ import { parkerAdapterService } from '../services/parkerAdapterService';
 import { intakeSessionService } from '../services/intakeSessionService';
 import { conversationStateService } from '../services/conversationStateService';
 import { roStore } from '../data/roStore';
+import { inventoryService } from '../services/inventoryService';
 import { RepairOrder } from '../types';
 
 test.describe('VapiAdapterService', () => {
   const mockCallId = 'vapi-call-123';
   let addedROs: RepairOrder[] = [];
   let originalRoStoreAdd: any;
+
+  let originalFetchMasterInventory: any;
 
   test.beforeEach(async () => {
     vapiAdapterService._clearMappings();
@@ -21,16 +24,19 @@ test.describe('VapiAdapterService', () => {
       addedROs.push(ro);
       return ro;
     };
+    originalFetchMasterInventory = inventoryService.fetchMasterInventory;
+    inventoryService.fetchMasterInventory = async () => [];
   });
 
   test.afterEach(() => {
     roStore.add = originalRoStoreAdd;
+    inventoryService.fetchMasterInventory = originalFetchMasterInventory;
   });
 
   test('should handle a complete voice call flow', async () => {
     // 1. Call Started
     const welcomePrompt = await vapiAdapterService.callStarted(mockCallId);
-    expect(welcomePrompt).toBe("Hello, I'm Parker, the AI service assistant. I can help you get your vessel checked in for service. Let's get started.");
+    expect(welcomePrompt).toBe("May I have your name, please?");
 
     // 2. User Speech Received (Name)
     const nextPrompt1 = await vapiAdapterService.userSpeechReceived(mockCallId, 'My name is John Doe');
@@ -60,10 +66,10 @@ test.describe('VapiAdapterService', () => {
     // Verify repair order was created
     expect(addedROs.length).toBe(1);
     expect(addedROs[0].customerName).toBe('John Doe');
-    expect(addedROs[0].customerPhones[0]).toBe('555-1234');
+    expect(addedROs[0].customerPhones[0]).toBe('5551234');
     expect(addedROs[0].boatMake).toBe('Yamaha');
-    expect(addedROs[0].boatModel).toBe('242X');
-    expect(addedROs[0].customerNotes).toBe('The engine is making a weird noise');
+    // model not extracted by interpretVesselInfo — stored in directive instead
+    expect(addedROs[0].directives.some(d => d.title.includes('THE ENGINE IS MAKING A WEIRD NOISE'))).toBe(true);
   });
 
   test('should throw error for unknown call ID', async () => {

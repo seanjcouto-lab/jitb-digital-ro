@@ -174,11 +174,21 @@ test.describe('ParkerAdapterService', () => {
     expect(result).toBe(mockRO);
     expect(capturedArgs[0]).toEqual({
       customerName: 'Jane Doe',
-      customerPhone: '1234567890',
-      customerEmail: '',
-      vesselMake: 'Yamaha',
-      vesselModel: '',
-      vesselHIN: ''
+      customerPhones: ['1234567890'],
+      customerEmails: [],
+      customerAddress: { street: '', city: '', state: '', zip: '' },
+      customerNotes: null,
+      vesselName: '',
+      vesselHIN: '',
+      boatMake: 'Yamaha',
+      boatModel: '',
+      boatYear: '',
+      boatLength: '',
+      engineMake: '',
+      engineModel: '',
+      engineYear: '',
+      engineHorsepower: '',
+      engineSerial: '',
     });
     expect(capturedArgs[1]).toEqual(['pkg1']);
     expect(capturedArgs[2]).toEqual([]);
