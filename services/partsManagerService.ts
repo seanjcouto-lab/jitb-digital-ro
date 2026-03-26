@@ -123,7 +123,10 @@ export const PartsManagerService = {
 
   finalizeSpecialOrders: (ro: RepairOrder): RepairOrder => {
     // JOBS with S/O parts also return to SM for review
-    return { ...ro, status: ROStatus.READY_FOR_TECH };
+    const updatedParts = ro.parts.map(p =>
+      p.status === PartStatus.SPECIAL_ORDER ? { ...p, status: PartStatus.ON_ORDER } : p
+    );
+    return { ...ro, parts: updatedParts, status: ROStatus.READY_FOR_TECH };
   },
 
   returnPartToStock: async (

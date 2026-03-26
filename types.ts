@@ -48,7 +48,8 @@ export enum PartStatus {
   RETURNED = 'RETURNED',
   DECLINED = 'DECLINED',
   NOT_USED = 'NOT_USED',
-  REQUESTED = 'REQUESTED'
+  REQUESTED = 'REQUESTED',
+  ON_ORDER = 'ON_ORDER'
 }
 
 export enum PaymentStatus {
