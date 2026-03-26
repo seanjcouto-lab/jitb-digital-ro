@@ -400,9 +400,9 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs 
     setMissingPartIndex(null);
   };
 
-  const handleConfirmNotUsed = (reason: string, notes: string) => {
+  const handleConfirmNotUsed = async (reason: string, notes: string) => {
     if (!repairOrder || notUsedPartIndex === null) return;
-    const updatedRO = TechnicianService.reportNotUsed(repairOrder, notUsedPartIndex, reason, notes);
+    const updatedRO = await TechnicianService.reportNotUsed(repairOrder, notUsedPartIndex, reason, notes, masterInventory);
     updateRO(updatedRO);
     setNotUsedPartIndex(null);
   };

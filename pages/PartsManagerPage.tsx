@@ -720,11 +720,11 @@ if (allPartsProcessed && result.updatedRO.parts.length > 0 && ![ROStatus.ACTIVE,
     updateRO(updatedRO);
   };
 
-  const handleConfirmNotUsed = (reason: string, notes: string) => {
+  const handleConfirmNotUsed = async (reason: string, notes: string) => {
     if (!notUsedPartInfo) return;
     const { ro, partIndex } = notUsedPartInfo;
-    
-    const updatedRO = PartsManagerService.confirmNotUsed(ro, partIndex, reason, notes);
+
+    const updatedRO = await PartsManagerService.confirmNotUsed(ro, partIndex, reason, notes, masterInventory);
     updateRO(updatedRO);
     setNotUsedPartInfo(null);
   };

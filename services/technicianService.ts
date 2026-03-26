@@ -111,7 +111,7 @@ export const TechnicianService = {
     return repairOrderService.confirmMissingPart(ro, partIndex, reason, notes);
   },
 
-  reportNotUsed: (ro: RepairOrder, partIndex: number, reason: string, notes: string): RepairOrder => {
-    return repairOrderService.confirmPartNotUsed(ro, partIndex, reason, notes);
+  reportNotUsed: async (ro: RepairOrder, partIndex: number, reason: string, notes: string, masterInventory: Part[]): Promise<RepairOrder> => {
+    return await repairOrderService.confirmPartNotUsed(ro, partIndex, reason, notes, masterInventory);
   }
 };

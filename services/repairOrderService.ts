@@ -638,7 +638,7 @@ export const repairOrderService = {
     return { updatedRO: { ...ro, parts: updatedParts }, updatedInventory, alertToAdd };
   },
 
-  confirmPartNotUsed: (ro: RepairOrder, partIndex: number, reason: string, notes: string): RepairOrder => {
+  confirmPartNotUsed: async (ro: RepairOrder, partIndex: number, reason: string, notes: string, masterInventory: Part[]): Promise<RepairOrder> => {
     const updatedParts = [...ro.parts];
     const part = updatedParts[partIndex];
 
@@ -649,6 +649,10 @@ export const repairOrderService = {
         notUsedNotes: notes,
         notUsedTimestamp: Date.now()
     };
+
+    if (!part.isCustom) {
+        await inventoryService.adjustInventory(masterInventory, part.partNumber, 1, 'Part not used — returned to stock', ro.id, ro.shopId);
+    }
 
     return { ...ro, parts: updatedParts };
   },

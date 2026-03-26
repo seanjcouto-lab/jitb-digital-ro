@@ -134,8 +134,8 @@ export const PartsManagerService = {
     return await repairOrderService.returnPartToStock(ro, partIndex, masterInventory);
   },
 
-  confirmNotUsed: (ro: RepairOrder, partIndex: number, reason: string, notes: string): RepairOrder => {
-    return repairOrderService.confirmPartNotUsed(ro, partIndex, reason, notes);
+  confirmNotUsed: async (ro: RepairOrder, partIndex: number, reason: string, notes: string, masterInventory: Part[]): Promise<RepairOrder> => {
+    return await repairOrderService.confirmPartNotUsed(ro, partIndex, reason, notes, masterInventory);
   },
 
   getClipboardEntries: async () => {
