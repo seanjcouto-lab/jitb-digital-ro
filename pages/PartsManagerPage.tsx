@@ -549,7 +549,7 @@ const PartsManagerPage: React.FC<PartsManagerPageProps> = ({
 
 
 const fulfillmentQueue = useMemo(() => repairOrders.filter(ro => ro.status === ROStatus.AUTHORIZED || ro.status === ROStatus.PARTS_PENDING || (ro.status === ROStatus.ACTIVE && ro.parts.some(p => p.status === PartStatus.REQUIRED && p.status !== PartStatus.ON_ORDER))), [repairOrders]);
-const pendingQueue = useMemo(() => repairOrders.filter(ro => [ROStatus.READY_FOR_TECH, ROStatus.HOLD, ROStatus.PARTS_PENDING].includes(ro.status) && ro.parts.some(p => p.status === PartStatus.MISSING || p.status === PartStatus.SPECIAL_ORDER || p.status === PartStatus.ON_ORDER)), [repairOrders]);
+const pendingQueue = useMemo(() => repairOrders.filter(ro => [ROStatus.READY_FOR_TECH, ROStatus.HOLD, ROStatus.PARTS_PENDING, ROStatus.ACTIVE].includes(ro.status) && ro.parts.some(p => p.status === PartStatus.MISSING || p.status === PartStatus.SPECIAL_ORDER || p.status === PartStatus.ON_ORDER)), [repairOrders]);
   
 
   const returnsQueue = useMemo(() => 
