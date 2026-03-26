@@ -300,7 +300,8 @@ export const repairOrderService = {
       status: ROStatus.COMPLETED,
       invoiceTotal: grandTotal,
       dateInvoiced,
-      paymentStatus: PaymentStatus.UNPAID,
+      paymentStatus: grandTotal === 0 ? PaymentStatus.PAID : PaymentStatus.UNPAID,
+      datePaid: grandTotal === 0 ? dateInvoiced : null,
       payments: [],
       collectionsStatus: CollectionsStatus.NONE,
       taxExempt: taxExempt ?? null,
@@ -449,12 +450,6 @@ export const repairOrderService = {
   },
 
   confirmDeferral: async (ro: RepairOrder, summary: string): Promise<RepairOrder> => {
-    const hasPendingRequests = ro.requests?.some(r => r.status === 'PENDING') ?? false;
-    const hasUnapprovedDirectives = ro.directives.some(d => d.isApproved === false);
-    if (hasPendingRequests || hasUnapprovedDirectives) {
-      throw new Error('Cannot move to billing: job has pending part requests or unapproved directives.');
-    }
-
     await vesselService.flagUnresolvedIssues(ro.vesselHIN, summary);
 
     const deferredNote = `**JOB FINALIZED WITH DEFERRED ITEMS [${new Date().toLocaleString()}]:** ${summary}`;
@@ -485,12 +480,6 @@ export const repairOrderService = {
   },
 
   completeJob: async (ro: RepairOrder, laborNote: string): Promise<RepairOrder> => {
-    const hasPendingRequests = ro.requests?.some(r => r.status === 'PENDING') ?? false;
-    const hasUnapprovedDirectives = ro.directives.some(d => d.isApproved === false);
-    if (hasPendingRequests || hasUnapprovedDirectives) {
-      throw new Error('Cannot move to billing: job has pending part requests or unapproved directives.');
-    }
-
     const unusedParts = ro.parts.filter(p => p.status === PartStatus.IN_BOX);
     if (unusedParts.length > 0) {
       const clipboardSubtractions: ClipboardEntry[] = unusedParts.map(part => ({

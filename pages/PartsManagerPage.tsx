@@ -181,6 +181,10 @@ const ClipboardModal = ({ onClose }: { onClose: () => void }) => {
                 </div>
 
                 <div className="printable-area bg-slate-900/50 p-4 rounded-lg flex-grow overflow-y-auto">
+                    <div className="print-only mb-6">
+                        <h1 className="text-2xl font-black uppercase tracking-widest text-center">Parts Order Form</h1>
+                        <p className="text-center text-sm mt-1">{new Date().toLocaleDateString()}</p>
+                    </div>
                     <table className="w-full text-left text-sm">
                         <thead className="text-xs uppercase text-slate-400 sticky top-0 bg-slate-800/80">
                             <tr>
