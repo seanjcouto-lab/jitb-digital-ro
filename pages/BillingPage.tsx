@@ -208,9 +208,11 @@ const BillingPage: React.FC<BillingPageProps> = ({ repairOrders, updateRO }) => 
                                                 <td className="p-3 font-mono text-white">${balanceDue.toFixed(2)}</td>
                                                 <td className="p-3">{getStatusPill(ro)}</td>
                                                 <td className="p-3 text-right">
-                                                    {ro.paymentStatus !== PaymentStatus.PAID &&
-                                                        <button onClick={() => setPaymentModalRO(ro)} className="px-3 py-1 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded text-xs font-bold">Record Payment</button>
-                                                    }
+                                                    {ro.paymentStatus !== PaymentStatus.PAID && (
+                                                        balanceDue <= 0
+                                                            ? <button onClick={() => handleSavePayment(ro, { date: Date.now(), amount: 0, method: 'Credit Card', reference: 'No charge' })} className="px-3 py-1 bg-green-500/20 hover:bg-green-500/30 text-green-400 border border-green-500/30 rounded text-xs font-bold">Mark Paid</button>
+                                                            : <button onClick={() => setPaymentModalRO(ro)} className="px-3 py-1 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded text-xs font-bold">Record Payment</button>
+                                                    )}
                                                 </td>
                                             </tr>
                                         )

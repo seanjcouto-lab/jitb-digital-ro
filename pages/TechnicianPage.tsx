@@ -212,7 +212,7 @@ const EvidenceModal: React.FC<EvidenceModalProps> = ({ mode, initialMediaUrl, on
 // ─── TechnicianPage ───────────────────────────────────────────────────────────
 
 const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs = [], updateRO, masterInventory, addInventoryAlert }) => {
-  const [laborNote, setLaborNote] = useState('');
+  const [laborNote, setLaborNote] = useState(repairOrder?.laborDescription ?? '');
   const [newDirectiveRequest, setNewDirectiveRequest] = useState('');
   const [newPartRequestQuery, setNewPartRequestQuery] = useState('');
 
@@ -289,10 +289,10 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs 
     }
   };
 
-  const handleDirectiveComplete = (directive: Directive) => {
+  const handleDirectiveComplete = async (directive: Directive) => {
     if (!repairOrder) return;
     const updatedRO = TechnicianService.completeDirective(repairOrder, directive);
-    updateRO(updatedRO);
+    await updateRO(updatedRO);
   };
 
   const handleRequestDirective = () => {

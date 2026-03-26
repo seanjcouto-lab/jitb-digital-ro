@@ -841,9 +841,9 @@ const handleROGenerated = (newRO: RepairOrder) => {
           <section className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 ${filterStatusGroup ? 'lg:grid-cols-1' : ''}`}>
             
             {(!filterStatusGroup || filterStatusGroup === 'STAGED') && (
-            <div className="glass rounded-2xl p-6 border-white/5">
+            <div className="glass rounded-2xl p-6 border-white/5 opacity-90">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-bold neon-steel uppercase tracking-tighter">Staged Queue</h2>
+                <h2 className="text-lg font-bold mb-4 neon-steel uppercase tracking-tighter">STAGED <span className="block text-[10px] font-bold text-blue-400/40 uppercase tracking-widest mt-0.5">Awaiting Assignment</span></h2>
                 <span className="text-[10px] font-bold text-slate-500 bg-white/5 px-2 py-0.5 rounded-full">{queues.STAGED.length}</span>
               </div>
               <div className="space-y-4">
@@ -884,8 +884,8 @@ const handleROGenerated = (newRO: RepairOrder) => {
             )}
 
             {(!filterStatusGroup || filterStatusGroup === 'PARTS') && (
-            <div className="glass rounded-2xl p-6 border-white/5">
-              <h2 className="text-lg font-bold mb-4 text-yellow-400 uppercase tracking-tighter">Parts Dept</h2>
+            <div className="glass rounded-2xl p-6 border-white/5 border-yellow-500/10">
+              <h2 className="text-lg font-bold mb-4 text-yellow-400 uppercase tracking-tighter">PARTS DEPT <span className="block text-[10px] font-bold text-yellow-400/40 uppercase tracking-widest mt-0.5">Waiting on Parts</span></h2>
               <div className="space-y-4">
                 {queues.PARTS.map(ro => {
                   const hasMissingOrSO = ro.parts.some(p => p.status === PartStatus.MISSING || p.status === PartStatus.SPECIAL_ORDER);
@@ -917,8 +917,8 @@ const handleROGenerated = (newRO: RepairOrder) => {
             )}
 
             {(!filterStatusGroup || filterStatusGroup === 'ACTIVE') && (
-            <div className="glass rounded-2xl p-6 border-white/5">
-              <h2 className="text-lg font-bold mb-4 neon-seafoam uppercase tracking-tighter">Deployment Deck</h2>
+            <div className="glass rounded-2xl p-6 border-white/5 border-teal-500/20 brightness-110">
+              <h2 className="text-lg font-bold mb-4 neon-seafoam uppercase tracking-tighter">DEPLOYMENT DECK <span className="block text-[10px] font-bold text-teal-400/40 uppercase tracking-widest mt-0.5">In Progress</span></h2>
               <div className="space-y-4">
                 {queues.ACTIVE.map(ro => { 
                   const hasPendingRequests = ro.requests?.some(r => r.status === 'PENDING'); 
@@ -955,8 +955,8 @@ const handleROGenerated = (newRO: RepairOrder) => {
             )}
 
             {(!filterStatusGroup || filterStatusGroup === 'HOLD') && (
-            <div className="glass rounded-2xl p-6 border-white/5">
-              <h2 className="text-lg font-bold mb-4 neon-crimson uppercase tracking-tighter">On Hold</h2>
+            <div className="glass rounded-2xl p-6 border-red-500/20 bg-red-500/5 shadow-[0_0_20px_rgba(239,68,68,0.1)]">
+              <h2 className="text-lg font-bold mb-4 neon-crimson uppercase tracking-tighter">ON HOLD <span className="block text-[10px] font-bold text-red-400/40 uppercase tracking-widest mt-0.5">Blocked Jobs</span></h2>
               <div className="space-y-4">
                 {queues.HOLD.map(ro => (
                   <ROCard 
@@ -983,7 +983,7 @@ const handleROGenerated = (newRO: RepairOrder) => {
 
             {(!filterStatusGroup || filterStatusGroup === 'BILLING') && (
             <div className="glass rounded-2xl p-6 border-white/5">
-              <h2 className="text-lg font-bold mb-4 neon-steel uppercase tracking-tighter">Billing Queue</h2>
+              <h2 className="text-lg font-bold mb-4 neon-steel uppercase tracking-tighter">BILLING <span className="block text-[10px] font-bold text-blue-400/40 uppercase tracking-widest mt-0.5">Ready to Close</span></h2>
               <div className="space-y-4">
                 {queues.BILLING.map(ro => (
                   <ROCard 

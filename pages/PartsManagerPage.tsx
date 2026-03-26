@@ -622,8 +622,6 @@ const pendingQueue = useMemo(() => repairOrders.filter(ro => [ROStatus.READY_FOR
 
   const handleUpdatePartStatus = async (ro: RepairOrder, partIndex: number, status: PartStatus) => {
     if (status === PartStatus.MISSING && ro.parts[partIndex].status !== PartStatus.MISSING) {
-        setMissingReason('');
-        setMissingReasonNotes('');
         setMissingPartInfo({ ro, partIndex });
         return;
     }

@@ -339,12 +339,21 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, ov
             </div>
           </div>
           <div className="flex flex-col gap-3">
-            <button
-              onClick={() => { handlePrint(); onFinalize(ro, isTaxExempt, taxExemptId, grandTotal); }}
-              className="px-8 py-4 bg-neon-seafoam text-slate-900 font-black rounded-lg transition-all hover:scale-105 active:scale-95 text-sm uppercase tracking-widest"
-            >
-              🖨 Finalize & Print Invoice
-            </button>
+            {grandTotal === 0 ? (
+              <button
+                onClick={() => onFinalize(ro, isTaxExempt, taxExemptId, 0)}
+                className="px-8 py-4 bg-neon-seafoam text-slate-900 font-black rounded-lg transition-all hover:scale-105 active:scale-95 text-sm uppercase tracking-widest"
+              >
+                Finalize — No Charge
+              </button>
+            ) : (
+              <button
+                onClick={() => { handlePrint(); onFinalize(ro, isTaxExempt, taxExemptId, grandTotal); }}
+                className="px-8 py-4 bg-neon-seafoam text-slate-900 font-black rounded-lg transition-all hover:scale-105 active:scale-95 text-sm uppercase tracking-widest"
+              >
+                🖨 Finalize & Print Invoice
+              </button>
+            )}
           </div>
         </div>
 
