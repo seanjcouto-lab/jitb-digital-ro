@@ -133,7 +133,7 @@ const ROCard: React.FC<ROCardProps> = ({
       {/* Row 4: Work summary */}
       <div className="flex gap-4 text-[9px] text-slate-400 font-bold uppercase tracking-wider">
         <span>{ro.directives.length} Directives</span>
-        {pendingPartsCount > 0 && <span className="text-amber-500">{pendingPartsCount} Parts Pending</span>}
+        {pendingPartsCount > 0 && <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-yellow-400 text-slate-900 text-[8px] font-black uppercase tracking-widest">⚠ {pendingPartsCount} PARTS PENDING</span>}
       </div>
 
       {/* Row 5: Alert badges */}
