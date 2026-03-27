@@ -56,6 +56,14 @@ const getRelativeTime = (timestamp: number) => {
   return `${diffInDays}d ago`;
 };
 
+const getAgeClass = (timestamp: number) => {
+  const diffInHours = (Date.now() - timestamp) / (1000 * 60 * 60);
+  if (diffInHours >= 48) return 'bg-red-500/5 border-red-500/20';
+  if (diffInHours >= 24) return 'bg-amber-500/5 border-amber-500/20';
+  if (diffInHours >= 12) return 'bg-yellow-500/5 border-yellow-500/10';
+  return '';
+};
+
 interface ROCardProps {
   ro: RepairOrder;
   onClick: () => void;
@@ -85,9 +93,9 @@ const ROCard: React.FC<ROCardProps> = ({
       onClick={onClick} 
      className={`relative p-4 rounded-xl border bg-white/5 flex flex-col gap-3 group transition-all cursor-pointer ${
         hasAttn ? 'border-red-500 shadow-[0_0_10px_rgba(239,68,68,0.3)] animate-pulse' :
-        ro.status === ROStatus.ACTIVE ? 'border-green-500/50 shadow-[0_0_10px_rgba(34,197,94,0.1)]' : 
+        ro.status === ROStatus.ACTIVE ? 'border-green-500/50 shadow-[0_0_10px_rgba(34,197,94,0.1)]' :
         ro.status === ROStatus.HOLD ? 'border-red-500/30 bg-red-500/5' :
-        'border-white/5 hover:border-white/20'
+        `${getAgeClass(createdAt)} hover:border-white/20`
       }`}
     >
       {/* Row 1: RO number, Vessel, Customer */}
@@ -118,8 +126,8 @@ const ROCard: React.FC<ROCardProps> = ({
       </div>
 
       {/* Row 3: Opened time (relative age) */}
-      <div className="text-[9px] text-slate-500 font-medium">
-        Opened {getRelativeTime(createdAt)}
+      <div className="text-[9px] text-slate-500 font-medium flex items-center gap-1">
+        <span>⏱</span><span>{getRelativeTime(createdAt)}</span>
       </div>
 
       {/* Row 4: Work summary */}
