@@ -1,6 +1,6 @@
 import { supabase } from '../supabaseClient'
 import { mapROToSupabase } from './supabaseMapper'
-import { RepairOrder, VesselHistory } from '../types'
+import { RepairOrder, VesselHistory, Part } from '../types'
 import { shopContextService } from '../services/shopContextService'
 
 export async function syncROToSupabase(ro: RepairOrder): Promise<void> {
@@ -157,5 +157,27 @@ export async function syncVesselToSupabase(vessel: VesselHistory): Promise<void>
     console.error('Supabase vessel sync failed:', error.message)
   } else {
     console.log('Supabase vessel sync OK:', vessel.vesselHIN)
+  }
+}
+
+export async function syncInventoryToSupabase(part: Part): Promise<void> {
+  const shopId = part.shopId || shopContextService.getActiveShopId()
+  const { error } = await supabase.from('master_inventory').upsert({
+    shop_id:          shopId,
+    part_number:      part.partNumber,
+    description:      part.description,
+    category:         part.category,
+    bin_location:     part.binLocation,
+    msrp:             part.msrp,
+    dealer_price:     part.dealerPrice,
+    cost:             part.cost,
+    quantity_on_hand: part.quantityOnHand,
+    reorder_point:    part.reorderPoint,
+    supersedes_part:  part.supersedesPart ?? null,
+  })
+  if (error) {
+    console.error('Supabase inventory sync failed:', error.message)
+  } else {
+    console.log('Supabase inventory sync OK:', part.partNumber)
   }
 }

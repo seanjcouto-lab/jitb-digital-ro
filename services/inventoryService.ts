@@ -2,6 +2,7 @@ import { Part, InventoryAlert, ClipboardEntry } from '../types';
 import { db } from '../localDb';
 import { inventoryStore } from '../data/inventoryStore';
 import { domainEventService } from './domainEventService';
+import { syncInventoryToSupabase } from '../utils/supabaseSync';
 
 export const inventoryService = {
   getFilteredInventory: (inventory: Part[], query: string): Part[] => {
@@ -40,8 +41,11 @@ export const inventoryService = {
     const newQuantity = partToUpdate.quantityOnHand + quantityChange;
 
     await inventoryStore.updateQuantity(shopId, partNumber, newQuantity);
-    
-    const updatedInventory = masterInventory.map(part => 
+
+    const updatedPart = { ...partToUpdate, quantityOnHand: newQuantity };
+    syncInventoryToSupabase(updatedPart).catch(err => console.warn('Supabase inventory sync failed:', err));
+
+    const updatedInventory = masterInventory.map(part =>
       part.partNumber === partNumber ? { ...part, quantityOnHand: newQuantity } : part
     );
 

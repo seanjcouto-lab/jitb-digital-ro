@@ -63,6 +63,7 @@ const App: React.FC = () => {
     const shopId = shopContextService.getActiveShopId();
     await loadFromSupabase(shopId);
     await vesselService.loadVesselsFromSupabase(shopId);
+    await inventoryStore.loadFromSupabase(shopId);
     const [initialROs, initialInventory] = await Promise.all([
       roStore.getAll(shopId),
       inventoryStore.getAll(shopId)
