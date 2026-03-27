@@ -105,7 +105,7 @@ const SignatureCanvas = ({ onSave }: { onSave: (dataUrl: string) => void }) => {
                 ctx.lineWidth = 2;
             }
         };
-        resizeCanvas();
+        requestAnimationFrame(resizeCanvas);
         window.addEventListener('resize', resizeCanvas);
         return () => window.removeEventListener('resize', resizeCanvas);
     }, []);
