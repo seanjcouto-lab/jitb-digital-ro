@@ -345,6 +345,7 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs 
           <div className="glass p-6 rounded-2xl border-orange-500/30">
             <h3 className="text-lg font-black uppercase tracking-widest text-orange-400 mb-4">My Halted Jobs</h3>
             <div className="space-y-3">
+              {haltedROs.length === 0 && <p className="text-slate-600 italic text-sm text-center py-4 font-medium">No halted jobs.</p>}
               {haltedROs.map(ro => (
                 <div key={ro.id} className="flex justify-between items-center p-4 bg-slate-900/50 rounded-xl border border-orange-500/20">
                   <div>
@@ -455,7 +456,7 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs 
                     <div key={directive.id} className="p-4 rounded-xl border border-orange-500/20 bg-slate-900/40 mb-4 last:mb-0 opacity-50 cursor-not-allowed">
                       <div className="flex justify-between items-center">
                         <div>
-                          <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Task 0{idx + 1}</span>
+                          <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Task {String(idx + 1).padStart(2, '0')}</span>
                           <h3 className="text-lg font-bold text-slate-400">{directive.title}</h3>
                         </div>
                         <div className="px-3 py-1 rounded-full text-[10px] font-black uppercase border border-orange-500/30 bg-orange-500/10 text-orange-400 animate-pulse">PENDING APPROVAL</div>
@@ -469,7 +470,7 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs 
                     <div className="flex justify-between items-start mb-4">
                       <div>
                         <div className="flex items-center gap-2 mb-1">
-                            <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Task 0{idx + 1}</span>
+                            <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Task {String(idx + 1).padStart(2, '0')}</span>
                         </div>
                         <h3 className="text-lg font-bold text-slate-200">{directive.title}</h3>
                       </div>
@@ -557,7 +558,7 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs 
             <section className="glass p-6 rounded-2xl border-white/5 h-fit">
               <EvidenceInputBlock title="Final Labor Conclusion" notes={laborNote} onNotesChange={setLaborNote} onTakePhoto={() => handleUploadEvidence(null, 'photo')} onTakeVideo={() => handleUploadEvidence(null, 'video')} onRecordAudio={() => handleOpenAudioRecorder(null)} placeholder="Final summary of all services performed (Required for exit gate)..." />
               <div className="flex gap-2 mt-6">
-                <button disabled={repairOrder.status !== ROStatus.ACTIVE} onClick={() => setIsHaltModalOpen(true)} className="flex-1 py-4 rounded-xl font-black uppercase tracking-widest text-sm transition-all shadow-2xl bg-orange-600/80 text-white hover:bg-orange-500 disabled:bg-slate-800 disabled:text-slate-500 disabled:grayscale">Halt Job</button>
+                <button disabled={repairOrder.status !== ROStatus.ACTIVE} onClick={() => setIsHaltModalOpen(true)} className="px-4 py-3 rounded-lg font-bold uppercase tracking-widest text-xs transition-all bg-slate-800 text-slate-400 border border-white/10 hover:border-orange-500/50 hover:text-orange-400 disabled:opacity-30 disabled:cursor-not-allowed">Halt</button>
                 <button disabled={!isFinalizable} onClick={handleFinalize} className={`flex-1 py-4 rounded-xl font-black uppercase tracking-widest text-sm transition-all shadow-2xl ${isFinalizable ? 'bg-neon-seafoam text-slate-900 hover:scale-105 active:scale-95' : 'bg-slate-800 text-slate-500 grayscale cursor-not-allowed'}`}>Send for Billing</button>
               </div>
              <div className="mt-4 space-y-2">{laborNote.length <= 10 && <div className="flex items-center gap-2 text-orange-400"><div className="w-1 h-1 rounded-full bg-orange-400"></div><span className="text-[9px] font-black uppercase tracking-widest">Awaiting Conclusion Notes</span></div>}{hasPendingPartDecisions && <div className="flex items-center gap-2 text-red-500"><div className="w-1 h-1 rounded-full bg-red-500 animate-pulse"></div><span className="text-[9px] font-black uppercase tracking-widest">Part Decisions Pending SM Approval</span></div>}</div>
