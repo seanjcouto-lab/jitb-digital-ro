@@ -147,7 +147,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, ov
                 <tr>
                   <td style="font-family:monospace;font-size:10px">${part.partNumber}</td>
                   <td>${part.description}</td>
-                  <td class="text-right">$${(editedPartPrices[idx] !== undefined ? editedPartPrices[idx] : (part.msrp || 0)).toFixed(2)}</td>
+                  <td class="text-right">$${((editedPartPrices[idx] !== undefined ? editedPartPrices[idx] : (part.msrp || 0)) * (part.quantity ?? 1)).toFixed(2)}</td>
                 </tr>
               `).join('')}
             </tbody>
@@ -195,7 +195,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, ov
   const billableParts = ro.parts
     .map((part, idx) => ({ part, idx }))
     .filter(({ part }) => part.status === 'USED' || part.status === 'IN_BOX');
-  const partsTotal = billableParts.reduce((acc, { part, idx }) => acc + (editedPartPrices[idx] !== undefined ? editedPartPrices[idx] : (part.msrp || 0)), 0);
+  const partsTotal = billableParts.reduce((acc, { part, idx }) => acc + (editedPartPrices[idx] !== undefined ? editedPartPrices[idx] : (part.msrp || 0)) * (part.quantity ?? 1), 0);
   const taxAmount = isTaxExempt ? 0 : (partsTotal * (taxRate / 100));
   const grandTotal = Math.max(0, laborTotal + partsTotal + taxAmount - discount);
 
@@ -265,7 +265,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, ov
                         {isUnlocked ? (
                           <input type="number" step="0.01" value={editedPartPrices[idx] !== undefined ? editedPartPrices[idx] : (part.msrp || 0)} onChange={e => setEditedPartPrices(prev => ({ ...prev, [idx]: parseFloat(e.target.value) || 0 }))} className="w-24 bg-yellow-500/10 border border-yellow-500/50 rounded px-2 py-1 text-yellow-300 font-mono text-right outline-none" />
                         ) : (
-                          <span>${(editedPartPrices[idx] !== undefined ? editedPartPrices[idx] : (part.msrp || 0)).toFixed(2)}</span>
+                          <span>${((editedPartPrices[idx] !== undefined ? editedPartPrices[idx] : (part.msrp || 0)) * (part.quantity ?? 1)).toFixed(2)}</span>
                         )}
                       </td>
                     </tr>
