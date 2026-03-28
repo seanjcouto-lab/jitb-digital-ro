@@ -201,6 +201,7 @@ const ROGenerationView: React.FC<ROGenerationViewProps> = ({ profileData, onROGe
       manualParts: manuallyAddedParts.map(p => ({
         partNumber: p.partNumber,
         description: p.description,
+        quantity: p.quantity ?? 1,
       })),
       manualDirectives: manuallyAddedDirectives,
       authorization: authorizationType
@@ -214,8 +215,9 @@ const ROGenerationView: React.FC<ROGenerationViewProps> = ({ profileData, onROGe
   };
   
   const handleTogglePackage = (pkgName: string) => setSelectedPackages(prev => prev.includes(pkgName) ? prev.filter(p => p !== pkgName) : [...prev, pkgName]);
-  const handleAddManualPart = (part: Part) => { setManuallyAddedParts(prev => [...prev, part]); setManualPartQuery(''); };
+  const handleAddManualPart = (part: Part) => { setManuallyAddedParts(prev => [...prev, { ...part, quantity: 1 }]); setManualPartQuery(''); };
   const handleRemoveManualPart = (partNumber: string) => setManuallyAddedParts(prev => prev.filter(p => p.partNumber !== partNumber));
+  const handleUpdateManualPartQty = (partNumber: string, qty: number) => { setManuallyAddedParts(prev => prev.map(p => p.partNumber === partNumber ? { ...p, quantity: Math.max(1, Math.floor(qty) || 1) } : p)); };
   const handleAddManualDirective = () => { if (manualDirective.trim()) { setManuallyAddedDirectives(prev => [...prev, manualDirective.trim()]); setManualDirective(''); } };
   const handleRemoveManualDirective = (index: number) => setManuallyAddedDirectives(prev => prev.filter((_, i) => i !== index));
 
@@ -348,7 +350,7 @@ const ROGenerationView: React.FC<ROGenerationViewProps> = ({ profileData, onROGe
             <div>
               <SectionHeader title="Manual Part Requisition" />
               <div className="space-y-3">
-                {manuallyAddedParts.map(part => (<div key={part.partNumber} className="flex justify-between items-center bg-slate-900/70 p-3 rounded-lg border border-white/5"><div><p className="text-sm font-bold text-slate-200">{part.description}</p><p className="text-xs font-mono text-slate-500">{part.partNumber}</p></div><button onClick={() => handleRemoveManualPart(part.partNumber)} className="p-2 bg-slate-800/50 rounded-lg text-slate-500 hover:bg-red-500/20 hover:text-red-400 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clipRule="evenodd" /></svg></button></div>))}
+                {manuallyAddedParts.map(part => (<div key={part.partNumber} className="flex justify-between items-center bg-slate-900/70 p-3 rounded-lg border border-white/5"><div><p className="text-sm font-bold text-slate-200">{part.description}</p><p className="text-xs font-mono text-slate-500">{part.partNumber}</p></div><div className="flex items-center gap-2 ml-auto mr-2"><label className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Qty</label><input type="number" min={1} value={part.quantity ?? 1} onChange={e => handleUpdateManualPartQty(part.partNumber, parseInt(e.target.value))} className="w-14 bg-slate-800 border border-white/10 rounded px-2 py-1 text-white text-sm text-center focus:border-neon-steel outline-none" /></div><button onClick={() => handleRemoveManualPart(part.partNumber)} className="p-2 bg-slate-800/50 rounded-lg text-slate-500 hover:bg-red-500/20 hover:text-red-400 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clipRule="evenodd" /></svg></button></div>))}
               </div>
               <div className="flex gap-2 mt-4">
                 <div className="relative flex-grow">

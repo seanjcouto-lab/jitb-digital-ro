@@ -185,7 +185,7 @@ export const repairOrderService = {
     
     const finalManuallyAddedParts = input.manualParts.map(p => {
         const invPart = masterInventory.find(m => m.partNumber === p.partNumber);
-        return { ...(invPart || p), status: PartStatus.REQUIRED } as Part;
+        return { ...(invPart || p), status: PartStatus.REQUIRED, quantity: p.quantity ?? 1 } as Part;
     });
     const allParts = [...packageParts, ...finalManuallyAddedParts];
     const uniqueParts = Array.from(new Map(allParts.map(p => [p.partNumber, p])).values());

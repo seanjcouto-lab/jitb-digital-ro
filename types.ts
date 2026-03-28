@@ -84,6 +84,7 @@ export interface Part {
   cost: number;
   quantityOnHand: number;
   reorderPoint: number;
+  quantity?: number;
   supersedesPart: string | null;
   status?: PartStatus;
   isCustom?: boolean;

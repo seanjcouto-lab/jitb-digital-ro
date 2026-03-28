@@ -519,7 +519,7 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs 
                         if (part.status === PartStatus.APPROVAL_PENDING) {
                           return (
                             <div key={part.partNumber + index} className="flex justify-between items-center p-3 bg-slate-900/50 rounded-xl border border-orange-500/20 opacity-50 cursor-not-allowed">
-                              <div><p className="font-bold text-sm text-slate-400">{part.description}</p><p className="text-[10px] text-slate-600 font-mono">{part.partNumber}</p></div>
+                              <div><p className="font-bold text-sm text-slate-400">{part.description}</p><p className="text-[10px] text-slate-600 font-mono">{part.partNumber} <span className="text-amber-400 font-bold">x{part.quantity ?? 1}</span></p></div>
                               <span className="text-[9px] font-black uppercase px-3 py-1 rounded-full border border-orange-500/30 bg-orange-500/10 text-orange-400 animate-pulse">PENDING APPROVAL</span>
                             </div>
                           );
@@ -527,7 +527,7 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs 
 
                         return (
                             <div key={part.partNumber + index} className="flex justify-between items-center p-3 bg-slate-900/50 rounded-xl border border-white/5 group">
-                                <div><p className="font-bold text-sm text-slate-200">{part.description}</p><p className="text-[10px] text-slate-500 font-mono">{part.partNumber} • BIN: {part.binLocation}</p></div>
+                                <div><p className="font-bold text-sm text-slate-200">{part.description}</p><p className="text-[10px] text-slate-500 font-mono">{part.partNumber} <span className="text-amber-400 font-bold">x{part.quantity ?? 1}</span> • BIN: {part.binLocation}</p></div>
                                 <div className="flex items-center gap-4">
                                     <span className={`text-[9px] font-black uppercase px-3 py-1 rounded-full border ${colorClass}`}>{part.status?.replace('_', ' ')}</span>
                                     {part.status === PartStatus.IN_BOX && (

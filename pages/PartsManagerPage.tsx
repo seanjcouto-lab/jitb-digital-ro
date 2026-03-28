@@ -330,7 +330,7 @@ const ROCard: React.FC<ROCardProps> = ({
                                 <div>
                                   <p className="text-sm font-bold text-slate-200">{part.description} {part.supersedesPart && <span className="text-xs text-slate-500">(was {part.supersedesPart})</span>}</p>
                                   <div className="flex items-center gap-2">
-                                    <p className="text-[10px] font-mono text-slate-500">{part.partNumber} • BIN: <span className="font-bold text-neon-steel">{part.binLocation}</span></p>
+                                    <p className="text-[10px] font-mono text-slate-500">{part.partNumber} <span className="text-amber-400 font-bold">x{part.quantity ?? 1}</span> • BIN: <span className="font-bold text-neon-steel">{part.binLocation}</span></p>
                                     {invPart && !part.isCustom && <p className={`text-[10px] font-bold ${invPart.quantityOnHand > 0 ? 'text-green-400' : 'text-red-400'}`}>QoH: {invPart.quantityOnHand}</p>}
                                   </div>
                                 </div>

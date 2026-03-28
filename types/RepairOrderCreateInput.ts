@@ -8,6 +8,7 @@ import { CollectionsStatus } from '../types';
 export interface ManualPartInput {
   partNumber: string;
   description: string;
+  quantity?: number;
 }
 
 /**

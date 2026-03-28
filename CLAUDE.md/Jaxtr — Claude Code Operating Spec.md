@@ -240,3 +240,15 @@ Session date: 2026-03-28
 ### Next build target
 
 **PWA implementation** — offline capability via service worker + web app manifest
+
+---
+
+## Known Gaps
+
+### Offline sign-in (auth)
+
+**Gap:** `LoggedInUser` record is re-fetched from Supabase on every call to `restoreSession()`. If the device is offline on reload, auth fails even with a valid JWT in localStorage.
+
+**Fix:** Cache `LoggedInUser` in localStorage after successful login. In `restoreSession()`, use the cached record as a fallback when the Supabase `users` table fetch fails or is unreachable.
+
+**Constraint:** `services/supabaseAuthService.ts` is frozen — requires explicit direction before touching.
