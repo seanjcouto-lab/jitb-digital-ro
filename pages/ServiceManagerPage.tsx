@@ -181,6 +181,7 @@ const RODetail = ({
   const [partSearchQuery, setPartSearchQuery] = useState('');
   const [partSearchResults, setPartSearchResults] = useState<Part[]>([]);
   const [showPartResults, setShowPartResults] = useState(false);
+  const [partAddQty, setPartAddQty] = useState(1);
 
   const handleAddDirective = (e?: React.MouseEvent) => {
     e?.stopPropagation();
@@ -207,10 +208,11 @@ const RODetail = ({
 
   const handleSelectPart = (part: Part) => {
     if (onAddPart) {
-      onAddPart(ro.id, { ...part, status: PartStatus.REQUIRED });
+      onAddPart(ro.id, { ...part, status: PartStatus.REQUIRED, quantity: partAddQty });
       setPartSearchQuery('');
       setPartSearchResults([]);
       setShowPartResults(false);
+      setPartAddQty(1);
     }
   };
 
@@ -229,11 +231,13 @@ const RODetail = ({
         supersedesPart: null,
         isCustom: true,
         status: PartStatus.REQUIRED,
+        quantity: partAddQty,
         shopId: ro.shopId
       });
       setPartSearchQuery('');
       setPartSearchResults([]);
       setShowPartResults(false);
+      setPartAddQty(1);
     }
   };
 
@@ -347,8 +351,15 @@ const RODetail = ({
                 </div>
               )}
             </div>
-            <button 
-              onClick={handleAddCustomPart} 
+            <input
+              type="number"
+              min={1}
+              value={partAddQty}
+              onChange={e => setPartAddQty(Math.max(1, parseInt(e.target.value) || 1))}
+              className="w-12 bg-slate-900 border border-white/10 rounded px-1 py-1.5 text-[10px] font-mono text-amber-400 text-center outline-none focus:border-neon-seafoam"
+            />
+            <button
+              onClick={handleAddCustomPart}
               className="px-3 py-1.5 bg-slate-800 rounded text-neon-seafoam border border-white/10 hover:bg-slate-700 transition-colors flex items-center justify-center"
             >
               <Plus className="h-3 w-3" />
