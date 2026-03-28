@@ -320,8 +320,9 @@ const RODetail = ({
           })}
         </div>
         {canEdit && (
-          <div className="mt-2 flex gap-2 pl-2 relative">
-            <div className="relative flex-1">
+          <>
+          <div className="mt-2 flex gap-1 pl-2 relative w-full items-center">
+            <div className="relative min-w-0 flex-1">
               <div className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none">
                 <Search className="h-3 w-3" />
               </div>
@@ -351,13 +352,6 @@ const RODetail = ({
                 </div>
               )}
             </div>
-            <input
-              type="number"
-              min={1}
-              value={partAddQty}
-              onChange={e => setPartAddQty(Math.max(1, parseInt(e.target.value) || 1))}
-              className="w-12 bg-slate-900 border border-white/10 rounded px-1 py-1.5 text-[10px] font-mono text-amber-400 text-center outline-none focus:border-neon-seafoam"
-            />
             <button
               onClick={handleAddCustomPart}
               className="px-3 py-1.5 bg-slate-800 rounded text-neon-seafoam border border-white/10 hover:bg-slate-700 transition-colors flex items-center justify-center"
@@ -365,6 +359,19 @@ const RODetail = ({
               <Plus className="h-3 w-3" />
             </button>
           </div>
+          {partSearchQuery.trim() && (
+            <div className="flex items-center gap-2 pl-2 mt-1">
+              <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Qty</span>
+              <input
+                type="number"
+                min={1}
+                value={partAddQty}
+                onChange={e => setPartAddQty(Math.max(1, parseInt(e.target.value) || 1))}
+                className="w-16 bg-slate-900 border border-white/10 rounded px-2 py-1 text-[10px] font-mono text-amber-400 text-center outline-none focus:border-neon-seafoam"
+              />
+            </div>
+          )}
+          </>
         )}
         {onSendToParts && ro.parts.some(p => p.status === PartStatus.REQUIRED) && (
           <button onClick={(e) => { e.stopPropagation(); onSendToParts(ro); }} className="w-full mt-2 px-4 py-2 rounded-lg bg-amber-500/20 text-amber-400 text-[10px] font-black border border-amber-500/30 uppercase tracking-widest hover:bg-amber-500/30 transition-all">Send to Parts Dept</button>
