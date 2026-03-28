@@ -203,35 +203,40 @@ Never proceed to the next file if tests are failing.
 
 
 ## Current Session Progress
-Session date: 2026-03-26
+Session date: 2026-03-28
 
-### Completed UI changes — pages/ServiceManagerPage.tsx
+### Completed this session
 
-All changes are purely presentational (className and label text). 77/77 tests pass after each change.
+**Inventory Supabase sync — DONE (Section 10 item 1 + 2)**
+- `master_inventory` table created in Supabase with RLS policies (shop_id scoped, authenticated users)
+- `syncInventoryToSupabase(part)` added to `utils/supabaseSync.ts` — upserts on every `adjustInventory()` call, fire-and-forget
+- `loadFromSupabase(shopId)` added to `data/inventoryStore.ts` — hydrates Dexie on app init, local wins (insert-only, never overwrites)
+- `App.tsx` calls `inventoryStore.loadFromSupabase(shopId)` alongside existing RO and vessel hydration
 
-1. **Column header labels** — replaced flat single-line h2 text with two-line structure: large bold title + small muted subtitle span (block, text-[10px], uppercase, tracking-widest, mt-0.5).
-2. **Subtitle colors** — each subtitle span uses a faint tinted color matched to its column instead of text-slate-500.
-3. **Column container styling** — border, background, shadow, opacity, and brightness adjustments per column.
-4. **Missing mb-4** on Staged header fixed.
+**Signature canvas fix — ROGenerationView.tsx**
+- Canvas `offsetWidth` was 0 at `useEffect` time because modal uses conditional rendering (`{showCreateSignatureModal && <SignatureCanvas />}`)
+- Fix: wrapped first `resizeCanvas()` call in `requestAnimationFrame()` to defer sizing until after browser layout
 
-### Current visual state of each column
+**TechnicianPage.tsx UI polish**
+- Task number overflow fixed: `Task 0{idx+1}` → `Task {String(idx+1).padStart(2, '0')}`
+- Halt button made visually subordinate: dark bg, muted text, subtle border — no longer competing with primary CTA
+- Empty halted jobs state: italic "No halted jobs." message when `haltedROs.length === 0`
 
-| Column | Title | Subtitle | Container className additions |
-|--------|-------|----------|-------------------------------|
-| Staged | STAGED | Awaiting Assignment (text-blue-400/40) | opacity-90 |
-| Parts Dept | PARTS DEPT | Waiting on Parts (text-yellow-400/40) | border-yellow-500/10 |
-| Deployment Deck | DEPLOYMENT DECK | In Progress (text-teal-400/40) | border-teal-500/20 brightness-110 |
-| On Hold | ON HOLD | Blocked Jobs (text-red-400/40) | border-red-500/20 bg-red-500/5 shadow-[0_0_20px_rgba(239,68,68,0.1)] |
-| Billing | BILLING | Ready to Close (text-blue-400/40) | no change from base |
+**ServiceManagerPage.tsx card improvements**
+- Age-based tint: 12h → faint yellow, 24h → amber, 48h → red border/bg on card container
+- Timer icon: "Opened {time}" replaced with `⏱ {time}`
+- Parts pending badge: plain amber text replaced with loud `⚠ N PARTS PENDING` yellow badge (bg-yellow-400, dark text, font-black, uppercase)
 
-### Remaining spec items not yet built (from current build target — Section 10)
+**Test suite status: 77 passing, 2 skipped (Playwright E2E)**
 
-These are the functional gaps listed in CLAUDE.md Section 10, none of which were touched this session:
+### Remaining Section 10 inventory items (InventoryPage UI)
 
-1. Close Supabase sync gap — add syncInventoryToSupabase() to utils/supabaseSync.ts, call fire-and-forget from adjustInventory()
-2. Inventory hydration from Supabase on app init
 3. Quantity edit control on InventoryPage
 4. Reorder point edit control on InventoryPage
 5. Add new part form on InventoryPage
 6. Import trigger for INVENTORY_MANAGER role on InventoryPage
 7. Receiving workflow (calls adjustInventory() with positive delta)
+
+### Next build target
+
+**PWA implementation** — offline capability via service worker + web app manifest
