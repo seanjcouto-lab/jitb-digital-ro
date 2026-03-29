@@ -23,6 +23,7 @@ test('Selector Discovery: Service Manager flow', async ({ page }) => {
   
   // Step 3: Create a new RO
   console.log('Initiating New RO flow...');
+  await page.getByRole('button', { name: 'Customer Search' }).click();
   await page.fill('#oracle-search', 'Test Customer');
   await page.getByRole('button', { name: 'New Customer' }).click();
 

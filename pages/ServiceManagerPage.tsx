@@ -36,10 +36,10 @@ const STATUS_GROUPS = {
   ARCHIVE: [ROStatus.COMPLETED, ROStatus.ARCHIVED],
 };
 
-const StatusPill = ({ count, label, colorClass, onClick, isActive }: { count: number, label: string, colorClass: string, onClick?: () => void, isActive?: boolean }) => (
-  <div onClick={onClick} className={`flex flex-col items-center justify-center p-3 rounded-xl border flex-1 min-w-[80px] cursor-pointer transition-all ${isActive ? 'bg-white/10 border-white/20 scale-105 shadow-lg ring-1 ring-white/20' : 'bg-slate-900/50 border-white/5 hover:bg-slate-800'}`}>
-    <span className={`text-xl font-black ${colorClass}`}>{count}</span>
-    <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest">{label}</span>
+const FolderTab = ({ count, borderColor, textColor }: { count: number, borderColor: string, textColor: string }) => (
+  <div className={`absolute -top-6 -mb-px right-6 flex flex-col items-center justify-center px-4 pt-2 pb-1 bg-slate-800 border border-b-0 border-t-2 ${borderColor} rounded-t-lg z-10 w-[64px] shadow-[0_-4px_12px_rgba(0,0,0,0.3)]`}>
+    <span className={`text-[20px] font-black ${textColor} leading-none`}>{count}</span>
+    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-none mt-0.5 mb-1">jobs</span>
   </div>
 );
 
@@ -608,6 +608,7 @@ const ServiceManagerPage: React.FC<ServiceManagerPageProps> = ({
   const [filterStatusGroup, setFilterStatusGroup] = useState<keyof typeof STATUS_GROUPS | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterTechId, setFilterTechId] = useState<string>('ALL');
+  const [searchExpanded, setSearchExpanded] = useState(false);
 
   const handleVesselClick = (vessel: VesselHistory) => {
     setSearchQuery('');
@@ -854,42 +855,48 @@ const handleROGenerated = (newRO: RepairOrder) => {
           {viewMode !== 'SEARCH' && (<button onClick={handleCancel} className="text-[10px] font-bold text-slate-400 hover:text-white uppercase transition-all bg-white/5 px-4 py-2 rounded-lg border border-white/5">← Cancel & Return to Dock</button>)}
         </div>
 
-        {/* Status Cards */}
-        <div className="flex flex-wrap gap-2 w-full">
-            <StatusPill count={stats.staged} label="Staged" colorClass="text-blue-400" onClick={() => toggleStatusFilter('STAGED')} isActive={filterStatusGroup === 'STAGED'} />
-            <StatusPill count={stats.parts} label="Parts Dept" colorClass="text-amber-400" onClick={() => toggleStatusFilter('PARTS')} isActive={filterStatusGroup === 'PARTS'} />
-            <StatusPill count={stats.deployment} label="Deployment Deck" colorClass="text-teal-400" onClick={() => toggleStatusFilter('ACTIVE')} isActive={filterStatusGroup === 'ACTIVE'} />
-            <StatusPill count={stats.activeOnly} label="Active" colorClass="text-green-400" onClick={() => toggleStatusFilter('ACTIVE_ONLY')} isActive={filterStatusGroup === 'ACTIVE_ONLY'} />
-            <StatusPill count={stats.hold} label="Hold" colorClass="text-red-400" onClick={() => toggleStatusFilter('HOLD')} isActive={filterStatusGroup === 'HOLD'} />
-            <StatusPill count={stats.billing} label="Billing" colorClass="text-purple-400" onClick={() => toggleStatusFilter('BILLING')} isActive={filterStatusGroup === 'BILLING'} />
-            
-        </div>
-
         <div className="space-y-8">
           <section>
             {viewMode === 'SEARCH' && (
-              <div className="space-y-4">
-                <OracleSearchView 
-                  onVesselSelect={(vessel) => { setVesselActionMenu(vessel); }} 
-                  onNewCustomer={(term) => { setActiveProfile({ ...initialProfileState, customerName: term }); setViewMode('PROFILE_CREATE'); }}
-                  onLoadMockData={() => { setActiveProfile(MOCK_NEW_CUSTOMER); setViewMode('PROFILE_CREATE'); }} 
-                  onHistoricalAlert={setHistoricalAlert}
-                  searchTerm={searchQuery}
-                  onSearchChange={setSearchQuery}
-                />
-                
+              <div>
+                {!searchExpanded ? (
+                  <button
+                    onClick={() => setSearchExpanded(true)}
+                    className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl glass border border-white/5 hover:border-white/10 transition-all group"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500 group-hover:text-slate-300 transition-colors"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    <span className="text-[11px] font-bold uppercase tracking-widest text-slate-500 group-hover:text-slate-300 transition-colors">Customer Search</span>
+                    <span className="ml-auto text-[10px] text-slate-600">click to expand</span>
+                  </button>
+                ) : (
+                  <div className="space-y-4">
+                    <OracleSearchView
+                      onVesselSelect={(vessel) => { setVesselActionMenu(vessel); }}
+                      onNewCustomer={(term) => { setActiveProfile({ ...initialProfileState, customerName: term }); setViewMode('PROFILE_CREATE'); setSearchExpanded(false); }}
+                      onLoadMockData={() => { setActiveProfile(MOCK_NEW_CUSTOMER); setViewMode('PROFILE_CREATE'); setSearchExpanded(false); }}
+                      onHistoricalAlert={setHistoricalAlert}
+                      searchTerm={searchQuery}
+                      onSearchChange={setSearchQuery}
+                    />
+                    <button onClick={() => { setSearchExpanded(false); setSearchQuery(''); }} className="text-[10px] text-slate-600 hover:text-slate-400 transition-colors">
+                      ↑ collapse search
+                    </button>
+                  </div>
+                )}
               </div>
             )}
             {viewMode === 'PROFILE_CREATE' && (<ProfileOnboardingForm initialData={activeProfile} onProfileComplete={handleProfileComplete} />)}
             {viewMode === 'RO_CREATE' && (<div ref={roGenerationRef}><ROGenerationView profileData={activeProfile} onROGenerated={handleROGenerated} masterInventory={masterInventory}/></div>)}
           </section>
+
+          {/* Column grid */}
           <section className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 ${filterStatusGroup ? 'lg:grid-cols-1' : ''}`}>
             
             {(!filterStatusGroup || filterStatusGroup === 'STAGED') && (
-            <div className="glass rounded-2xl p-6 border-white/5 opacity-90">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-bold mb-4 neon-steel uppercase tracking-tighter">STAGED <span className="block text-[10px] font-bold text-blue-400/40 uppercase tracking-widest mt-0.5">Awaiting Assignment</span></h2>
-                <span className="text-[10px] font-bold text-slate-500 bg-white/5 px-2 py-0.5 rounded-full">{queues.STAGED.length}</span>
+            <div className="relative overflow-visible glass rounded-2xl p-6 pt-10 mt-6 border-t-2 border-t-blue-400/40 border-white/5 opacity-90 cursor-pointer transition-all hover:border-blue-400/30" onClick={() => toggleStatusFilter('STAGED')}>
+              <FolderTab count={queues.STAGED.length} borderColor="border-blue-400" textColor="text-blue-400" />
+              <div className="mb-4">
+                <h2 className={`text-lg font-bold neon-steel uppercase tracking-tighter transition-all ${filterStatusGroup === 'STAGED' ? 'text-blue-400' : ''}`}>STAGED <span className="block text-[10px] font-bold text-blue-400/40 uppercase tracking-widest mt-0.5">Awaiting Assignment</span></h2>
               </div>
               <div className="space-y-4">
                 {queues.STAGED.map(ro => (
@@ -929,8 +936,9 @@ const handleROGenerated = (newRO: RepairOrder) => {
             )}
 
             {(!filterStatusGroup || filterStatusGroup === 'PARTS') && (
-            <div className="glass rounded-2xl p-6 border-white/5 border-yellow-500/10">
-              <h2 className="text-lg font-bold mb-4 text-yellow-400 uppercase tracking-tighter">PARTS DEPT <span className="block text-[10px] font-bold text-yellow-400/40 uppercase tracking-widest mt-0.5">Waiting on Parts</span></h2>
+            <div className="relative overflow-visible glass rounded-2xl p-6 pt-10 mt-6 border-t-2 border-t-amber-400/40 border-white/5 border-yellow-500/10 cursor-pointer transition-all hover:border-yellow-400/30" onClick={() => toggleStatusFilter('PARTS')}>
+              <FolderTab count={queues.PARTS.length} borderColor="border-amber-400" textColor="text-amber-400" />
+              <h2 className={`text-lg font-bold mb-4 uppercase tracking-tighter transition-all ${filterStatusGroup === 'PARTS' ? 'text-amber-300' : 'text-yellow-400'}`}>PARTS DEPT <span className="block text-[10px] font-bold text-yellow-400/40 uppercase tracking-widest mt-0.5">Waiting on Parts</span></h2>
               <div className="space-y-4">
                 {queues.PARTS.map(ro => {
                   const hasMissingOrSO = ro.parts.some(p => p.status === PartStatus.MISSING || p.status === PartStatus.SPECIAL_ORDER);
@@ -962,8 +970,9 @@ const handleROGenerated = (newRO: RepairOrder) => {
             )}
 
             {(!filterStatusGroup || filterStatusGroup === 'ACTIVE') && (
-            <div className="glass rounded-2xl p-6 border-white/5 border-teal-500/20 brightness-110">
-              <h2 className="text-lg font-bold mb-4 neon-seafoam uppercase tracking-tighter">DEPLOYMENT DECK <span className="block text-[10px] font-bold text-teal-400/40 uppercase tracking-widest mt-0.5">In Progress</span></h2>
+            <div className="relative overflow-visible glass rounded-2xl p-6 pt-10 mt-6 border-t-2 border-t-teal-400/40 border-white/5 border-teal-500/20 brightness-110 cursor-pointer transition-all hover:border-teal-400/30" onClick={() => toggleStatusFilter('ACTIVE')}>
+              <FolderTab count={queues.ACTIVE.length} borderColor="border-teal-400" textColor="text-teal-400" />
+              <h2 className={`text-lg font-bold mb-4 uppercase tracking-tighter transition-all ${filterStatusGroup === 'ACTIVE' ? 'text-teal-300' : 'neon-seafoam'}`}>DEPLOYMENT DECK <span className="block text-[10px] font-bold text-teal-400/40 uppercase tracking-widest mt-0.5">In Progress</span></h2>
               <div className="space-y-4">
                 {queues.ACTIVE.map(ro => { 
                   const hasPendingRequests = ro.requests?.some(r => r.status === 'PENDING'); 
@@ -1000,8 +1009,9 @@ const handleROGenerated = (newRO: RepairOrder) => {
             )}
 
             {(!filterStatusGroup || filterStatusGroup === 'HOLD') && (
-            <div className="glass rounded-2xl p-6 border-red-500/20 bg-red-500/5 shadow-[0_0_20px_rgba(239,68,68,0.1)]">
-              <h2 className="text-lg font-bold mb-4 neon-crimson uppercase tracking-tighter">ON HOLD <span className="block text-[10px] font-bold text-red-400/40 uppercase tracking-widest mt-0.5">Blocked Jobs</span></h2>
+            <div className="relative overflow-visible glass rounded-2xl p-6 pt-10 mt-6 border-t-2 border-t-red-400/40 border-red-500/20 bg-red-500/5 shadow-[0_0_20px_rgba(239,68,68,0.1)] cursor-pointer transition-all hover:border-red-400/40" onClick={() => toggleStatusFilter('HOLD')}>
+              <FolderTab count={queues.HOLD.length} borderColor="border-red-400" textColor="text-red-400" />
+              <h2 className={`text-lg font-bold mb-4 uppercase tracking-tighter transition-all ${filterStatusGroup === 'HOLD' ? 'text-red-300' : 'neon-crimson'}`}>ON HOLD <span className="block text-[10px] font-bold text-red-400/40 uppercase tracking-widest mt-0.5">Blocked Jobs</span></h2>
               <div className="space-y-4">
                 {queues.HOLD.map(ro => (
                   <ROCard 
@@ -1027,8 +1037,9 @@ const handleROGenerated = (newRO: RepairOrder) => {
             )}
 
             {(!filterStatusGroup || filterStatusGroup === 'BILLING') && (
-            <div className="glass rounded-2xl p-6 border-white/5">
-              <h2 className="text-lg font-bold mb-4 neon-steel uppercase tracking-tighter">BILLING <span className="block text-[10px] font-bold text-blue-400/40 uppercase tracking-widest mt-0.5">Ready to Close</span></h2>
+            <div className="relative overflow-visible glass rounded-2xl p-6 pt-10 mt-6 border-t-2 border-t-purple-400/40 border-white/5 cursor-pointer transition-all hover:border-purple-400/30" onClick={() => toggleStatusFilter('BILLING')}>
+              <FolderTab count={queues.BILLING.length} borderColor="border-purple-400" textColor="text-purple-400" />
+              <h2 className={`text-lg font-bold mb-4 uppercase tracking-tighter transition-all ${filterStatusGroup === 'BILLING' ? 'text-purple-300' : 'neon-steel'}`}>BILLING <span className="block text-[10px] font-bold text-blue-400/40 uppercase tracking-widest mt-0.5">Ready to Close</span></h2>
               <div className="space-y-4">
                 {queues.BILLING.map(ro => (
                   <ROCard 

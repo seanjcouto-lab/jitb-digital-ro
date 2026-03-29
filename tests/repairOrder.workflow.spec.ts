@@ -29,6 +29,7 @@ test('Repair Order Workflow: Creation to Directive Completion', async ({ page })
 
   // Initiate New RO flow
   const customerName = `Test Customer ${Date.now()}`;
+  await page.getByRole('button', { name: 'Customer Search' }).click();
   await page.fill('#oracle-search', customerName);
   await page.getByRole('button', { name: 'New Customer' }).click();
 
