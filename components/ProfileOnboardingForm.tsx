@@ -24,6 +24,7 @@ const makeVessel = () => ({
   boatModel: '',
   boatYear: '',
   boatLength: '',
+  vesselNotes: '',
   engines: [makeEngine()],
 });
 
@@ -57,6 +58,7 @@ const TrashIcon = () => (
 const inp = "w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-white text-base focus:border-neon-seafoam outline-none";
 const lbl = "block text-xs text-slate-400 uppercase font-bold mb-2";
 const trashBtn = "p-2 bg-slate-800/50 rounded-lg text-slate-500 hover:bg-red-500/20 hover:text-red-400 transition-colors disabled:opacity-30 disabled:cursor-not-allowed";
+const addBtn = "w-full border border-dashed border-amber-400/30 text-amber-400 bg-transparent hover:bg-amber-400/10 rounded-lg py-3 text-sm font-bold transition-colors text-center";
 
 const ProfileOnboardingForm: React.FC<ProfileOnboardingFormProps> = ({ initialData, onProfileComplete }) => {
   const [profileData, setProfileData] = useState<any>(() =>
@@ -207,45 +209,33 @@ const ProfileOnboardingForm: React.FC<ProfileOnboardingFormProps> = ({ initialDa
 
       <div className="space-y-10">
 
-        {/* ── SECTION 1: COMPANY ───────────────────────────────────────────── */}
+        {/* ── SECTION 1: CUSTOMER / ACCOUNT ────────────────────────────────── */}
         <div>
-          <SectionHeader title="Company / Account" />
-          <div className="space-y-4 mt-4">
+          <SectionHeader title="Customer / Account" />
+          <div className="space-y-6 mt-4">
+
+            {/* Company Name */}
             <div>
-              <label htmlFor="companyName" className={lbl}>Company Name</label>
+              <label htmlFor="companyName" className={lbl}>Company Name (optional)</label>
               <input id="companyName" value={profileData.companyName} onFocus={onFocus} onChange={e => setTop('companyName', e.target.value)} className={inp} placeholder="e.g. Coastal Marine LLC" />
             </div>
-            <div>
-              <label className={lbl}>Mailing Address</label>
-              <input value={profileData.address.street} onFocus={onFocus} onChange={e => setAddr('street', e.target.value)} placeholder="Street" className={`${inp} mb-2`} />
-              <div className="grid grid-cols-6 gap-2">
-                <input aria-label="City" value={profileData.address.city} onFocus={onFocus} onChange={e => setAddr('city', e.target.value)} placeholder="City" className={`col-span-3 ${inp}`} />
-                <input aria-label="State" value={profileData.address.state} onFocus={onFocus} onChange={e => setAddr('state', e.target.value)} placeholder="State" className={`col-span-1 ${inp}`} />
-                <input aria-label="ZIP Code" value={profileData.address.zip} onFocus={onFocus} onChange={e => setAddr('zip', e.target.value)} placeholder="ZIP" className={`col-span-2 ${inp}`} />
-              </div>
-            </div>
-            <div>
-              <label className={lbl}>Notes</label>
-              <textarea value={profileData.customerNotes} onFocus={onFocus} onChange={e => setTop('customerNotes', e.target.value)} rows={3} className={`${inp} resize-none`} placeholder="Any relevant account notes..." />
-            </div>
-          </div>
-        </div>
 
-        {/* ── SECTION 2: CONTACTS ──────────────────────────────────────────── */}
-        <div>
-          <SectionHeader title="Contacts" />
-          <div className="space-y-4 mt-4">
+            {/* Contacts */}
             {profileData.contacts.map((contact: any, ci: number) => (
               <div key={contact.contactId} className="bg-slate-800/40 border border-white/10 rounded-xl p-5 space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-slate-500 uppercase font-bold tracking-widest">Contact {ci + 1}</span>
+                  <span className="text-xs text-slate-500 uppercase font-bold tracking-widest">
+                    {ci === 0 ? 'Primary Contact' : `Contact ${ci + 1}`}
+                  </span>
                   <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => setPrimary(ci)}
-                      className={`text-xs font-bold px-3 py-1 rounded-full border transition-colors ${contact.isPrimary ? 'bg-neon-seafoam/20 border-neon-seafoam text-neon-seafoam' : 'border-white/10 text-slate-500 hover:border-neon-seafoam/50 hover:text-neon-seafoam/70'}`}
-                    >
-                      {contact.isPrimary ? 'Primary' : 'Set Primary'}
-                    </button>
+                    {profileData.contacts.length > 1 && (
+                      <button
+                        onClick={() => setPrimary(ci)}
+                        className={`text-xs font-bold px-3 py-1 rounded-full border transition-colors ${contact.isPrimary ? 'bg-neon-seafoam/20 border-neon-seafoam text-neon-seafoam' : 'border-white/10 text-slate-500 hover:border-neon-seafoam/50 hover:text-neon-seafoam/70'}`}
+                      >
+                        {contact.isPrimary ? 'Primary' : 'Set Primary'}
+                      </button>
+                    )}
                     <button disabled={profileData.contacts.length <= 1} onClick={() => removeContact(ci)} className={trashBtn}>
                       <TrashIcon />
                     </button>
@@ -280,7 +270,7 @@ const ProfileOnboardingForm: React.FC<ProfileOnboardingFormProps> = ({ initialDa
                 </div>
 
                 <div>
-                  <label className={lbl}>Email Addresses</label>
+                  <label className={lbl}>Email Addresses (optional)</label>
                   {contact.emails.map((email: string, idx: number) => (
                     <div key={idx} className="flex items-center gap-2 mb-2">
                       <input value={email} type="email" onFocus={onFocus} onChange={e => updContactArr(ci, 'emails', idx, e.target.value)} className={`flex-grow ${inp}`} placeholder="e.g. user@example.com" />
@@ -293,13 +283,33 @@ const ProfileOnboardingForm: React.FC<ProfileOnboardingFormProps> = ({ initialDa
                     <button onClick={() => addContactArrItem(ci, 'emails')} className="text-xs text-neon-seafoam font-bold hover:text-white transition-colors">+ Add Email</button>
                   )}
                 </div>
+
+                {ci === 0 && (
+                  <>
+                    <div>
+                      <label className={lbl}>Mailing Address</label>
+                      <input value={profileData.address.street} onFocus={onFocus} onChange={e => setAddr('street', e.target.value)} placeholder="Street" className={`${inp} mb-2`} />
+                      <div className="grid grid-cols-6 gap-2">
+                        <input aria-label="City" value={profileData.address.city} onFocus={onFocus} onChange={e => setAddr('city', e.target.value)} placeholder="City" className={`col-span-3 ${inp}`} />
+                        <input aria-label="State" value={profileData.address.state} onFocus={onFocus} onChange={e => setAddr('state', e.target.value)} placeholder="State" className={`col-span-1 ${inp}`} />
+                        <input aria-label="ZIP Code" value={profileData.address.zip} onFocus={onFocus} onChange={e => setAddr('zip', e.target.value)} placeholder="ZIP" className={`col-span-2 ${inp}`} />
+                      </div>
+                    </div>
+                    <div>
+                      <label className={lbl}>Notes</label>
+                      <textarea value={profileData.customerNotes} onFocus={onFocus} onChange={e => setTop('customerNotes', e.target.value)} rows={3} className={`${inp} resize-none`} placeholder="Any relevant account notes..." />
+                    </div>
+                  </>
+                )}
               </div>
             ))}
-            <button onClick={addContact} className="text-xs text-neon-seafoam font-bold hover:text-white transition-colors">+ Add Contact</button>
+
+            <button onClick={addContact} className={addBtn}>+ Add Contact</button>
+
           </div>
         </div>
 
-        {/* ── SECTION 3: VESSELS ───────────────────────────────────────────── */}
+        {/* ── SECTION 2: VESSELS ───────────────────────────────────────────── */}
         <div>
           <SectionHeader title="Vessels" />
           <div className="space-y-6 mt-4">
@@ -343,6 +353,11 @@ const ProfileOnboardingForm: React.FC<ProfileOnboardingFormProps> = ({ initialDa
                     <label className={lbl}>Length</label>
                     <input value={vessel.boatLength} onFocus={onFocus} onChange={e => updVessel(vi, 'boatLength', e.target.value)} className={inp} placeholder="e.g. 24ft" />
                   </div>
+                </div>
+
+                <div>
+                  <label className={lbl}>Vessel Notes</label>
+                  <textarea value={vessel.vesselNotes || ''} onFocus={onFocus} onChange={e => updVessel(vi, 'vesselNotes', e.target.value)} rows={2} className={`${inp} resize-none`} placeholder="e.g. Stored at slip 42, trailer in lot B..." />
                 </div>
 
                 {/* Engines */}
@@ -390,9 +405,9 @@ const ProfileOnboardingForm: React.FC<ProfileOnboardingFormProps> = ({ initialDa
                           value={engine.engineSerial}
                           onFocus={onFocus}
                           onChange={e => updEngine(vi, ei, 'engineSerial', e.target.value)}
-                          className={`w-full bg-slate-900 rounded-lg px-4 py-3 text-white text-base font-mono uppercase outline-none border-2 ${!engine.engineSerial ? 'border-red-500 animate-pulse' : 'border-neon-steel/30 focus:border-neon-steel'}`}
+                          className={`w-full bg-slate-900 rounded-lg px-4 py-3 text-white text-base font-mono uppercase outline-none border-2 ${!engine.engineSerial ? 'border-amber-400/50' : 'border-neon-steel/30 focus:border-neon-steel'}`}
                         />
-                        {!engine.engineSerial && <p className="text-xs text-red-400 mt-1 font-bold">Serial number recommended if available.</p>}
+                        {!engine.engineSerial && <p className="text-xs text-amber-400 mt-1 font-bold">Serial number recommended if available.</p>}
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -418,11 +433,11 @@ const ProfileOnboardingForm: React.FC<ProfileOnboardingFormProps> = ({ initialDa
                       </div>
                     </div>
                   ))}
-                  <button onClick={() => addEngine(vi)} className="text-xs text-neon-seafoam font-bold hover:text-white transition-colors">+ Add Engine</button>
+                  <button onClick={() => addEngine(vi)} className={addBtn}>+ Add Engine</button>
                 </div>
               </div>
             ))}
-            <button onClick={addVessel} className="text-xs text-neon-seafoam font-bold hover:text-white transition-colors">+ Add Vessel</button>
+            <button onClick={addVessel} className={addBtn}>+ Add Vessel</button>
           </div>
         </div>
 
