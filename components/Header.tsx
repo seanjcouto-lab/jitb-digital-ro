@@ -17,9 +17,9 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ 
-    activeRO, config, currentTechnician, onTechViewExit, 
+    activeRO, config, currentTechnician, onTechViewExit,
     currentRole, onCommsLinkToggle, loggedInUser, onAppLogout,
-    isImpersonating, onExitImpersonation, onHomeClick
+    isImpersonating, onExitImpersonation
 }) => {
   const roleText = currentRole === 'DATABASE' ? 'Vessel DNA' : currentRole.replace('_', ' ');
 
@@ -111,11 +111,7 @@ const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="sticky top-0 z-40 glass border-b border-white/5 px-6 py-4 flex flex-col md:flex-row justify-between items-center">
-      <div
-        className={`flex items-center gap-4 mb-4 md:mb-0 ${onHomeClick ? 'cursor-pointer' : ''}`}
-        onClick={onHomeClick}
-        title={onHomeClick ? 'Go to home' : undefined}
-      >
+      <div className="flex items-center gap-4 mb-4 md:mb-0">
         {config.logoUrl
           ? <img src={config.logoUrl} alt="Logo" className="h-20 object-contain" />
           : <h1 className="text-xl font-bold tracking-tighter neon-seafoam">{config.companyName}</h1>
