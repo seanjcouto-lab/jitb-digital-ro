@@ -236,6 +236,8 @@ export interface RepairOrder {
   contactId?: string;
   vesselId?: string;
   engineId?: string;
+  scheduledDate?: string | null;   // ISO date string — when the job is scheduled for service
+  arrivalDate?: string | null;     // ISO date string — when the boat physically arrives on yard
 }
 
 export interface VesselHistory {

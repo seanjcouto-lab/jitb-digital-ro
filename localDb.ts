@@ -14,8 +14,8 @@ export class LocalDatabase extends Dexie {
 
   constructor() {
     super('sccDatabase');
-    (this as Dexie).version(8).stores({
-      repairOrders: 'id, status, technicianId, shopId, [shopId+status]',
+    (this as Dexie).version(9).stores({
+      repairOrders: 'id, status, technicianId, shopId, scheduledDate, [shopId+status]',
       masterInventory: '[shopId+partNumber], partNumber, description, category, shopId',
       vesselDnaHistory: 'vesselHIN, customerName, engineSerial, boatMake, boatModel',
       clipboard: '++id, partNumber, timestamp',

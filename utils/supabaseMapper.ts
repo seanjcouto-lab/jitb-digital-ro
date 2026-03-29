@@ -42,6 +42,8 @@ export function mapROToSupabase(ro: RepairOrder) {
       engine_horsepower: ro.engineHorsepower,
       technician_id: ro.technicianId,
       technician_name: ro.technicianName,
+      scheduled_date: ro.scheduledDate ?? null,
+      arrival_date: ro.arrivalDate ?? null,
     },
     parts: (ro.parts ?? []).map(p => ({
       repair_order_id: ro.id,
