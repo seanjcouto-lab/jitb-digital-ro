@@ -210,6 +210,62 @@ const ROGenerationView: React.FC<ROGenerationViewProps> = ({ profileData, onROGe
       shopId: shopContextService.getActiveShopId(),
     };
 
+    // Phase 4 — pass nested entity payloads if profileData carries them
+    const shopId = shopContextService.getActiveShopId();
+    const primaryContact = (currentProfileData as any).contacts?.find((c: any) => c.isPrimary) || (currentProfileData as any).contacts?.[0];
+    const v0 = (currentProfileData as any).vessels?.[0];
+    const e0 = v0?.engines?.[0];
+
+    if (primaryContact || v0) {
+      if ((currentProfileData as any).companyName) {
+        input.company = {
+          companyId: crypto.randomUUID(),
+          shopId,
+          companyName: (currentProfileData as any).companyName,
+          address: (currentProfileData as any).address || null,
+        };
+      }
+      if (primaryContact) {
+        input.contact = {
+          contactId: primaryContact.contactId,
+          shopId,
+          companyId: input.company?.companyId || '',
+          fullName: primaryContact.fullName,
+          phones: primaryContact.phones || [],
+          emails: primaryContact.emails || [],
+          isPrimary: true,
+        };
+      }
+      if (v0) {
+        input.vessel = {
+          vesselId: v0.vesselId,
+          shopId,
+          companyId: input.company?.companyId || '',
+          vesselName: v0.vesselName || '',
+          hin: v0.hin || '',
+          boatMake: v0.boatMake || '',
+          boatModel: v0.boatModel || '',
+          boatYear: v0.boatYear || '',
+          boatLength: v0.boatLength || '',
+        };
+      }
+      if (e0) {
+        input.engine = {
+          engineId: e0.engineId,
+          vesselId: v0.vesselId,
+          shopId,
+          engineMake: e0.engineMake || '',
+          engineModel: e0.engineModel || '',
+          engineYear: e0.engineYear || '',
+          engineHorsepower: e0.engineHorsepower || '',
+          engineSerial: e0.engineSerial || '',
+          engineHours: e0.engineHours || '',
+          engineType: e0.engineType || '',
+          fuelType: e0.fuelType || '',
+        };
+      }
+    }
+
     const newRO = repairOrderService.createRepairOrder(input, masterInventory);
     onROGenerated(newRO);
   };
