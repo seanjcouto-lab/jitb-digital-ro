@@ -7,6 +7,7 @@ import EvidenceInputBlock from '../components/EvidenceInputBlock';
 interface TechnicianPageProps {
   repairOrder?: RepairOrder;
   haltedROs?: RepairOrder[];
+  queuedROs?: RepairOrder[];
   updateRO: (ro: RepairOrder) => void;
   masterInventory: Part[];
   addInventoryAlert: (alert: Omit<InventoryAlert, 'id' | 'timestamp'>) => void;
@@ -211,10 +212,11 @@ const EvidenceModal: React.FC<EvidenceModalProps> = ({ mode, initialMediaUrl, on
 
 // ─── TechnicianPage ───────────────────────────────────────────────────────────
 
-const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs = [], updateRO, masterInventory, addInventoryAlert }) => {
+const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs = [], queuedROs = [], updateRO, masterInventory, addInventoryAlert }) => {
   const [laborNote, setLaborNote] = useState(repairOrder?.laborDescription ?? '');
   const [newDirectiveRequest, setNewDirectiveRequest] = useState('');
   const [newPartRequestQuery, setNewPartRequestQuery] = useState('');
+  const [expandedQueueId, setExpandedQueueId] = useState<string | null>(null);
 
   // Evidence modal trigger — directiveId, mode, and initialMediaUrl for photo/video uploads
   const [evidenceModal, setEvidenceModal] = useState<{ directiveId: string | null; mode: EvidenceModalMode; initialMediaUrl: string | null } | null>(null);
@@ -224,6 +226,16 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs 
   const [isHaltModalOpen, setIsHaltModalOpen] = useState(false);
   const [missingPartIndex, setMissingPartIndex] = useState<number | null>(null);
   const [notUsedPartIndex, setNotUsedPartIndex] = useState<number | null>(null);
+
+  const getRelativeTime = (id: string) => {
+    const ts = parseInt(id.split('-')[1]);
+    if (!ts) return '';
+    const mins = Math.floor((Date.now() - ts) / 60000);
+    if (mins < 60) return `${mins}m ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs}h ago`;
+    return `${Math.floor(hrs / 24)}d ago`;
+  };
 
   const photoInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
@@ -363,6 +375,70 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs 
                   </button>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+        {queuedROs.length > 0 && (
+          <div className="mt-6">
+            <h2 className="text-[11px] font-black uppercase tracking-widest text-slate-500 mb-3">Your Queue <span className="text-slate-600">({queuedROs.length})</span></h2>
+            <div className="space-y-3">
+              {queuedROs.map(ro => {
+                const isOpen = expandedQueueId === ro.id;
+                return (
+                  <div
+                    key={ro.id}
+                    className="glass rounded-xl border border-white/5 p-4 cursor-pointer"
+                    onClick={() => setExpandedQueueId(isOpen ? null : ro.id)}
+                  >
+                    {/* Collapsed header */}
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="text-[13px] font-black text-white">{ro.customerName}</p>
+                        <p className="text-[11px] text-slate-400">{ro.boatMake} {ro.boatModel}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] text-slate-500">⏱ {getRelativeTime(ro.id)}</span>
+                        <span className="text-[10px] font-bold text-slate-500">{ro.directives?.length || 0} directives</span>
+                      </div>
+                    </div>
+
+                    {/* Expanded detail — read only */}
+                    {isOpen && (
+                      <div className="mt-3 pt-3 border-t border-white/5">
+                        {/* Engine identity */}
+                        <div className="mb-3 p-2 rounded-lg bg-white/3 border border-white/5">
+                          <p className="text-[9px] font-bold uppercase tracking-widest text-slate-500 mb-1">Engine</p>
+                          <p className="text-[11px] font-bold text-slate-200">{ro.engineYear} {ro.engineMake} {ro.engineModel}</p>
+                          <div className="flex gap-3 mt-0.5">
+                            {ro.engineSerial && <span className="text-[11px] font-mono font-bold text-neon-seafoam">S/N: {ro.engineSerial}</span>}
+                            {ro.engineHorsepower && <span className="text-[10px] text-slate-500">{ro.engineHorsepower}HP</span>}
+                          </div>
+                        </div>
+
+                        {/* Directives — read only */}
+                        {ro.directives?.length > 0 && (
+                          <div className="mb-3">
+                            <p className="text-[9px] font-bold uppercase tracking-widest text-slate-500 mb-2">Directives</p>
+                            {ro.directives.map((d, i) => (
+                              <p key={i} className="text-[11px] text-slate-300 py-1 border-b border-white/5">{d.title}</p>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Start button — only if no active job */}
+                        {!repairOrder && (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); updateRO({ ...ro, status: ROStatus.ACTIVE }); }}
+                            className="w-full mt-2 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all"
+                          >
+                            START JOB
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
