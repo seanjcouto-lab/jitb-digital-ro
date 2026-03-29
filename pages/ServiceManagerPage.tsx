@@ -977,13 +977,13 @@ const handleROGenerated = (newRO: RepairOrder) => {
                       actions={
                         ro.status === ROStatus.ACTIVE ? (
                           <div className="flex gap-2">
-                            <button onClick={(e) => { e.stopPropagation(); handleHoldJob(ro); }} className="w-full px-4 py-2 rounded-lg bg-orange-500/20 text-orange-400 text-[10px] font-black border border-orange-500/30 hover:bg-orange-500/30 transition-all uppercase tracking-widest">HOLD</button>
-                            {hasPendingRequests && <button onClick={(e) => { e.stopPropagation(); setReviewRequestRO(ro); }} className="w-full px-4 py-2 rounded-lg bg-red-500/20 text-red-400 text-[10px] font-black border border-red-500/30 hover:bg-red-500/30 transition-all uppercase tracking-widest">REVIEW</button>}
+                            <button onClick={(e) => { e.stopPropagation(); handleHoldJob(ro); }} className="w-full px-4 py-2 rounded-lg bg-orange-500/20 text-orange-400 text-[10px] font-black border border-orange-500/30 hover:bg-orange-500/30 transition-all uppercase tracking-widest opacity-70">HOLD</button>
+                            {hasPendingRequests && <button onClick={(e) => { e.stopPropagation(); setReviewRequestRO(ro); }} className="w-full px-4 py-2 rounded-lg bg-red-500 text-white text-[10px] font-black border border-red-500/30 hover:bg-red-600 transition-all uppercase tracking-widest">REVIEW</button>}
                           </div>
                         ) : [ROStatus.PARTS_READY, ROStatus.READY_FOR_TECH, ROStatus.PARTS_PENDING].includes(ro.status) && ro.technicianId ? (
                           <div className="flex gap-2">
-                            <button onClick={(e) => { e.stopPropagation(); handleHoldJob(ro); }} className="w-full px-4 py-2 rounded-lg bg-orange-500/20 text-orange-400 text-[10px] font-black border border-orange-500/30 hover:bg-orange-500/30 transition-all uppercase tracking-widest">HOLD</button>
-                            {hasPendingRequests && <button onClick={(e) => { e.stopPropagation(); setReviewRequestRO(ro); }} className="w-full px-4 py-2 rounded-lg bg-red-500/20 text-red-400 text-[10px] font-black border border-red-500/30 hover:bg-red-500/30 transition-all uppercase tracking-widest">REVIEW</button>}
+                            <button onClick={(e) => { e.stopPropagation(); handleHoldJob(ro); }} className="w-full px-4 py-2 rounded-lg bg-orange-500/20 text-orange-400 text-[10px] font-black border border-orange-500/30 hover:bg-orange-500/30 transition-all uppercase tracking-widest opacity-70">HOLD</button>
+                            {hasPendingRequests && <button onClick={(e) => { e.stopPropagation(); setReviewRequestRO(ro); }} className="w-full px-4 py-2 rounded-lg bg-red-500 text-white text-[10px] font-black border border-red-500/30 hover:bg-red-600 transition-all uppercase tracking-widest">REVIEW</button>}
                           </div>
                         ) : [ROStatus.PARTS_READY, ROStatus.READY_FOR_TECH, ROStatus.PARTS_PENDING].includes(ro.status) && !ro.technicianId ? (
                           <button onClick={(e) => { e.stopPropagation(); handleSendToBay(ro); }} className="w-full px-4 py-2 rounded-lg bg-slate-800 text-[10px] font-black border border-white/10 hover:bg-neon-seafoam hover:text-slate-900 transition-all uppercase tracking-widest">ASSIGN TECH</button>
