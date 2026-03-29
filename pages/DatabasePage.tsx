@@ -226,7 +226,7 @@ const DatabasePage: React.FC<DatabasePageProps> = ({ allROs }) => {
       ) : (
         <div className="glass rounded-2xl p-6 border-white/5">
         <div className="relative mb-8">
-          <label className="block text-[10px] text-neon-seafoam uppercase font-black mb-3 tracking-widest">AI Oracle: Vessel Identity Scan</label>
+          <label className="block text-[10px] text-neon-seafoam uppercase font-black mb-3 tracking-widest">Vessel Identity Scan</label>
           <div className="relative">
             <input 
               value={query} 

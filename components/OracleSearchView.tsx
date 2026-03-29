@@ -91,7 +91,7 @@ const OracleSearchView: React.FC<OracleSearchViewProps> = ({
       {/* Search Header */}
       <div className="relative z-10">
         <div className="flex justify-between items-center mb-4">
-            <label htmlFor="oracle-search" className="block text-[10px] text-neon-seafoam uppercase font-black tracking-[0.2em] animate-pulse">Oracle Search</label>
+            <label htmlFor="oracle-search" className="block text-[10px] text-neon-seafoam uppercase font-black tracking-[0.2em] animate-pulse">Customer Search</label>
             {isSearching && <span className="text-[8px] font-black text-slate-500 uppercase animate-pulse">Scanning Registry Streams...</span>}
         </div>
         <div className="relative">

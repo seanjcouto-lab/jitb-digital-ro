@@ -298,6 +298,10 @@ const App: React.FC = () => {
           setImpersonatedRole(null);
           authService.stopImpersonation();
         }}
+        onHomeClick={() => {
+          setImpersonatedRole(null);
+          authService.stopImpersonation();
+        }}
       />
 
       <CommsLink isOpen={isCommsLinkOpen} onClose={() => setIsCommsLinkOpen(false)} />
