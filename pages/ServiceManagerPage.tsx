@@ -243,20 +243,13 @@ const RODetail = ({
 
   return (
     <div onClick={(e) => e.stopPropagation()} className="mt-4 pt-4 border-t border-white/10 animate-in fade-in duration-300 space-y-4 text-xs">
-      {/* Vessel & Engine Identity */}
-      <div className="grid grid-cols-2 gap-2 mb-4 p-3 rounded-xl bg-white/3 border border-white/5">
-        <div>
-          <p className="text-[9px] font-bold uppercase tracking-widest text-slate-500 mb-1">Vessel</p>
-          <p className="text-[11px] font-bold text-slate-200">{ro.boatYear} {ro.boatMake} {ro.boatModel}</p>
-          {ro.vesselHIN && <p className="text-[10px] text-slate-500 font-mono">HIN: {ro.vesselHIN}</p>}
-        </div>
-        <div>
-          <p className="text-[9px] font-bold uppercase tracking-widest text-slate-500 mb-1">Engine</p>
-          <p className="text-[11px] font-bold text-slate-200">{ro.engineYear} {ro.engineMake} {ro.engineModel}</p>
-          <div className="flex gap-2 mt-0.5">
-            {ro.engineHorsepower && <span className="text-[10px] text-slate-500">{ro.engineHorsepower}HP</span>}
-            {ro.engineSerial && <span className="text-[10px] text-slate-500 font-mono">S/N: {ro.engineSerial}</span>}
-          </div>
+      {/* Engine Identity */}
+      <div className="mb-4 p-3 rounded-xl bg-white/3 border border-white/5">
+        <p className="text-[9px] font-bold uppercase tracking-widest text-slate-500 mb-1">Engine</p>
+        <p className="text-[11px] font-bold text-slate-200">{ro.engineYear} {ro.engineMake} {ro.engineModel}</p>
+        <div className="flex gap-3 mt-0.5">
+          {ro.engineSerial && <span className="text-[11px] font-mono font-bold text-neon-seafoam">S/N: {ro.engineSerial}</span>}
+          {ro.engineHorsepower && <span className="text-[10px] text-slate-500">{ro.engineHorsepower}HP</span>}
         </div>
       </div>
       <div>
