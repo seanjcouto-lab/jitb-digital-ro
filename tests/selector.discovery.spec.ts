@@ -24,10 +24,10 @@ test('Selector Discovery: Service Manager flow', async ({ page }) => {
   // Step 3: Create a new RO
   console.log('Initiating New RO flow...');
   await page.fill('#oracle-search', 'Test Customer');
-  await page.getByRole('button', { name: 'Initialize Profile' }).click();
-  
+  await page.getByRole('button', { name: 'New Customer' }).click();
+
   // Fill Profile Onboarding
-  await expect(page.getByText('New Service Profile Onboarding')).toBeVisible();
+  await expect(page.getByText('New Customer')).toBeVisible();
   await page.fill('#customerName', 'Test Customer');
   await page.fill('#engineSerial', 'TEST-SN-123');
   await page.getByRole('button', { name: 'SAVE & GENERATE RO' }).click();

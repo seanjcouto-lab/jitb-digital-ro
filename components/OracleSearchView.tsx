@@ -151,7 +151,7 @@ const OracleSearchView: React.FC<OracleSearchViewProps> = ({
             </div>
             <p className="text-slate-500 font-bold mb-6 text-sm">Identity Protocol Failure: No Match Found</p>
             <div className="flex flex-col sm:flex-row justify-center gap-4 px-8">
-                <button onClick={() => onNewCustomer(query)} className="bg-neon-seafoam text-slate-900 text-[10px] font-black px-10 py-4 rounded-xl shadow-xl hover:scale-105 active:scale-95 transition-all uppercase tracking-[0.2em]">Initialize Profile</button>
+                <button onClick={() => onNewCustomer(query)} className="bg-neon-seafoam text-slate-900 text-[10px] font-black px-10 py-4 rounded-xl shadow-xl hover:scale-105 active:scale-95 transition-all uppercase tracking-[0.2em]">New Customer</button>
                 <button onClick={onLoadMockData} className="bg-slate-800 text-slate-300 text-[10px] font-black px-10 py-4 rounded-xl border border-white/10 hover:bg-slate-700 transition-all uppercase tracking-[0.2em]">Load Mock Profile</button>
             </div>
           </div>

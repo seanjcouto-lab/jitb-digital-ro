@@ -30,10 +30,10 @@ test('Repair Order Workflow: Creation to Directive Completion', async ({ page })
   // Initiate New RO flow
   const customerName = `Test Customer ${Date.now()}`;
   await page.fill('#oracle-search', customerName);
-  await page.getByRole('button', { name: 'Initialize Profile' }).click();
-  
+  await page.getByRole('button', { name: 'New Customer' }).click();
+
   // Fill Profile Onboarding
-  await expect(page.getByText('New Service Profile Onboarding')).toBeVisible();
+  await expect(page.getByText('New Customer')).toBeVisible();
   await page.fill('#customerName', customerName);
   await page.fill('#engineSerial', 'TEST-SN-999');
   await page.getByRole('button', { name: 'SAVE & GENERATE RO' }).click();

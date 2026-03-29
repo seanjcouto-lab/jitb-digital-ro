@@ -203,7 +203,7 @@ const ProfileOnboardingForm: React.FC<ProfileOnboardingFormProps> = ({ initialDa
   return (
     <div className="glass rounded-2xl p-8 border-white/5 animate-in slide-in-from-right-4 duration-500">
       <div className="border-b border-white/5 pb-6 mb-8">
-        <h3 className="text-2xl font-black text-white uppercase tracking-tighter">New Service Profile Onboarding</h3>
+        <h3 className="text-2xl font-black text-white uppercase tracking-tighter">New Customer</h3>
         <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Customer & Asset Registration Matrix</p>
       </div>
 

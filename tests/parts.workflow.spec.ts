@@ -17,8 +17,8 @@ const navigateToPM = async (page) => {
 
 const createROWithPackage = async (page, customerName: string, packageName: string) => {
   await page.fill('#oracle-search', customerName);
-  await page.getByRole('button', { name: 'Initialize Profile' }).click();
-  await expect(page.getByText('New Service Profile Onboarding')).toBeVisible();
+  await page.getByRole('button', { name: 'New Customer' }).click();
+  await expect(page.getByText('New Customer')).toBeVisible();
   await page.fill('#customerName', customerName);
   await page.fill('#engineSerial', `TEST-${Date.now()}`);
   await page.getByRole('button', { name: 'SAVE & GENERATE RO' }).click();
