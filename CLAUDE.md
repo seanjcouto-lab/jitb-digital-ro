@@ -103,24 +103,27 @@ Danny (SM), Pierre (Tech), Mike (Admin/Owner) — used in dev login shortcuts an
 - Playwright MUST run before and after every change — no exceptions
 - All work on `develop` branch — PRs to `main` when stable
 
-### Completed this session (March 29 2026 afternoon + evening)
+### Completed this session (March 29 2026 — full day)
 
 - **Subscription gating**: `active`, `pilot`, `trial`, `grace` allowed — `null` passes through (no shop record in test env). Lives in `App.tsx` + `services/shopContextService.ts`
-- **Naming cleanup**: "New Service Profile Onboarding" → "New Customer", "Initialize Profile" → "New Customer" across `ProfileOnboardingForm.tsx`, `OracleSearchView.tsx`, and 3 Playwright test files
-- **Home button**: Added to dev toolbar pill as SVG house icon — resets to native role via `setImpersonatedRole(null)`. Lives in `App.tsx` lines ~293–302
-- **Logo click removed**: Logo/company name div in `Header.tsx` is no longer clickable. `onHomeClick` prop remains on the interface but is unused
-- **Staged cards: HOLD removed from collapsed view** — collapsed actions show ASSIGN TECH only; HOLD still present in expanded view
-- **Deployment deck button hierarchy**: REVIEW is dominant (solid red) when pending requests present; HOLD is dimmed (`opacity-70`)
-- **Engine identity block on expanded cards**: Engine year/make/model + S/N front and center at top of RODetail. Vessel block removed. Lives in `pages/ServiceManagerPage.tsx` RODetail render
-- **Tech queue view**: `queuedROsForTech` in `App.tsx` filters READY_FOR_TECH jobs assigned to current tech but not the active job. "Your Queue" section in `TechnicianPage.tsx` — read-only expand, shows when no active job
-- **Collapsible Customer Search**: OracleSearchView hidden behind a slim "Customer Search" button by default, expands on click, collapses after selection. `searchExpanded` state in `ServiceManagerPage.tsx`. Playwright tests updated to click the button before filling search
-- **Folder tab column counters**: `FolderTab` component on all 5 SM board columns — colored top border, fixed `w-[64px]`, `text-[20px]` count, flush to card top border with `pt-10` on column wrapper. Colors: blue/amber/teal/red/purple per column
+- **Naming cleanup**: "New Service Profile Onboarding" → "New Customer", "Initialize Profile" → "New Customer" — 6 files updated including 3 Playwright tests
+- **Home button**: SVG house icon in dev toolbar pill — resets to native role via `setImpersonatedRole(null)`. Lives in `App.tsx`
+- **Staged cards: HOLD removed from collapsed view** — ASSIGN TECH only when collapsed; HOLD still in expanded view
+- **Engine identity block on expanded cards**: Engine year/make/model + S/N front and center at top of RODetail. `pages/ServiceManagerPage.tsx`
+- **Deployment deck button hierarchy**: REVIEW dominant (solid red) when pending requests present; HOLD dimmed (`opacity-70`)
+- **Tech queue view**: `queuedROsForTech` in `App.tsx` — READY_FOR_TECH jobs assigned to current tech, not active. "Your Queue" section in `TechnicianPage.tsx` — read-only expand, Start Job when no active job
+- **SM board: folder tab column counters**: `FolderTab` component — colored top border, fixed `w-[64px]`, `text-[20px]` count, flush to card top. Colors: blue/amber/teal/red/purple per column
+- **Collapsible Customer Search**: Slim by default, expands on click, collapses after selection. `searchExpanded` state in `ServiceManagerPage.tsx`. Playwright tests updated
+- **Calendar Phase 1**: `scheduledDate` + `arrivalDate` added to `types.ts`, Dexie schema bumped to v9, `supabaseMapper.ts` forward-mapped, `repair_orders` Supabase table columns added
 
 ### Next session queue (priority order)
 
-1. Weekly calendar — SM planning tool, staged overflow management
-2. ChatGPT UI enhancement list — triage against what's already done
-3. Vercel deployment — live URL before follow-up demo
+1. Date picker in `ROGenerationView` + `ProfileOnboardingForm`
+2. Scheduled date on SM cards
+3. Calendar week view build
+4. Calendar month view
+5. Vercel deployment
+6. Left sidebar nav (post-pilot)
 
 ---
 
