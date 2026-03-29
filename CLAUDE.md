@@ -103,22 +103,24 @@ Danny (SM), Pierre (Tech), Mike (Admin/Owner) — used in dev login shortcuts an
 - Playwright MUST run before and after every change — no exceptions
 - All work on `develop` branch — PRs to `main` when stable
 
-### Completed this session (March 29 2026 afternoon)
+### Completed this session (March 29 2026 afternoon + evening)
 
 - **Subscription gating**: `active`, `pilot`, `trial`, `grace` allowed — `null` passes through (no shop record in test env). Lives in `App.tsx` + `services/shopContextService.ts`
 - **Naming cleanup**: "New Service Profile Onboarding" → "New Customer", "Initialize Profile" → "New Customer" across `ProfileOnboardingForm.tsx`, `OracleSearchView.tsx`, and 3 Playwright test files
 - **Home button**: Added to dev toolbar pill as SVG house icon — resets to native role via `setImpersonatedRole(null)`. Lives in `App.tsx` lines ~293–302
 - **Logo click removed**: Logo/company name div in `Header.tsx` is no longer clickable. `onHomeClick` prop remains on the interface but is unused
-- **"Oracle Search" label → "Customer Search"**: `OracleSearchView.tsx` label confirmed updated
+- **Staged cards: HOLD removed from collapsed view** — collapsed actions show ASSIGN TECH only; HOLD still present in expanded view
+- **Deployment deck button hierarchy**: REVIEW is dominant (solid red) when pending requests present; HOLD is dimmed (`opacity-70`)
+- **Engine identity block on expanded cards**: Engine year/make/model + S/N front and center at top of RODetail. Vessel block removed. Lives in `pages/ServiceManagerPage.tsx` RODetail render
+- **Tech queue view**: `queuedROsForTech` in `App.tsx` filters READY_FOR_TECH jobs assigned to current tech but not the active job. "Your Queue" section in `TechnicianPage.tsx` — read-only expand, shows when no active job
+- **Collapsible Customer Search**: OracleSearchView hidden behind a slim "Customer Search" button by default, expands on click, collapses after selection. `searchExpanded` state in `ServiceManagerPage.tsx`. Playwright tests updated to click the button before filling search
+- **Folder tab column counters**: `FolderTab` component on all 5 SM board columns — colored top border, fixed `w-[64px]`, `text-[20px]` count, flush to card top border with `pt-10` on column wrapper. Colors: blue/amber/teal/red/purple per column
 
 ### Next session queue (priority order)
 
-1. Staged card simplification — collapsed: title, age, status, Assign Tech / expanded: full detail + Hold
-2. SM card intelligence pass — icon-only metadata, problem surface on deployment cards, button hierarchy, deployment column brightness
-3. Tech queue view — assigned-not-active jobs visible to technician
-4. Weekly calendar — SM planning tool, staged overflow management
-5. ChatGPT UI enhancement list — triage against what's already done
-6. Vercel deployment — live URL before follow-up demo
+1. Weekly calendar — SM planning tool, staged overflow management
+2. ChatGPT UI enhancement list — triage against what's already done
+3. Vercel deployment — live URL before follow-up demo
 
 ---
 
@@ -171,7 +173,7 @@ Danny (SM), Pierre (Tech), Mike (Admin/Owner) — used in dev login shortcuts an
 2. Dual/triple engine support per vessel
 3. ~~Home button — persistent navigation escape hatch~~ **DONE** (dev toolbar SVG house icon)
 4. ~~Terminology cleanup — remove "Oracle" / AI labels, replace with plain shop language~~ **DONE**
-5. Tech queue view — assigned but not active jobs, expandable scope of work
+5. ~~Tech queue view — assigned but not active jobs, expandable scope of work~~ **DONE**
 6. Company name field on customer profile
 7. Engine hours, engine type (outboard/inboard), fuel type (gas/diesel) on vessel
 8. ~~Subscription gating via `subscription_status` field~~ **DONE**
