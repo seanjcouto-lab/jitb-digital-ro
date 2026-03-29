@@ -101,7 +101,24 @@ Danny (SM), Pierre (Tech), Mike (Admin/Owner) — used in dev login shortcuts an
 - **77 Playwright tests passing, 2 skipped**
 - 2 skipped: `parts.workflow` tests — need dedicated test `shop_id` in Supabase with controlled inventory seeding
 - Playwright MUST run before and after every change — no exceptions
-- All work on `main` branch — no branch strategy yet
+- All work on `develop` branch — PRs to `main` when stable
+
+### Completed this session (March 29 2026 afternoon)
+
+- **Subscription gating**: `active`, `pilot`, `trial`, `grace` allowed — `null` passes through (no shop record in test env). Lives in `App.tsx` + `services/shopContextService.ts`
+- **Naming cleanup**: "New Service Profile Onboarding" → "New Customer", "Initialize Profile" → "New Customer" across `ProfileOnboardingForm.tsx`, `OracleSearchView.tsx`, and 3 Playwright test files
+- **Home button**: Added to dev toolbar pill as SVG house icon — resets to native role via `setImpersonatedRole(null)`. Lives in `App.tsx` lines ~293–302
+- **Logo click removed**: Logo/company name div in `Header.tsx` is no longer clickable. `onHomeClick` prop remains on the interface but is unused
+- **"Oracle Search" label → "Customer Search"**: `OracleSearchView.tsx` label confirmed updated
+
+### Next session queue (priority order)
+
+1. Staged card simplification — collapsed: title, age, status, Assign Tech / expanded: full detail + Hold
+2. SM card intelligence pass — icon-only metadata, problem surface on deployment cards, button hierarchy, deployment column brightness
+3. Tech queue view — assigned-not-active jobs visible to technician
+4. Weekly calendar — SM planning tool, staged overflow management
+5. ChatGPT UI enhancement list — triage against what's already done
+6. Vercel deployment — live URL before follow-up demo
 
 ---
 
@@ -116,7 +133,7 @@ Danny (SM), Pierre (Tech), Mike (Admin/Owner) — used in dev login shortcuts an
 - Vessel DNA history viewer
 - PWA: service worker (`public/sw.js`), manifest (`public/manifest.json`), offline app shell
 - Supabase sync: `repair_orders`, `master_inventory`, `vessel_dna_history`
-- `subscription_status` field on `shops` table (TEXT NOT NULL DEFAULT 'active') — present but not yet gating
+- `subscription_status` field on `shops` table (TEXT NOT NULL DEFAULT 'active') — **active gating in App.tsx**: `active`, `pilot`, `trial`, `grace` allowed; anything else shows "Account Not Active" screen; `null` passes through
 - `quantity` field on `Part` interface — threads through RO creation, PM display, Tech display, invoice math (unit price × quantity)
 - Signature canvas on RO creation (initialized via `requestAnimationFrame` to handle modal layout timing)
 
@@ -152,12 +169,12 @@ Danny (SM), Pierre (Tech), Mike (Admin/Owner) — used in dev login shortcuts an
 
 1. Multiple vessels per customer
 2. Dual/triple engine support per vessel
-3. Home button — persistent navigation escape hatch
-4. Terminology cleanup — remove "Oracle" / AI labels, replace with plain shop language
+3. ~~Home button — persistent navigation escape hatch~~ **DONE** (dev toolbar SVG house icon)
+4. ~~Terminology cleanup — remove "Oracle" / AI labels, replace with plain shop language~~ **DONE**
 5. Tech queue view — assigned but not active jobs, expandable scope of work
 6. Company name field on customer profile
 7. Engine hours, engine type (outboard/inboard), fuel type (gas/diesel) on vessel
-8. Subscription gating via `subscription_status` field
+8. ~~Subscription gating via `subscription_status` field~~ **DONE**
 9. Stripe in-app billing (post-pilot)
 10. Quantity display styling pass — currently amber text, needs to be larger/bolder
 
