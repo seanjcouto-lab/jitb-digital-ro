@@ -131,6 +131,58 @@ export interface Technician {
   name: string;
 }
 
+export interface Company {
+  companyId: string;
+  shopId: string;
+  companyName: string;
+  address?: {
+    street?: string;
+    city?: string;
+    state?: string;
+    zip?: string;
+  };
+  createdAt?: string;
+}
+
+export interface Contact {
+  contactId: string;
+  companyId: string;
+  shopId: string;
+  fullName: string;
+  phones: string[];
+  emails: string[];
+  isPrimary: boolean;
+  createdAt?: string;
+}
+
+export interface Vessel {
+  vesselId: string;
+  companyId: string;
+  shopId: string;
+  vesselName?: string;
+  hin?: string;
+  boatMake?: string;
+  boatModel?: string;
+  boatYear?: string;
+  boatLength?: string;
+  createdAt?: string;
+}
+
+export interface Engine {
+  engineId: string;
+  vesselId: string;
+  shopId: string;
+  engineMake?: string;
+  engineModel?: string;
+  engineYear?: string;
+  engineHorsepower?: string;
+  engineSerial?: string;
+  engineHours?: string;
+  engineType?: string;
+  fuelType?: string;
+  createdAt?: string;
+}
+
 export interface RepairOrder {
   id: string;
   customerName: string;
@@ -180,6 +232,10 @@ export interface RepairOrder {
   technicianId: string | null;
   technicianName: string | null;
   shopId: string;
+  companyId?: string;
+  contactId?: string;
+  vesselId?: string;
+  engineId?: string;
 }
 
 export interface VesselHistory {
