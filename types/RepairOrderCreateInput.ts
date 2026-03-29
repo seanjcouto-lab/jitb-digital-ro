@@ -59,6 +59,18 @@ export interface RepairOrderCreateInput {
   };
 
   shopId: string;
+
+  // Phase 3 nested entity IDs — optional, written by createRepairOrder()
+  companyId?: string;
+  contactId?: string;
+  vesselId?: string;
+  engineId?: string;
+
+  // Phase 3 nested entity payloads — optional, passed in from ProfileOnboardingForm
+  company?: import('../types').Company;
+  contact?: import('../types').Contact;
+  vessel?: import('../types').Vessel;
+  engine?: import('../types').Engine;
 }
 
 export interface ParkerRepairOrderCreateInput extends RepairOrderCreateInput {

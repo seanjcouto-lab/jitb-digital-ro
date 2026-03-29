@@ -1,6 +1,6 @@
 import { supabase } from '../supabaseClient'
 import { mapROToSupabase } from './supabaseMapper'
-import { RepairOrder, VesselHistory, Part } from '../types'
+import { RepairOrder, VesselHistory, Part, Company, Contact, Vessel, Engine } from '../types'
 import { shopContextService } from '../services/shopContextService'
 
 export async function syncROToSupabase(ro: RepairOrder): Promise<void> {
@@ -179,5 +179,80 @@ export async function syncInventoryToSupabase(part: Part): Promise<void> {
     console.error('Supabase inventory sync failed:', error.message)
   } else {
     console.log('Supabase inventory sync OK:', part.partNumber)
+  }
+}
+
+export async function syncCompanyToSupabase(company: Company): Promise<void> {
+  const { error } = await supabase.from('companies').upsert({
+    company_id:   company.companyId,
+    shop_id:      company.shopId,
+    company_name: company.companyName,
+    address:      company.address ?? null,
+    created_at:   company.createdAt ?? new Date().toISOString(),
+  })
+  if (error) {
+    console.error('Supabase company sync failed:', error.message)
+  } else {
+    console.log('Supabase company sync OK:', company.companyId)
+  }
+}
+
+export async function syncContactToSupabase(contact: Contact): Promise<void> {
+  const { error } = await supabase.from('contacts').upsert({
+    contact_id:  contact.contactId,
+    company_id:  contact.companyId,
+    shop_id:     contact.shopId,
+    full_name:   contact.fullName,
+    phones:      contact.phones,
+    emails:      contact.emails,
+    is_primary:  contact.isPrimary,
+    created_at:  contact.createdAt ?? new Date().toISOString(),
+  })
+  if (error) {
+    console.error('Supabase contact sync failed:', error.message)
+  } else {
+    console.log('Supabase contact sync OK:', contact.contactId)
+  }
+}
+
+export async function syncVesselEntityToSupabase(vessel: Vessel): Promise<void> {
+  const { error } = await supabase.from('vessels').upsert({
+    vessel_id:   vessel.vesselId,
+    company_id:  vessel.companyId,
+    shop_id:     vessel.shopId,
+    vessel_name: vessel.vesselName ?? null,
+    hin:         vessel.hin ?? null,
+    boat_make:   vessel.boatMake ?? null,
+    boat_model:  vessel.boatModel ?? null,
+    boat_year:   vessel.boatYear ?? null,
+    boat_length: vessel.boatLength ?? null,
+    created_at:  vessel.createdAt ?? new Date().toISOString(),
+  })
+  if (error) {
+    console.error('Supabase vessel entity sync failed:', error.message)
+  } else {
+    console.log('Supabase vessel entity sync OK:', vessel.vesselId)
+  }
+}
+
+export async function syncEngineToSupabase(engine: Engine): Promise<void> {
+  const { error } = await supabase.from('engines').upsert({
+    engine_id:         engine.engineId,
+    vessel_id:         engine.vesselId,
+    shop_id:           engine.shopId,
+    engine_make:       engine.engineMake ?? null,
+    engine_model:      engine.engineModel ?? null,
+    engine_year:       engine.engineYear ?? null,
+    engine_horsepower: engine.engineHorsepower ?? null,
+    engine_serial:     engine.engineSerial ?? null,
+    engine_hours:      engine.engineHours ?? null,
+    engine_type:       engine.engineType ?? null,
+    fuel_type:         engine.fuelType ?? null,
+    created_at:        engine.createdAt ?? new Date().toISOString(),
+  })
+  if (error) {
+    console.error('Supabase engine sync failed:', error.message)
+  } else {
+    console.log('Supabase engine sync OK:', engine.engineId)
   }
 }

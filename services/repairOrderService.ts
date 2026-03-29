@@ -18,6 +18,8 @@ import { inventoryService } from './inventoryService';
 import { SERVICE_PACKAGES } from '../constants';
 import { shopContextService } from './shopContextService';
 import { domainEventService } from './domainEventService';
+import { db } from '../localDb';
+import { syncCompanyToSupabase, syncContactToSupabase, syncVesselEntityToSupabase, syncEngineToSupabase } from '../utils/supabaseSync';
 
 export const repairOrderService = {
   createPartRequest: (repairOrder: RepairOrder, partPayload: Part): RepairOrder => {
@@ -165,6 +167,40 @@ export const repairOrderService = {
     input: RepairOrderCreateInput,
     masterInventory: Part[]
   ): RepairOrder => {
+    // Phase 3 — persist nested entities if provided, resolve IDs
+    let resolvedCompanyId = input.companyId;
+    let resolvedContactId = input.contactId;
+    let resolvedVesselId = input.vesselId;
+    let resolvedEngineId = input.engineId;
+
+    if (input.company) {
+      const company = { ...input.company, companyId: input.company.companyId || crypto.randomUUID() };
+      resolvedCompanyId = company.companyId;
+      db.companies.put(company).catch(console.error);
+      syncCompanyToSupabase(company).catch(console.error);
+    }
+
+    if (input.contact) {
+      const contact = { ...input.contact, contactId: input.contact.contactId || crypto.randomUUID(), companyId: resolvedCompanyId };
+      resolvedContactId = contact.contactId;
+      db.contacts.put(contact).catch(console.error);
+      syncContactToSupabase(contact).catch(console.error);
+    }
+
+    if (input.vessel) {
+      const vessel = { ...input.vessel, vesselId: input.vessel.vesselId || crypto.randomUUID(), companyId: resolvedCompanyId };
+      resolvedVesselId = vessel.vesselId;
+      db.vessels.put(vessel).catch(console.error);
+      syncVesselEntityToSupabase(vessel).catch(console.error);
+    }
+
+    if (input.engine) {
+      const engine = { ...input.engine, engineId: input.engine.engineId || crypto.randomUUID(), vesselId: resolvedVesselId };
+      resolvedEngineId = engine.engineId;
+      db.engines.put(engine).catch(console.error);
+      syncEngineToSupabase(engine).catch(console.error);
+    }
+
     let packageParts: Part[] = [];
     input.selectedPackages.forEach(pkgName => {
         const pkg = SERVICE_PACKAGES[pkgName as keyof typeof SERVICE_PACKAGES];
@@ -242,6 +278,10 @@ export const repairOrderService = {
       technicianId: null,
       technicianName: null,
       shopId: input.shopId,
+      companyId: resolvedCompanyId,
+      contactId: resolvedContactId,
+      vesselId: resolvedVesselId,
+      engineId: resolvedEngineId,
     };
     
     domainEventService.publish('repair-order:created', newRO);
