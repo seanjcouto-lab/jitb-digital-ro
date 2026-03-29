@@ -527,7 +527,7 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs 
 
                         return (
                             <div key={part.partNumber + index} className="flex justify-between items-center p-3 bg-slate-900/50 rounded-xl border border-white/5 group">
-                                <div><p className="font-bold text-sm text-slate-200">{part.description}</p><p className="text-[10px] text-slate-500 font-mono">{part.partNumber} <span className="text-amber-400 font-bold">x{part.quantity ?? 1}</span> • BIN: {part.binLocation}</p></div>
+                                <div><p className="font-bold text-sm text-slate-200">{part.description}</p><p className="text-[10px] text-slate-500 font-mono">{part.partNumber} • BIN: {part.binLocation}</p><div className="flex items-center gap-1 mt-1"><label className="text-[9px] text-slate-600 uppercase font-bold">Qty</label><input type="number" min={1} value={part.quantity ?? 1} onChange={e => { const updated = repairOrder.parts.map((p, i) => i === index ? { ...p, quantity: Math.max(1, Math.floor(parseInt(e.target.value) || 1)) } : p); updateRO({ ...repairOrder, parts: updated }); }} className="w-12 bg-slate-800 border border-white/10 rounded px-1 py-0.5 text-amber-400 font-bold text-[10px] text-center outline-none focus:border-amber-400" /></div></div>
                                 <div className="flex items-center gap-4">
                                     <span className={`text-[9px] font-black uppercase px-3 py-1 rounded-full border ${colorClass}`}>{part.status?.replace('_', ' ')}</span>
                                     {part.status === PartStatus.IN_BOX && (

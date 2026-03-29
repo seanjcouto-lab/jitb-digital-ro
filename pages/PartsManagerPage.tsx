@@ -346,14 +346,14 @@ const ROCard: React.FC<ROCardProps> = ({
                                   {part.status?.replace('_', ' ') || 'REQUIRED'}
                                 </div>
                               </div>
-                                <div className="grid grid-cols-2 gap-4 mb-2">
+                                <div className="grid grid-cols-3 gap-4 mb-2">
                                     <div>
                                         <label className="block text-[8px] text-slate-500 uppercase font-bold mb-1">Dealer Cost</label>
                                         <div className="relative">
                                             <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-slate-500">$</span>
-                                            <input 
-                                                type="number" 
-                                                value={part.dealerPrice || ''} 
+                                            <input
+                                                type="number"
+                                                value={part.dealerPrice || ''}
                                                 onChange={e => handleUpdatePartDetails(ro, index, { dealerPrice: parseFloat(e.target.value) || 0 })}
                                                 className="w-full bg-slate-800 border border-white/5 rounded px-5 py-1 text-[10px] font-mono text-white outline-none focus:border-neon-steel"
                                                 placeholder="0.00"
@@ -364,14 +364,24 @@ const ROCard: React.FC<ROCardProps> = ({
                                         <label className="block text-[8px] text-slate-500 uppercase font-bold mb-1">Retail (MSRP)</label>
                                         <div className="relative">
                                             <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-slate-500">$</span>
-                                            <input 
-                                                type="number" 
-                                                value={part.msrp || ''} 
+                                            <input
+                                                type="number"
+                                                value={part.msrp || ''}
                                                 onChange={e => handleUpdatePartDetails(ro, index, { msrp: parseFloat(e.target.value) || 0 })}
                                                 className="w-full bg-slate-800 border border-white/5 rounded px-5 py-1 text-[10px] font-mono text-white outline-none focus:border-neon-steel"
                                                 placeholder="0.00"
                                             />
                                         </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-[8px] text-slate-500 uppercase font-bold mb-1">Qty</label>
+                                        <input
+                                            type="number"
+                                            min={1}
+                                            value={part.quantity ?? 1}
+                                            onChange={e => handleUpdatePartDetails(ro, index, { quantity: Math.max(1, Math.floor(parseInt(e.target.value) || 1)) })}
+                                            className="w-full bg-slate-800 border border-white/5 rounded px-2 py-1 text-[10px] font-mono text-white text-center outline-none focus:border-amber-400"
+                                        />
                                     </div>
                                 </div>
                                 <div className="flex justify-between items-center">

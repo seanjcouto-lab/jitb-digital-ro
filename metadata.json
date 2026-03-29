@@ -1,7 +1,0 @@
-{
-  "name": "Remix: SBW DIGITAL RO",
-  "description": "Industrial-grade Marine Service Management Platform with role-based gates, glass-morphism UI, and strict workflow accountability.",
-  "requestFramePermissions": [
-    "microphone"
-  ]
-}

@@ -227,6 +227,19 @@ Session date: 2026-03-28
 - Timer icon: "Opened {time}" replaced with `⏱ {time}`
 - Parts pending badge: plain amber text replaced with loud `⚠ N PARTS PENDING` yellow badge (bg-yellow-400, dark text, font-black, uppercase)
 
+**PWA implementation**
+- `public/manifest.json` — name "Jaxtr", theme #0A1726, standalone display, icon placeholders
+- `public/sw.js` — hand-rolled service worker: app shell cache on install, StaleWhileRevalidate for CDN (esm.sh, Tailwind, Google Fonts), NetworkFirst for local assets, offline fallback to cached index.html
+- `index.html` — manifest link, theme-color meta, SW registration on load
+
+**Part quantity field — full stack**
+- `types.ts` — `quantity?: number` added to `Part` interface
+- `types/RepairOrderCreateInput.ts` — `quantity?: number` added to `ManualPartInput`
+- `components/ROGenerationView.tsx` — qty input (default 1, min 1) next to each manual part; quantity passed through `manualParts` in `handleGenerateRO`
+- `services/repairOrderService.ts` — `quantity: p.quantity ?? 1` preserved when spreading manual parts
+- `pages/PartsManagerPage.tsx` — `x{qty}` amber display on fulfillment cards (line 333)
+- `pages/TechnicianPage.tsx` — `x{qty}` amber display on directive part cards (lines 522 + 530)
+
 **Test suite status: 77 passing, 2 skipped (Playwright E2E)**
 
 ### Remaining Section 10 inventory items (InventoryPage UI)
@@ -239,7 +252,7 @@ Session date: 2026-03-28
 
 ### Next build target
 
-**PWA implementation** — offline capability via service worker + web app manifest
+**Billing math** — multiply unit price × quantity for part line items in `components/InvoiceModal.tsx`. BillingPage.tsx consumes `ro.invoiceTotal` (pre-computed) — part line item calculation lives in InvoiceModal.
 
 ---
 
