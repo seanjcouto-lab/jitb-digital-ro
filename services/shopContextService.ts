@@ -1,4 +1,5 @@
 import { DEFAULT_SHOP_ID } from '../constants';
+import { supabase } from '../supabaseClient';
 
 let currentActiveShopId = DEFAULT_SHOP_ID;
 
@@ -25,3 +26,13 @@ export const shopContextService = {
     currentActiveShopId = shopId || DEFAULT_SHOP_ID;
   }
 };
+
+export async function fetchShopSubscriptionStatus(shopId: string): Promise<string | null> {
+  const { data, error } = await supabase
+    .from('shops')
+    .select('subscription_status')
+    .eq('id', shopId)
+    .single();
+  if (error || !data) return null;
+  return data.subscription_status ?? null;
+}

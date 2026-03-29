@@ -10,7 +10,7 @@ import { inventoryService } from './services/inventoryService';
 import { authService } from './services/authService';
 import { supabaseAuthService } from './services/supabaseAuthService';
 import { appConfigService } from './services/appConfigService';
-import { shopContextService } from './services/shopContextService';
+import { shopContextService, fetchShopSubscriptionStatus } from './services/shopContextService';
 import Header from './components/Header';
 import ServiceManagerPage from './pages/ServiceManagerPage';
 import PartsManagerPage from './pages/PartsManagerPage';
@@ -52,6 +52,8 @@ const App: React.FC = () => {
   const [isCommsLinkOpen, setIsCommsLinkOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isRecovering, setIsRecovering] = useState(false);
+  const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(null);
+  const [subscriptionLoading, setSubscriptionLoading] = useState(true);
 
   const initDb = async (user: LoggedInUser | null) => {
     if (!user) {
@@ -78,6 +80,12 @@ const App: React.FC = () => {
       const { user } = await supabaseAuthService.restoreSession();
       setLoggedInUser(user);
       await initDb(user);
+      if (user) {
+        const shopId = shopContextService.getActiveShopId();
+        const status = await fetchShopSubscriptionStatus(shopId);
+        setSubscriptionStatus(status);
+      }
+      setSubscriptionLoading(false);
       setIsLoading(false);
     };
     restoreAndInit();
@@ -96,6 +104,10 @@ const App: React.FC = () => {
   const handleLogin = async (user: LoggedInUser) => {
     setLoggedInUser(user);
     await initDb(user);
+    const shopId = shopContextService.getActiveShopId();
+    const status = await fetchShopSubscriptionStatus(shopId);
+    setSubscriptionStatus(status);
+    setSubscriptionLoading(false);
   };
 
   const canAccessRole = useCallback(
@@ -232,6 +244,18 @@ const App: React.FC = () => {
 
   if (!loggedInUser) {
     return <LoginScreen onLogin={handleLogin} />;
+  }
+
+  if (subscriptionLoading) return <div className="min-h-screen flex items-center justify-center text-white">Loading...</div>;
+
+  const ALLOWED_STATUSES = ['active', 'pilot', 'trial', 'grace'];
+  if (subscriptionStatus !== null && !ALLOWED_STATUSES.includes(subscriptionStatus)) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 text-white">
+        <h1 className="text-2xl font-bold">Account Not Active</h1>
+        <p className="text-gray-400">Your shop subscription is not currently active. Please contact support.</p>
+      </div>
+    );
   }
 
   const roleIcons = {
