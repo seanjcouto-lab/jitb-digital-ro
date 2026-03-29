@@ -892,7 +892,6 @@ const handleROGenerated = (newRO: RepairOrder) => {
                     actions={
                       <div className="flex gap-2">
                         <button onClick={(e) => { e.stopPropagation(); handleSendToBay(ro); }} className="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>
-                        <button onClick={(e) => { e.stopPropagation(); handleHoldJob(ro); }} className="flex-1 px-4 py-2 rounded-lg bg-red-500/20 text-red-400 text-[10px] font-black border border-red-500/30 uppercase tracking-widest hover:bg-red-500/30 transition-all">HOLD</button>
                       </div>
                     }
                   >
