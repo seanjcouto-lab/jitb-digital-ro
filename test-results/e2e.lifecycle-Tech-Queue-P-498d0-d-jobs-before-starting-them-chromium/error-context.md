@@ -1,0 +1,84 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - img "Logo" [ref=e6]
+    - generic [ref=e8]:
+      - generic [ref=e9]:
+        - generic [ref=e10]: Customer
+        - text: Tech Queue Job A 1774879142180
+      - generic [ref=e12]: Vessel
+      - generic [ref=e13]:
+        - generic [ref=e14]: Engine S/N
+        - text: SN-1774879142521
+    - generic [ref=e16]:
+      - generic [ref=e17]:
+        - text: Pierre
+        - generic [ref=e18]: Technician
+      - button "Logout" [ref=e19] [cursor=pointer]:
+        - img [ref=e20]
+      - button "Enter Fullscreen" [ref=e22] [cursor=pointer]:
+        - img [ref=e23]
+      - button "Comms Link" [ref=e25] [cursor=pointer]:
+        - img [ref=e26]
+  - main [ref=e28]:
+    - generic [ref=e29]:
+      - generic [ref=e30]:
+        - generic [ref=e31]:
+          - heading "Active Bay Deck" [level=2] [ref=e32]
+          - paragraph [ref=e33]: "Order: RO-1774879143024 • Tech Queue Job A 1774879142180 •"
+        - button "Start Job Clock" [ref=e35] [cursor=pointer]
+      - generic [ref=e36]:
+        - generic [ref=e37]:
+          - generic [ref=e38]:
+            - heading "Service Directives" [level=4] [ref=e39]
+            - generic [ref=e41]:
+              - generic [ref=e42]:
+                - generic [ref=e44]: Task 01
+                - heading "PERFORM DIAGNOSTICS & REQUESTED WORK" [level=3] [ref=e45]
+              - button "Locked" [disabled] [ref=e46]
+            - generic [ref=e48]:
+              - generic [ref=e49]:
+                - generic [ref=e51]: Task 02
+                - heading "OIL CHANGE" [level=3] [ref=e52]
+              - button "Locked" [disabled] [ref=e53]
+          - generic [ref=e54]:
+            - 'heading "Bay Manifest: Parts Status" [level=4] [ref=e55]'
+            - paragraph [ref=e57]: No parts assigned to this order yet.
+        - generic [ref=e58]:
+          - generic [ref=e59]:
+            - heading "Log Requisitions" [level=4] [ref=e60]
+            - generic [ref=e61]:
+              - generic [ref=e62]:
+                - generic [ref=e63]: Add Directive Request
+                - generic [ref=e64]:
+                  - textbox "e.g. Check trim seal" [ref=e65]
+                  - button "Add" [disabled] [ref=e66]
+              - generic [ref=e67]:
+                - generic [ref=e68]: Request New Parts
+                - generic [ref=e69]:
+                  - 'textbox "Search Part # or Description" [ref=e71]'
+                  - button "Add" [disabled] [ref=e72]
+          - generic [ref=e73]:
+            - generic [ref=e74]:
+              - heading "Final Labor Conclusion" [level=4] [ref=e75]
+              - generic [ref=e76]:
+                - textbox "Final summary of all services performed (Required for exit gate)..." [ref=e77]
+                - button "Dictate Notes" [ref=e79] [cursor=pointer]:
+                  - img [ref=e80]
+              - generic [ref=e82]:
+                - button "Photo" [ref=e83] [cursor=pointer]:
+                  - img [ref=e84]
+                  - text: Photo
+                - button "Video" [ref=e87] [cursor=pointer]:
+                  - img [ref=e88]
+                  - text: Video
+                - button "Audio" [ref=e90] [cursor=pointer]:
+                  - img [ref=e91]
+                  - text: Audio
+            - generic [ref=e93]:
+              - button "Halt" [disabled] [ref=e94]
+              - button "Send for Billing" [disabled] [ref=e95]
+            - generic [ref=e99]: Awaiting Conclusion Notes
+```

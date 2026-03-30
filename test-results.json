@@ -1,0 +1,3111 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\playwright.config.ts",
+    "rootDir": "C:/Users/seans/OneDrive/Desktop/JITB 312 835PM LAST ONE/JITB_MASTER/tests",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 4
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/seans/OneDrive/Desktop/JITB 312 835PM LAST ONE/JITB_MASTER/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 4
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/seans/OneDrive/Desktop/JITB 312 835PM LAST ONE/JITB_MASTER/tests",
+        "testIgnore": [
+          "**/repairOrderService.spec.ts",
+          "**/repairOrder.directiveUnlock.spec.ts",
+          "**/technicianService.spec.ts",
+          "**/vesselService.spec.ts",
+          "**/inventoryService.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.2",
+    "workers": 4,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "e2e.exhaustive.spec.ts",
+      "file": "e2e.exhaustive.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Auth: Login screen renders on cold load",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6621,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:26:05.261Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-bd25dae75f85ab56fe95",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 110,
+          "column": 1
+        },
+        {
+          "title": "Auth: Service Manager login lands on The Dock",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 7039,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:26:05.292Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-5b4a69d5621df74d0e65",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 116,
+          "column": 1
+        },
+        {
+          "title": "Auth: Technician login lands on Active Bay Deck",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 2,
+                  "status": "failed",
+                  "duration": 21555,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: 'Active Bay Deck' })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: 'Active Bay Deck' })\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: 'Active Bay Deck' })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: 'Active Bay Deck' })\u001b[22m\n\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:126:72",
+                    "location": {
+                      "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                      "column": 72,
+                      "line": 126
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 124 |\u001b[39m   \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'/'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 125 |\u001b[39m   \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'Pierre (Tech)'\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 126 |\u001b[39m   \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'heading'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'Active Bay Deck'\u001b[39m }))\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 127 |\u001b[39m   \u001b[36mawait\u001b[39m screenshot(page\u001b[33m,\u001b[39m \u001b[32m'auth-tech-login'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 128 |\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 129 |\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                        "column": 72,
+                        "line": 126
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: 'Active Bay Deck' })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: 'Active Bay Deck' })\u001b[22m\n\n\n  124 |   await page.goto('/');\n  125 |   await page.getByRole('button', { name: 'Pierre (Tech)' }).click();\n> 126 |   await expect(page.getByRole('heading', { name: 'Active Bay Deck' })).toBeVisible({ timeout: 15000 });\n      |                                                                        ^\n  127 |   await screenshot(page, 'auth-tech-login');\n  128 | });\n  129 |\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:126:72"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:26:05.346Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\test-results\\e2e.exhaustive-Auth-Techni-eb5f0-in-lands-on-Active-Bay-Deck-chromium\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                    "column": 72,
+                    "line": 126
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-e4c1f2bda1589dd0b4d7",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 123,
+          "column": 1
+        },
+        {
+          "title": "Auth: Owner login lands on owner dashboard",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 3,
+                  "status": "timedOut",
+                  "duration": 30170,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                        "column": 53,
+                        "line": 132
+                      },
+                      "message": "Error: locator.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /Mike/i })\u001b[22m\n\n\n  130 | test('Auth: Owner login lands on owner dashboard', async ({ page }) => {\n  131 |   await page.goto('/');\n> 132 |   await page.getByRole('button', { name: /Mike/i }).click();\n      |                                                     ^\n  133 |   await page.waitForTimeout(2000);\n  134 |   await screenshot(page, 'auth-owner-login');\n  135 | });\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:132:53"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:26:05.494Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\test-results\\e2e.exhaustive-Auth-Owner-login-lands-on-owner-dashboard-chromium\\error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-4fbc8544d319f6e5b996",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 130,
+          "column": 1
+        },
+        {
+          "title": "Auth: Logout clears session and returns to login screen",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2460,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:26:14.305Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-4b466f7c68c6d6510307",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 137,
+          "column": 1
+        },
+        {
+          "title": "Auth: Session does not persist across logout — tech cannot access SM view",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 1,
+                  "status": "failed",
+                  "duration": 17781,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: 'Active Bay Deck' })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: 'Active Bay Deck' })\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: 'Active Bay Deck' })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: 'Active Bay Deck' })\u001b[22m\n\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:152:72",
+                    "location": {
+                      "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                      "column": 72,
+                      "line": 152
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 150 |\u001b[39m   \u001b[36mawait\u001b[39m logout(page)\u001b[33m;\u001b[39m\n \u001b[90m 151 |\u001b[39m   \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'Pierre (Tech)'\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 152 |\u001b[39m   \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'heading'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'Active Bay Deck'\u001b[39m }))\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 153 |\u001b[39m   \u001b[90m// SM heading must not be present\u001b[39m\n \u001b[90m 154 |\u001b[39m   \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'heading'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'The Dock'\u001b[39m }))\u001b[33m.\u001b[39mnot\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m 155 |\u001b[39m   \u001b[36mawait\u001b[39m screenshot(page\u001b[33m,\u001b[39m \u001b[32m'auth-role-isolation'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                        "column": 72,
+                        "line": 152
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: 'Active Bay Deck' })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: 'Active Bay Deck' })\u001b[22m\n\n\n  150 |   await logout(page);\n  151 |   await page.getByRole('button', { name: 'Pierre (Tech)' }).click();\n> 152 |   await expect(page.getByRole('heading', { name: 'Active Bay Deck' })).toBeVisible({ timeout: 15000 });\n      |                                                                        ^\n  153 |   // SM heading must not be present\n  154 |   await expect(page.getByRole('heading', { name: 'The Dock' })).not.toBeVisible();\n  155 |   await screenshot(page, 'auth-role-isolation');\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:152:72"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:26:14.596Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\test-results\\e2e.exhaustive-Auth-Sessio-c8b89--tech-cannot-access-SM-view-chromium\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                    "column": 72,
+                    "line": 152
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-ac2e360150d006c475c0",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 146,
+          "column": 1
+        },
+        {
+          "title": "RO Creation: New customer with single manual directive",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7434,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:26:16.848Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-11d4f11cb3ebe8467b11",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 162,
+          "column": 1
+        },
+        {
+          "title": "RO Creation: Multiple directives added before authorization",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7430,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:26:24.337Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-8b14034ab9dc91700e6e",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 172,
+          "column": 1
+        },
+        {
+          "title": "RO Creation: Returning customer found by name search",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 2,
+                  "status": "passed",
+                  "duration": 8115,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:26:33.428Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-d1cb3d98547dc1a42b1b",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 196,
+          "column": 1
+        },
+        {
+          "title": "RO Creation: Returning customer found by engine serial",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 18198,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Engine Serial Customer 1774826796549').first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Engine Serial Customer 1774826796549').first()\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Engine Serial Customer 1774826796549').first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Engine Serial Customer 1774826796549').first()\u001b[22m\n\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:219:46",
+                    "location": {
+                      "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                      "column": 46,
+                      "line": 219
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 217 |\u001b[39m   \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'#oracle-search'\u001b[39m\u001b[33m,\u001b[39m serial)\u001b[33m;\u001b[39m\n \u001b[90m 218 |\u001b[39m   \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForTimeout(\u001b[35m1000\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 219 |\u001b[39m   \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByText(name)\u001b[33m.\u001b[39mfirst())\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 220 |\u001b[39m   \u001b[36mawait\u001b[39m screenshot(page\u001b[33m,\u001b[39m \u001b[32m'ro-search-by-serial'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 221 |\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 222 |\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                        "column": 46,
+                        "line": 219
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Engine Serial Customer 1774826796549').first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Engine Serial Customer 1774826796549').first()\u001b[22m\n\n\n  217 |   await page.fill('#oracle-search', serial);\n  218 |   await page.waitForTimeout(1000);\n> 219 |   await expect(page.getByText(name).first()).toBeVisible({ timeout: 10000 });\n      |                                              ^\n  220 |   await screenshot(page, 'ro-search-by-serial');\n  221 | });\n  222 |\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:219:46"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:26:31.815Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\test-results\\e2e.exhaustive-RO-Creation-2d5f2-omer-found-by-engine-serial-chromium\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                    "column": 46,
+                    "line": 219
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-f7cc4256ebcbe53a663e",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 209,
+          "column": 1
+        },
+        {
+          "title": "RO Creation: Verbal authorization checkbox required before generate",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 6085,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "Generate button disabled without auth: false\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:26:39.389Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-ffeebd2ea9cfe51609d6",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 223,
+          "column": 1
+        },
+        {
+          "title": "RO Creation: RO appears in staged queue immediately after creation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 3,
+                  "status": "passed",
+                  "duration": 9494,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:26:43.839Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-83dc075cac065b51e357",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 244,
+          "column": 1
+        },
+        {
+          "title": "RO Creation: RO persists after page refresh",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 2,
+                  "status": "failed",
+                  "duration": 27565,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Persist Test 1774826808091').first()\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Persist Test 1774826808091').first()\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Persist Test 1774826808091').first()\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Persist Test 1774826808091').first()\u001b[22m\n\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:262:46",
+                    "location": {
+                      "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                      "column": 46,
+                      "line": 262
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 260 |\u001b[39m   \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mreload()\u001b[33m;\u001b[39m\n \u001b[90m 261 |\u001b[39m   \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForTimeout(\u001b[35m2000\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 262 |\u001b[39m   \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByText(name)\u001b[33m.\u001b[39mfirst())\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 263 |\u001b[39m   \u001b[36mawait\u001b[39m screenshot(page\u001b[33m,\u001b[39m \u001b[32m'ro-persists-after-refresh'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 264 |\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 265 |\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                        "column": 46,
+                        "line": 262
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Persist Test 1774826808091').first()\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Persist Test 1774826808091').first()\u001b[22m\n\n\n  260 |   await page.reload();\n  261 |   await page.waitForTimeout(2000);\n> 262 |   await expect(page.getByText(name).first()).toBeVisible({ timeout: 15000 });\n      |                                              ^\n  263 |   await screenshot(page, 'ro-persists-after-refresh');\n  264 | });\n  265 |\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:262:46"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:26:42.775Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\test-results\\e2e.exhaustive-RO-Creation-RO-persists-after-page-refresh-chromium\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                    "column": 46,
+                    "line": 262
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-741f7e7d2424c91e7f1e",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 254,
+          "column": 1
+        },
+        {
+          "title": "RO Creation: Two ROs for same customer — both visible",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 11729,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:26:45.927Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-b3c25f393ee9810ebb69",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 266,
+          "column": 1
+        },
+        {
+          "title": "Status: Card never vanishes when assigned tech — moves to correct column",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 7,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8783,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "✅ Card still on board after tech assignment\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:26:57.840Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-c59f0bac8984283b30b7",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 289,
+          "column": 1
+        },
+        {
+          "title": "Status: Full state machine — STAGED → ACTIVE → COMPLETED → BILLING",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 3,
+                  "status": "timedOut",
+                  "duration": 180128,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 180000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 180000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 180000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                        "column": 86,
+                        "line": 92
+                      },
+                      "message": "Error: locator.click: Test timeout of 180000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /Complete Job|Finish Job|Mark Complete/i })\u001b[22m\n\n\n  90 |\n  91 | async function completeJob(page: Page) {\n> 92 |   await page.getByRole('button', { name: /Complete Job|Finish Job|Mark Complete/i }).click();\n     |                                                                                      ^\n  93 |   await page.waitForTimeout(500);\n  94 | }\n  95 |\n    at completeJob (C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:92:86)\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:315:9"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:26:53.998Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\test-results\\e2e.exhaustive-Status-Full-94312-CTIVE-→-COMPLETED-→-BILLING-chromium\\error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-0789905fd562dc2250d6",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 303,
+          "column": 1
+        },
+        {
+          "title": "Status: HOLD — job card remains visible in hold column",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 10638,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "✅ Job visible in HOLD column\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:26:57.721Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-fb70efd56cf15ebbd048",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 322,
+          "column": 1
+        },
+        {
+          "title": "Status: HOLD → RESUME — job returns to active workflow",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 7,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11165,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:27:07.323Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-e7663dd87598a565c807",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 346,
+          "column": 1
+        },
+        {
+          "title": "Status: DISPUTED — job stays on board in disputed state",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 1,
+                  "status": "timedOut",
+                  "duration": 120028,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                        "column": 86,
+                        "line": 92
+                      },
+                      "message": "Error: locator.click: Test timeout of 120000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /Complete Job|Finish Job|Mark Complete/i })\u001b[22m\n\n\n  90 |\n  91 | async function completeJob(page: Page) {\n> 92 |   await page.getByRole('button', { name: /Complete Job|Finish Job|Mark Complete/i }).click();\n     |                                                                                      ^\n  93 |   await page.waitForTimeout(500);\n  94 | }\n  95 |\n    at completeJob (C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:92:86)\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:386:9"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:27:08.400Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\test-results\\e2e.exhaustive-Status-DISP-88fb7--on-board-in-disputed-state-chromium\\error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-55adeb8bd42c0100b879",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 374,
+          "column": 1
+        },
+        {
+          "title": "Status: ARCHIVED — job no longer appears on active board",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 8,
+                  "parallelIndex": 2,
+                  "status": "timedOut",
+                  "duration": 120141,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                        "column": 86,
+                        "line": 92
+                      },
+                      "message": "Error: locator.click: Test timeout of 120000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /Complete Job|Finish Job|Mark Complete/i })\u001b[22m\n\n\n  90 |\n  91 | async function completeJob(page: Page) {\n> 92 |   await page.getByRole('button', { name: /Complete Job|Finish Job|Mark Complete/i }).click();\n     |                                                                                      ^\n  93 |   await page.waitForTimeout(500);\n  94 | }\n  95 |\n    at completeJob (C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:92:86)\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:413:9"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:27:17.677Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\test-results\\e2e.exhaustive-Status-ARCH-6c8e5-ger-appears-on-active-board-chromium\\error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-bee093b51c3b75f52907",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 401,
+          "column": 1
+        },
+        {
+          "title": "Tech: Sees assigned job BEFORE starting it",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 7,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9959,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "✅ Tech sees job before starting\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:27:18.523Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-9eb327c37cd9d4ef19d8",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 430,
+          "column": 1
+        },
+        {
+          "title": "Tech: Sees ALL assigned jobs when multiple are queued",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 7,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 19725,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Queue Job B 1774826852091').first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Queue Job B 1774826852091').first()\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Queue Job B 1774826852091').first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Queue Job B 1774826852091').first()\u001b[22m\n\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:460:46",
+                    "location": {
+                      "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                      "column": 46,
+                      "line": 460
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 458 |\u001b[39m   \u001b[36mawait\u001b[39m loginTech(page)\u001b[33m;\u001b[39m\n \u001b[90m 459 |\u001b[39m   \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByText(job1)\u001b[33m.\u001b[39mfirst())\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m })\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 460 |\u001b[39m   \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByText(job2)\u001b[33m.\u001b[39mfirst())\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 461 |\u001b[39m   \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByText(job3)\u001b[33m.\u001b[39mfirst())\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 462 |\u001b[39m   console\u001b[33m.\u001b[39mlog(\u001b[32m'✅ Tech sees all 3 queued jobs'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 463 |\u001b[39m   \u001b[36mawait\u001b[39m screenshot(page\u001b[33m,\u001b[39m \u001b[32m'tech-multi-queue'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                        "column": 46,
+                        "line": 460
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Queue Job B 1774826852091').first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Queue Job B 1774826852091').first()\u001b[22m\n\n\n  458 |   await loginTech(page);\n  459 |   await expect(page.getByText(job1).first()).toBeVisible({ timeout: 15000 });\n> 460 |   await expect(page.getByText(job2).first()).toBeVisible({ timeout: 10000 });\n      |                                              ^\n  461 |   await expect(page.getByText(job3).first()).toBeVisible({ timeout: 10000 });\n  462 |   console.log('✅ Tech sees all 3 queued jobs');\n  463 |   await screenshot(page, 'tech-multi-queue');\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:460:46"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:27:28.530Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\test-results\\e2e.exhaustive-Tech-Sees-A-8b8fb-bs-when-multiple-are-queued-chromium\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                    "column": 46,
+                    "line": 460
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-5ec5fc94344733b3e019",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 444,
+          "column": 1
+        },
+        {
+          "title": "Tech: Starting one job does not hide other queued jobs",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 9,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 16608,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Waiting Job 1774826872611').first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Waiting Job 1774826872611').first()\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Waiting Job 1774826872611').first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Waiting Job 1774826872611').first()\u001b[22m\n\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:480:46",
+                    "location": {
+                      "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                      "column": 46,
+                      "line": 480
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 478 |\u001b[39m   \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByText(job1)\u001b[33m.\u001b[39mfirst())\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 479 |\u001b[39m   \u001b[36mawait\u001b[39m startJob(page)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 480 |\u001b[39m   \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByText(job2)\u001b[33m.\u001b[39mfirst())\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 481 |\u001b[39m   console\u001b[33m.\u001b[39mlog(\u001b[32m'✅ Queued job visible while another is active'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 482 |\u001b[39m   \u001b[36mawait\u001b[39m screenshot(page\u001b[33m,\u001b[39m \u001b[32m'tech-active-plus-queued'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 483 |\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                        "column": 46,
+                        "line": 480
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Waiting Job 1774826872611').first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Waiting Job 1774826872611').first()\u001b[22m\n\n\n  478 |   await expect(page.getByText(job1).first()).toBeVisible({ timeout: 15000 });\n  479 |   await startJob(page);\n> 480 |   await expect(page.getByText(job2).first()).toBeVisible({ timeout: 10000 });\n      |                                              ^\n  481 |   console.log('✅ Queued job visible while another is active');\n  482 |   await screenshot(page, 'tech-active-plus-queued');\n  483 | });\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:480:46"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:27:49.857Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\test-results\\e2e.exhaustive-Tech-Starti-d5cad--not-hide-other-queued-jobs-chromium\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                    "column": 46,
+                    "line": 480
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-1403abfd6ad3d13042b8",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 466,
+          "column": 1
+        },
+        {
+          "title": "Tech: Labor clock starts on first action",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 10,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5461,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "✅ Labor clock started\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:28:08.540Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-136c43d10b9803f485da",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 485,
+          "column": 1
+        },
+        {
+          "title": "Tech: Directive completion marked on card",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 10,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5813,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "✅ Directive marked completed\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:28:14.214Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-3706ed6a2407fc36cb35",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 501,
+          "column": 1
+        },
+        {
+          "title": "Tech: Completing all directives enables job completion",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 10,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 15425,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: /Complete Job|Finish Job|Mark Complete/i }).first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: /Complete Job|Finish Job|Mark Complete/i }).first()\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: /Complete Job|Finish Job|Mark Complete/i }).first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: /Complete Job|Finish Job|Mark Complete/i }).first()\u001b[22m\n\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:531:29",
+                    "location": {
+                      "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                      "column": 29,
+                      "line": 531
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 529 |\u001b[39m   \u001b[36mawait\u001b[39m completeDirective(page)\u001b[33m;\u001b[39m\n \u001b[90m 530 |\u001b[39m   \u001b[36mconst\u001b[39m completeBtn \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/Complete Job|Finish Job|Mark Complete/i\u001b[39m })\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 531 |\u001b[39m   \u001b[36mawait\u001b[39m expect(completeBtn)\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 532 |\u001b[39m   console\u001b[33m.\u001b[39mlog(\u001b[32m'✅ Complete job button available after all directives done'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 533 |\u001b[39m   \u001b[36mawait\u001b[39m screenshot(page\u001b[33m,\u001b[39m \u001b[32m'tech-all-directives-complete'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 534 |\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                        "column": 29,
+                        "line": 531
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: /Complete Job|Finish Job|Mark Complete/i }).first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: /Complete Job|Finish Job|Mark Complete/i }).first()\u001b[22m\n\n\n  529 |   await completeDirective(page);\n  530 |   const completeBtn = page.getByRole('button', { name: /Complete Job|Finish Job|Mark Complete/i }).first();\n> 531 |   await expect(completeBtn).toBeVisible({ timeout: 10000 });\n      |                             ^\n  532 |   console.log('✅ Complete job button available after all directives done');\n  533 |   await screenshot(page, 'tech-all-directives-complete');\n  534 | });\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:531:29"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:28:20.058Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\test-results\\e2e.exhaustive-Tech-Comple-795c7-ives-enables-job-completion-chromium\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                    "column": 29,
+                    "line": 531
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-9615e457fc3284009425",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 518,
+          "column": 1
+        },
+        {
+          "title": "Tech: Job can complete with some directives unfinished",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 11,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7590,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "ℹ️ Complete job not available with partial directives — spec behavior TBD\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:28:36.935Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-5e180d772cc77353d93c",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 536,
+          "column": 1
+        },
+        {
+          "title": "Tech: Tech exits job — job returns to queued not lost",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 11,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 90073,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                        "column": 48,
+                        "line": 53
+                      },
+                      "message": "Error: locator.click: Test timeout of 90000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button[title=\"Logout\"]')\u001b[22m\n\u001b[2m    - locator resolved to <button title=\"Logout\" class=\"p-3 rounded-full bg-red-500/20 hover:bg-red-500/40 transition-colors\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 animate-in fade-in duration-300\">…</div> from <main class=\"container mx-auto p-4 md:p-8\">…</main> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 animate-in fade-in duration-300\">…</div> from <main class=\"container mx-auto p-4 md:p-8\">…</main> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    155 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m        - element is visible, enabled and stable\u001b[22m\n\u001b[2m        - scrolling into view if needed\u001b[22m\n\u001b[2m        - done scrolling\u001b[22m\n\u001b[2m        - <div class=\"fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 animate-in fade-in duration-300\">…</div> from <main class=\"container mx-auto p-4 md:p-8\">…</main> subtree intercepts pointer events\u001b[22m\n\u001b[2m      - retrying click action\u001b[22m\n\u001b[2m        - waiting 500ms\u001b[22m\n\n\n  51 |\n  52 | async function logout(page: Page) {\n> 53 |   await page.locator('button[title=\"Logout\"]').click();\n     |                                                ^\n  54 |   await expect(page.getByRole('heading', { name: 'Sign In' })).toBeVisible({ timeout: 15000 });\n  55 | }\n  56 |\n    at logout (C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:53:48)\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:591:9"
+                    }
+                  ],
+                  "stdout": [
+                    {
+                      "text": "✅ Tech exited job\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:28:44.661Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\test-results\\e2e.exhaustive-Tech-Tech-e-d6b38--returns-to-queued-not-lost-chromium\\error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-1ddeefa28aa585580809",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 574,
+          "column": 1
+        },
+        {
+          "title": "Tech: Discovery added — requires SM approval",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 12,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 4732,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "ℹ️ Discovery button not found — may not be implemented\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:29:09.966Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-3a1686410e7c1a621867",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 598,
+          "column": 1
+        },
+        {
+          "title": "Tech: Flags missing part — shows on SM board",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 12,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 8333,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "✅ SM sees job with parts issue\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:29:14.836Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-be626ea0b037a3164d0e",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 624,
+          "column": 1
+        },
+        {
+          "title": "SM: Can assign technician to staged job",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 13,
+                  "parallelIndex": 2,
+                  "status": "passed",
+                  "duration": 6826,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "✅ SM assigned tech successfully\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:29:23.401Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-215606ec25d7a6146e1b",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 656,
+          "column": 1
+        },
+        {
+          "title": "SM: Can unassign technician from active job",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 12,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 10111,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:29:23.213Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-7814eadd564791c91377",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 668,
+          "column": 1
+        },
+        {
+          "title": "SM: Can put active job on hold",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 13,
+                  "parallelIndex": 2,
+                  "status": "passed",
+                  "duration": 10751,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "✅ SM placed job on hold — still visible\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:29:30.514Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-bb6bc25df8a8c08ded14",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 693,
+          "column": 1
+        },
+        {
+          "title": "SM: Approves discovery — directive becomes billable",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 12,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 7973,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:29:33.362Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-481f5d59df25cb4bf730",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 717,
+          "column": 1
+        },
+        {
+          "title": "SM: Rejects discovery — job continues without it",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 13,
+                  "parallelIndex": 2,
+                  "status": "passed",
+                  "duration": 9036,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:29:41.301Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-b077e50d503c0cc0ba8d",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 747,
+          "column": 1
+        },
+        {
+          "title": "SM: Missing part — decides to continue job",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 12,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 9811,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:29:41.373Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-8559f1f3ea1220148610",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 779,
+          "column": 1
+        },
+        {
+          "title": "SM: Missing part — puts job on hold",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 13,
+                  "parallelIndex": 2,
+                  "status": "passed",
+                  "duration": 10545,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "✅ Job on hold due to missing part — still visible\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:29:50.375Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-03e0e6ce6af18b533689",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 811,
+          "column": 1
+        },
+        {
+          "title": "Billing: Invoice renders with dollar amount after job completes",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 12,
+                  "parallelIndex": 1,
+                  "status": "timedOut",
+                  "duration": 120027,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                        "column": 86,
+                        "line": 92
+                      },
+                      "message": "Error: locator.click: Test timeout of 120000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /Complete Job|Finish Job|Mark Complete/i })\u001b[22m\n\n\n  90 |\n  91 | async function completeJob(page: Page) {\n> 92 |   await page.getByRole('button', { name: /Complete Job|Finish Job|Mark Complete/i }).click();\n     |                                                                                      ^\n  93 |   await page.waitForTimeout(500);\n  94 | }\n  95 |\n    at completeJob (C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:92:86)\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:861:9"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:29:51.222Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\test-results\\e2e.exhaustive-Billing-Inv-531f2--amount-after-job-completes-chromium\\error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-17229d32d0ce7e63fc7e",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 848,
+          "column": 1
+        },
+        {
+          "title": "Billing: Labor-only job — invoice shows labor charge, no parts",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 14,
+                  "parallelIndex": 3,
+                  "status": "timedOut",
+                  "duration": 120121,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                        "column": 86,
+                        "line": 92
+                      },
+                      "message": "Error: locator.click: Test timeout of 120000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /Complete Job|Finish Job|Mark Complete/i })\u001b[22m\n\n\n  90 |\n  91 | async function completeJob(page: Page) {\n> 92 |   await page.getByRole('button', { name: /Complete Job|Finish Job|Mark Complete/i }).click();\n     |                                                                                      ^\n  93 |   await page.waitForTimeout(500);\n  94 | }\n  95 |\n    at completeJob (C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:92:86)\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:884:9"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:30:00.791Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\test-results\\e2e.exhaustive-Billing-Lab-1ec96-shows-labor-charge-no-parts-chromium\\error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-53e9a43f354fb742f719",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 871,
+          "column": 1
+        },
+        {
+          "title": "Billing: Zero balance job — invoice allows close without payment",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 13,
+                  "parallelIndex": 2,
+                  "status": "timedOut",
+                  "duration": 120058,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                        "column": 86,
+                        "line": 92
+                      },
+                      "message": "Error: locator.click: Test timeout of 120000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /Complete Job|Finish Job|Mark Complete/i })\u001b[22m\n\n\n  90 |\n  91 | async function completeJob(page: Page) {\n> 92 |   await page.getByRole('button', { name: /Complete Job|Finish Job|Mark Complete/i }).click();\n     |                                                                                      ^\n  93 |   await page.waitForTimeout(500);\n  94 | }\n  95 |\n    at completeJob (C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:92:86)\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:906:9"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:30:00.965Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\test-results\\e2e.exhaustive-Billing-Zer-d0feb-llows-close-without-payment-chromium\\error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-c8891a34e222c11f95ab",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 894,
+          "column": 1
+        },
+        {
+          "title": "Billing: Invoice line items multiply unit price by quantity correctly",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 15,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 120044,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                        "column": 86,
+                        "line": 92
+                      },
+                      "message": "Error: locator.click: Test timeout of 120000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /Complete Job|Finish Job|Mark Complete/i })\u001b[22m\n\n\n  90 |\n  91 | async function completeJob(page: Page) {\n> 92 |   await page.getByRole('button', { name: /Complete Job|Finish Job|Mark Complete/i }).click();\n     |                                                                                      ^\n  93 |   await page.waitForTimeout(500);\n  94 | }\n  95 |\n    at completeJob (C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:92:86)\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:930:9"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:30:17.361Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\test-results\\e2e.exhaustive-Billing-Inv-30e2e-price-by-quantity-correctly-chromium\\error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-bf44559c8c7968b1037a",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 918,
+          "column": 1
+        },
+        {
+          "title": "Billing: Mark as paid — job moves to archived state",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 16,
+                  "parallelIndex": 1,
+                  "status": "timedOut",
+                  "duration": 120063,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                        "column": 86,
+                        "line": 92
+                      },
+                      "message": "Error: locator.click: Test timeout of 120000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /Complete Job|Finish Job|Mark Complete/i })\u001b[22m\n\n\n  90 |\n  91 | async function completeJob(page: Page) {\n> 92 |   await page.getByRole('button', { name: /Complete Job|Finish Job|Mark Complete/i }).click();\n     |                                                                                      ^\n  93 |   await page.waitForTimeout(500);\n  94 | }\n  95 |\n    at completeJob (C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:92:86)\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:952:9"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:31:52.860Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\test-results\\e2e.exhaustive-Billing-Mar-f4597-job-moves-to-archived-state-chromium\\error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-2257887e3f901ed4b017",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 940,
+          "column": 1
+        },
+        {
+          "title": "Billing: Dispute — job removed from collections, stays in disputed",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 17,
+                  "parallelIndex": 2,
+                  "status": "timedOut",
+                  "duration": 120061,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                        "column": 86,
+                        "line": 92
+                      },
+                      "message": "Error: locator.click: Test timeout of 120000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /Complete Job|Finish Job|Mark Complete/i })\u001b[22m\n\n\n  90 |\n  91 | async function completeJob(page: Page) {\n> 92 |   await page.getByRole('button', { name: /Complete Job|Finish Job|Mark Complete/i }).click();\n     |                                                                                      ^\n  93 |   await page.waitForTimeout(500);\n  94 | }\n  95 |\n    at completeJob (C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:92:86)\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:978:9"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:32:04.763Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\test-results\\e2e.exhaustive-Billing-Dis-be27b-llections-stays-in-disputed-chromium\\error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-34aba689c77268111b06",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 966,
+          "column": 1
+        },
+        {
+          "title": "Parts: Backordered part — job stays invoiceable, not stuck",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 18,
+                  "parallelIndex": 3,
+                  "status": "timedOut",
+                  "duration": 120060,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                        "column": 86,
+                        "line": 92
+                      },
+                      "message": "Error: locator.click: Test timeout of 120000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /Complete Job|Finish Job|Mark Complete/i })\u001b[22m\n\n\n  90 |\n  91 | async function completeJob(page: Page) {\n> 92 |   await page.getByRole('button', { name: /Complete Job|Finish Job|Mark Complete/i }).click();\n     |                                                                                      ^\n  93 |   await page.waitForTimeout(500);\n  94 | }\n  95 |\n    at completeJob (C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:92:86)\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:1018:9"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:32:04.892Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\test-results\\e2e.exhaustive-Parts-Backo-0b3d1-stays-invoiceable-not-stuck-chromium\\error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-501d799fedeed10c3655",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 997,
+          "column": 1
+        },
+        {
+          "title": "Parts: Special order — marked as SO on parts list",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 19,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6119,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:32:19.837Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-ab7259ec848b57db1685",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 1028,
+          "column": 1
+        },
+        {
+          "title": "Parts: Parts Manager sees missing parts from active jobs",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 19,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 120035,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                        "column": 42,
+                        "line": 48
+                      },
+                      "message": "Error: locator.click: Test timeout of 120000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByTitle('PARTS MANAGER')\u001b[22m\n\n\n  46 |   await page.goto('/');\n  47 |   await page.getByRole('button', { name: 'Danny (SM)' }).click();\n> 48 |   await page.getByTitle('PARTS MANAGER').click();\n     |                                          ^\n  49 |   await expect(page.getByText(/Parts Command/i)).toBeVisible({ timeout: 15000 });\n  50 | }\n  51 |\n    at loginParts (C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:48:42)\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:1073:3"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:32:26.132Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\test-results\\e2e.exhaustive-Parts-Parts-dfee9-sing-parts-from-active-jobs-chromium\\error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-46d395743a22068679d6",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 1052,
+          "column": 1
+        },
+        {
+          "title": "Board: 5 simultaneous ROs — all visible, no bleed",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 20,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 6261,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "✅ All 5 ROs visible simultaneously\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:33:55.995Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-69a69001c71f6f58a1dd",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 1082,
+          "column": 1
+        },
+        {
+          "title": "Board: Assigning some jobs does not affect unassigned jobs visibility",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 20,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 4799,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "✅ Unassigned job unaffected by assigning another\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:34:02.392Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-f4d3216c307fa25e7c51",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 1098,
+          "column": 1
+        },
+        {
+          "title": "Board: Jobs in different states coexist without bleed",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 21,
+                  "parallelIndex": 2,
+                  "status": "failed",
+                  "duration": 24719,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Active 1774827253540').first()\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Active 1774827253540').first()\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Active 1774827253540').first()\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Active 1774827253540').first()\u001b[22m\n\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:1125:48",
+                    "location": {
+                      "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                      "column": 48,
+                      "line": 1125
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 1123 |\u001b[39m   \u001b[36mawait\u001b[39m logout(page)\u001b[33m;\u001b[39m\n \u001b[90m 1124 |\u001b[39m   \u001b[36mawait\u001b[39m loginTech(page)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 1125 |\u001b[39m   \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByText(active)\u001b[33m.\u001b[39mfirst())\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m      |\u001b[39m                                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 1126 |\u001b[39m   \u001b[36mawait\u001b[39m startJob(page)\u001b[33m;\u001b[39m\n \u001b[90m 1127 |\u001b[39m   \u001b[36mawait\u001b[39m logout(page)\u001b[33m;\u001b[39m\n \u001b[90m 1128 |\u001b[39m   \u001b[36mawait\u001b[39m loginSM(page)\u001b[33m;\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                        "column": 48,
+                        "line": 1125
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Active 1774827253540').first()\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Active 1774827253540').first()\u001b[22m\n\n\n  1123 |   await logout(page);\n  1124 |   await loginTech(page);\n> 1125 |   await expect(page.getByText(active).first()).toBeVisible({ timeout: 15000 });\n       |                                                ^\n  1126 |   await startJob(page);\n  1127 |   await logout(page);\n  1128 |   await loginSM(page);\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:1125:48"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:34:07.040Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\test-results\\e2e.exhaustive-Board-Jobs--d9908-tates-coexist-without-bleed-chromium\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                    "column": 48,
+                    "line": 1125
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-50f9a2ef023121088ae5",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 1114,
+          "column": 1
+        },
+        {
+          "title": "Board: Search finds specific RO by customer name",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 22,
+                  "parallelIndex": 3,
+                  "status": "passed",
+                  "duration": 7845,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:34:07.164Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-7137e1ac43e80c689d01",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 1135,
+          "column": 1
+        },
+        {
+          "title": "Vessel DNA: Second RO for same customer pre-populates from history",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 20,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 9121,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "✅ Returning customer found in search\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:34:07.207Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-25b7beeac0423d6c5b8a",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 1157,
+          "column": 1
+        },
+        {
+          "title": "Vessel DNA: Customer history shows previous ROs",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 22,
+                  "parallelIndex": 3,
+                  "status": "timedOut",
+                  "duration": 120038,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                        "column": 86,
+                        "line": 92
+                      },
+                      "message": "Error: locator.click: Test timeout of 120000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /Complete Job|Finish Job|Mark Complete/i })\u001b[22m\n\n\n  90 |\n  91 | async function completeJob(page: Page) {\n> 92 |   await page.getByRole('button', { name: /Complete Job|Finish Job|Mark Complete/i }).click();\n     |                                                                                      ^\n  93 |   await page.waitForTimeout(500);\n  94 | }\n  95 |\n    at completeJob (C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:92:86)\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:1185:9"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:34:15.234Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\test-results\\e2e.exhaustive-Vessel-DNA--de602--history-shows-previous-ROs-chromium\\error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-aba329fee42d0a445e3d",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 1173,
+          "column": 1
+        },
+        {
+          "title": "Vessel DNA: Engine serial is the unique vessel identifier",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 20,
+                  "parallelIndex": 1,
+                  "status": "failed",
+                  "duration": 15914,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Serial ID 1774827260260').first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Serial ID 1774827260260').first()\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Serial ID 1774827260260').first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Serial ID 1774827260260').first()\u001b[22m\n\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:1207:46",
+                    "location": {
+                      "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                      "column": 46,
+                      "line": 1207
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 1205 |\u001b[39m   \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'#oracle-search'\u001b[39m\u001b[33m,\u001b[39m serial)\u001b[33m;\u001b[39m\n \u001b[90m 1206 |\u001b[39m   \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForTimeout(\u001b[35m1000\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 1207 |\u001b[39m   \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByText(name)\u001b[33m.\u001b[39mfirst())\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m      |\u001b[39m                                              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 1208 |\u001b[39m   console\u001b[33m.\u001b[39mlog(\u001b[32m'✅ Customer found by engine serial'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 1209 |\u001b[39m   \u001b[36mawait\u001b[39m screenshot(page\u001b[33m,\u001b[39m \u001b[32m'dna-serial-identifier'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 1210 |\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                        "column": 46,
+                        "line": 1207
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Serial ID 1774827260260').first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Serial ID 1774827260260').first()\u001b[22m\n\n\n  1205 |   await page.fill('#oracle-search', serial);\n  1206 |   await page.waitForTimeout(1000);\n> 1207 |   await expect(page.getByText(name).first()).toBeVisible({ timeout: 10000 });\n       |                                              ^\n  1208 |   console.log('✅ Customer found by engine serial');\n  1209 |   await screenshot(page, 'dna-serial-identifier');\n  1210 | });\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:1207:46"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:34:16.359Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\test-results\\e2e.exhaustive-Vessel-DNA--7db5a-he-unique-vessel-identifier-chromium\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                    "column": 46,
+                    "line": 1207
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-445789e760517f763c1b",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 1197,
+          "column": 1
+        },
+        {
+          "title": "Persistence: RO survives page reload",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 23,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 21024,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Reload Persist 1774827270810').first()\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Reload Persist 1774827270810').first()\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Reload Persist 1774827270810').first()\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Reload Persist 1774827270810').first()\u001b[22m\n\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:1224:46",
+                    "location": {
+                      "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                      "column": 46,
+                      "line": 1224
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 1222 |\u001b[39m   \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mreload()\u001b[33m;\u001b[39m\n \u001b[90m 1223 |\u001b[39m   \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForTimeout(\u001b[35m2000\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 1224 |\u001b[39m   \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByText(name)\u001b[33m.\u001b[39mfirst())\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m      |\u001b[39m                                              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 1225 |\u001b[39m   console\u001b[33m.\u001b[39mlog(\u001b[32m'✅ RO persists after reload'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 1226 |\u001b[39m   \u001b[36mawait\u001b[39m screenshot(page\u001b[33m,\u001b[39m \u001b[32m'persist-reload'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 1227 |\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                        "column": 46,
+                        "line": 1224
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Reload Persist 1774827270810').first()\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Reload Persist 1774827270810').first()\u001b[22m\n\n\n  1222 |   await page.reload();\n  1223 |   await page.waitForTimeout(2000);\n> 1224 |   await expect(page.getByText(name).first()).toBeVisible({ timeout: 15000 });\n       |                                              ^\n  1225 |   console.log('✅ RO persists after reload');\n  1226 |   await screenshot(page, 'persist-reload');\n  1227 | });\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:1224:46"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:34:27.929Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\test-results\\e2e.exhaustive-Persistence-RO-survives-page-reload-chromium\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                    "column": 46,
+                    "line": 1224
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-19962405ae4d715c1726",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 1216,
+          "column": 1
+        },
+        {
+          "title": "Persistence: Job status survives page reload",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 24,
+                  "parallelIndex": 2,
+                  "status": "failed",
+                  "duration": 24333,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Status Persist 1774827278529').first()\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Status Persist 1774827278529').first()\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Status Persist 1774827278529').first()\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Status Persist 1774827278529').first()\u001b[22m\n\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:1243:46",
+                    "location": {
+                      "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                      "column": 46,
+                      "line": 1243
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 1241 |\u001b[39m   \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mreload()\u001b[33m;\u001b[39m\n \u001b[90m 1242 |\u001b[39m   \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForTimeout(\u001b[35m2000\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 1243 |\u001b[39m   \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByText(name)\u001b[33m.\u001b[39mfirst())\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m      |\u001b[39m                                              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 1244 |\u001b[39m   \u001b[36mawait\u001b[39m screenshot(page\u001b[33m,\u001b[39m \u001b[32m'persist-status'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 1245 |\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 1246 |\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                        "column": 46,
+                        "line": 1243
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Status Persist 1774827278529').first()\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Status Persist 1774827278529').first()\u001b[22m\n\n\n  1241 |   await page.reload();\n  1242 |   await page.waitForTimeout(2000);\n> 1243 |   await expect(page.getByText(name).first()).toBeVisible({ timeout: 15000 });\n       |                                              ^\n  1244 |   await screenshot(page, 'persist-status');\n  1245 | });\n  1246 |\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:1243:46"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:34:34.820Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\test-results\\e2e.exhaustive-Persistence-Job-status-survives-page-reload-chromium\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                    "column": 46,
+                    "line": 1243
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-f2d9f3673a2baddf33ca",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 1229,
+          "column": 1
+        },
+        {
+          "title": "Persistence: Multiple ROs all persist after reload",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 25,
+                  "parallelIndex": 1,
+                  "status": "failed",
+                  "duration": 24477,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Persist A 1774827278921').first()\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Persist A 1774827278921').first()\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Persist A 1774827278921').first()\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Persist A 1774827278921').first()\u001b[22m\n\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:1259:47",
+                    "location": {
+                      "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                      "column": 47,
+                      "line": 1259
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 1257 |\u001b[39m   \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForTimeout(\u001b[35m2000\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 1258 |\u001b[39m   \u001b[36mfor\u001b[39m (\u001b[36mconst\u001b[39m job \u001b[36mof\u001b[39m jobs) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 1259 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByText(job)\u001b[33m.\u001b[39mfirst())\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m      |\u001b[39m                                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 1260 |\u001b[39m   }\n \u001b[90m 1261 |\u001b[39m   console\u001b[33m.\u001b[39mlog(\u001b[32m'✅ All 3 ROs persist after reload'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 1262 |\u001b[39m   \u001b[36mawait\u001b[39m screenshot(page\u001b[33m,\u001b[39m \u001b[32m'persist-multi-ro'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                        "column": 47,
+                        "line": 1259
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Persist A 1774827278921').first()\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Persist A 1774827278921').first()\u001b[22m\n\n\n  1257 |   await page.waitForTimeout(2000);\n  1258 |   for (const job of jobs) {\n> 1259 |     await expect(page.getByText(job).first()).toBeVisible({ timeout: 15000 });\n       |                                               ^\n  1260 |   }\n  1261 |   console.log('✅ All 3 ROs persist after reload');\n  1262 |   await screenshot(page, 'persist-multi-ro');\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:1259:47"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:34:35.105Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\test-results\\e2e.exhaustive-Persistence-d36ec-Os-all-persist-after-reload-chromium\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                    "column": 47,
+                    "line": 1259
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-d09874da7631252c6dfc",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 1247,
+          "column": 1
+        },
+        {
+          "title": "Edge: Customer declines repair mid-job — job can be closed",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 26,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6392,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "ℹ️ Cancel/decline flow not found — may need implementation\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:34:51.447Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-e8d72ce01705fd42db22",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 1269,
+          "column": 1
+        },
+        {
+          "title": "Edge: No directives — RO generation is blocked",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 26,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4829,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "Generate blocked with no directives: false\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:34:58.015Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-6474f908b33047cb99a7",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 1294,
+          "column": 1
+        },
+        {
+          "title": "Edge: Rapid RO creation — 3 jobs created back to back without errors",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 27,
+                  "parallelIndex": 2,
+                  "status": "passed",
+                  "duration": 8770,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "✅ 3 rapid ROs created without error\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:35:03.024Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-12a8c0262839e2f614d8",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 1314,
+          "column": 1
+        },
+        {
+          "title": "Edge: Long customer name — renders without overflow or truncation error",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 28,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 7161,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "✅ Long name rendered without error\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:35:03.288Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-6030f2c23cc589ea7d24",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 1330,
+          "column": 1
+        },
+        {
+          "title": "Edge: Two techs assigned to same job — both tracked",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 26,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7917,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:35:02.876Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-ca3cec4501a2cd04d149",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 1341,
+          "column": 1
+        },
+        {
+          "title": "Edge: Parts Manager role — can see and act on parts queue",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 28,
+                  "parallelIndex": 1,
+                  "status": "timedOut",
+                  "duration": 90036,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                        "column": 42,
+                        "line": 48
+                      },
+                      "message": "Error: locator.click: Test timeout of 90000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByTitle('PARTS MANAGER')\u001b[22m\n\n\n  46 |   await page.goto('/');\n  47 |   await page.getByRole('button', { name: 'Danny (SM)' }).click();\n> 48 |   await page.getByTitle('PARTS MANAGER').click();\n     |                                          ^\n  49 |   await expect(page.getByText(/Parts Command/i)).toBeVisible({ timeout: 15000 });\n  50 | }\n  51 |\n    at loginParts (C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:48:42)\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:1366:3"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:35:10.733Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\test-results\\e2e.exhaustive-Edge-Parts--d859f--see-and-act-on-parts-queue-chromium\\error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-cb6042308037842a2370",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 1363,
+          "column": 1
+        },
+        {
+          "title": "Edge: Owner dashboard loads with metrics",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 26,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 60025,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 60000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 60000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 60000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                        "column": 53,
+                        "line": 41
+                      },
+                      "message": "Error: locator.click: Test timeout of 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /Mike/i })\u001b[22m\n\n\n  39 | async function loginOwner(page: Page) {\n  40 |   await page.goto('/');\n> 41 |   await page.getByRole('button', { name: /Mike/i }).click();\n     |                                                     ^\n  42 |   await page.waitForTimeout(2000);\n  43 | }\n  44 |\n    at loginOwner (C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:41:53)\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:1375:3"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:35:10.843Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\test-results\\e2e.exhaustive-Edge-Owner-dashboard-loads-with-metrics-chromium\\error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-45e16d02065b9f3bcb87",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 1372,
+          "column": 1
+        },
+        {
+          "title": "Edge: Navigation — home button returns to correct role dashboard",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 27,
+                  "parallelIndex": 2,
+                  "status": "passed",
+                  "duration": 4361,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:35:12.042Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-96c1e741222d85f8c22c",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 1381,
+          "column": 1
+        },
+        {
+          "title": "Smoke: All role pages render without crash",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 27,
+                  "parallelIndex": 2,
+                  "status": "failed",
+                  "duration": 16516,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: 'Active Bay Deck' })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: 'Active Bay Deck' })\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: 'Active Bay Deck' })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: 'Active Bay Deck' })\u001b[22m\n\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:1408:72",
+                    "location": {
+                      "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                      "column": 72,
+                      "line": 1408
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 1406 |\u001b[39m   \u001b[90m// Tech\u001b[39m\n \u001b[90m 1407 |\u001b[39m   \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'Pierre (Tech)'\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 1408 |\u001b[39m   \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'heading'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'Active Bay Deck'\u001b[39m }))\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m      |\u001b[39m                                                                        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 1409 |\u001b[39m   \u001b[36mawait\u001b[39m logout(page)\u001b[33m;\u001b[39m\n \u001b[90m 1410 |\u001b[39m   \u001b[90m// Parts Manager via switcher\u001b[39m\n \u001b[90m 1411 |\u001b[39m   \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'Danny (SM)'\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                        "column": 72,
+                        "line": 1408
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: 'Active Bay Deck' })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: 'Active Bay Deck' })\u001b[22m\n\n\n  1406 |   // Tech\n  1407 |   await page.getByRole('button', { name: 'Pierre (Tech)' }).click();\n> 1408 |   await expect(page.getByRole('heading', { name: 'Active Bay Deck' })).toBeVisible({ timeout: 15000 });\n       |                                                                        ^\n  1409 |   await logout(page);\n  1410 |   // Parts Manager via switcher\n  1411 |   await page.getByRole('button', { name: 'Danny (SM)' }).click();\n    at C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts:1408:72"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-29T23:35:16.440Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\test-results\\e2e.exhaustive-Smoke-All-role-pages-render-without-crash-chromium\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\seans\\OneDrive\\Desktop\\JITB 312 835PM LAST ONE\\JITB_MASTER\\tests\\e2e.exhaustive.spec.ts",
+                    "column": 72,
+                    "line": 1408
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d6da80523f38de2e9408-58e7dbbd6575f4f3f381",
+          "file": "e2e.exhaustive.spec.ts",
+          "line": 1399,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-03-29T23:26:01.921Z",
+    "duration": 638995.539,
+    "expected": 36,
+    "skipped": 0,
+    "unexpected": 29,
+    "flaky": 0
+  }
+}

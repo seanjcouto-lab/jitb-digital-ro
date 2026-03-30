@@ -893,10 +893,10 @@ const handleROGenerated = (newRO: RepairOrder) => {
           <section className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 ${filterStatusGroup ? 'lg:grid-cols-1' : ''}`}>
             
             {(!filterStatusGroup || filterStatusGroup === 'STAGED') && (
-            <div className="relative overflow-visible glass rounded-2xl p-6 pt-10 mt-6 border-t-2 border-t-blue-400/40 border-white/5 opacity-90 cursor-pointer transition-all hover:border-blue-400/30" onClick={() => toggleStatusFilter('STAGED')}>
+            <div className="relative overflow-visible glass rounded-2xl p-6 pt-10 mt-6 border-t-2 border-t-blue-400/40 border-white/5 opacity-90 transition-all hover:border-blue-400/30">
               <FolderTab count={queues.STAGED.length} borderColor="border-blue-400" textColor="text-blue-400" />
               <div className="mb-4">
-                <h2 className={`text-lg font-bold neon-steel uppercase tracking-tighter transition-all ${filterStatusGroup === 'STAGED' ? 'text-blue-400' : ''}`}>STAGED <span className="block text-[10px] font-bold text-blue-400/40 uppercase tracking-widest mt-0.5">Awaiting Assignment</span></h2>
+                <h2 className={`text-lg font-bold neon-steel uppercase tracking-tighter transition-all cursor-pointer ${filterStatusGroup === 'STAGED' ? 'text-blue-400' : ''}`} onClick={() => toggleStatusFilter('STAGED')}>STAGED <span className="block text-[10px] font-bold text-blue-400/40 uppercase tracking-widest mt-0.5">Awaiting Assignment</span></h2>
               </div>
               <div className="space-y-4">
                 {queues.STAGED.map(ro => (
@@ -936,9 +936,9 @@ const handleROGenerated = (newRO: RepairOrder) => {
             )}
 
             {(!filterStatusGroup || filterStatusGroup === 'PARTS') && (
-            <div className="relative overflow-visible glass rounded-2xl p-6 pt-10 mt-6 border-t-2 border-t-amber-400/40 border-white/5 border-yellow-500/10 cursor-pointer transition-all hover:border-yellow-400/30" onClick={() => toggleStatusFilter('PARTS')}>
+            <div className="relative overflow-visible glass rounded-2xl p-6 pt-10 mt-6 border-t-2 border-t-amber-400/40 border-white/5 border-yellow-500/10 transition-all hover:border-yellow-400/30">
               <FolderTab count={queues.PARTS.length} borderColor="border-amber-400" textColor="text-amber-400" />
-              <h2 className={`text-lg font-bold mb-4 uppercase tracking-tighter transition-all ${filterStatusGroup === 'PARTS' ? 'text-amber-300' : 'text-yellow-400'}`}>PARTS DEPT <span className="block text-[10px] font-bold text-yellow-400/40 uppercase tracking-widest mt-0.5">Waiting on Parts</span></h2>
+              <h2 className={`text-lg font-bold mb-4 uppercase tracking-tighter transition-all cursor-pointer ${filterStatusGroup === 'PARTS' ? 'text-amber-300' : 'text-yellow-400'}`} onClick={() => toggleStatusFilter('PARTS')}>PARTS DEPT <span className="block text-[10px] font-bold text-yellow-400/40 uppercase tracking-widest mt-0.5">Waiting on Parts</span></h2>
               <div className="space-y-4">
                 {queues.PARTS.map(ro => {
                   const hasMissingOrSO = ro.parts.some(p => p.status === PartStatus.MISSING || p.status === PartStatus.SPECIAL_ORDER);
@@ -970,9 +970,9 @@ const handleROGenerated = (newRO: RepairOrder) => {
             )}
 
             {(!filterStatusGroup || filterStatusGroup === 'ACTIVE') && (
-            <div className="relative overflow-visible glass rounded-2xl p-6 pt-10 mt-6 border-t-2 border-t-teal-400/40 border-white/5 border-teal-500/20 brightness-110 cursor-pointer transition-all hover:border-teal-400/30" onClick={() => toggleStatusFilter('ACTIVE')}>
+            <div className="relative overflow-visible glass rounded-2xl p-6 pt-10 mt-6 border-t-2 border-t-teal-400/40 border-white/5 border-teal-500/20 brightness-110 transition-all hover:border-teal-400/30">
               <FolderTab count={queues.ACTIVE.length} borderColor="border-teal-400" textColor="text-teal-400" />
-              <h2 className={`text-lg font-bold mb-4 uppercase tracking-tighter transition-all ${filterStatusGroup === 'ACTIVE' ? 'text-teal-300' : 'neon-seafoam'}`}>DEPLOYMENT DECK <span className="block text-[10px] font-bold text-teal-400/40 uppercase tracking-widest mt-0.5">In Progress</span></h2>
+              <h2 className={`text-lg font-bold mb-4 uppercase tracking-tighter transition-all cursor-pointer ${filterStatusGroup === 'ACTIVE' ? 'text-teal-300' : 'neon-seafoam'}`} onClick={() => toggleStatusFilter('ACTIVE')}>DEPLOYMENT DECK <span className="block text-[10px] font-bold text-teal-400/40 uppercase tracking-widest mt-0.5">In Progress</span></h2>
               <div className="space-y-4">
                 {queues.ACTIVE.map(ro => { 
                   const hasPendingRequests = ro.requests?.some(r => r.status === 'PENDING'); 
@@ -1009,9 +1009,9 @@ const handleROGenerated = (newRO: RepairOrder) => {
             )}
 
             {(!filterStatusGroup || filterStatusGroup === 'HOLD') && (
-            <div className="relative overflow-visible glass rounded-2xl p-6 pt-10 mt-6 border-t-2 border-t-red-400/40 border-red-500/20 bg-red-500/5 shadow-[0_0_20px_rgba(239,68,68,0.1)] cursor-pointer transition-all hover:border-red-400/40" onClick={() => toggleStatusFilter('HOLD')}>
+            <div className="relative overflow-visible glass rounded-2xl p-6 pt-10 mt-6 border-t-2 border-t-red-400/40 border-red-500/20 bg-red-500/5 shadow-[0_0_20px_rgba(239,68,68,0.1)] transition-all hover:border-red-400/40">
               <FolderTab count={queues.HOLD.length} borderColor="border-red-400" textColor="text-red-400" />
-              <h2 className={`text-lg font-bold mb-4 uppercase tracking-tighter transition-all ${filterStatusGroup === 'HOLD' ? 'text-red-300' : 'neon-crimson'}`}>ON HOLD <span className="block text-[10px] font-bold text-red-400/40 uppercase tracking-widest mt-0.5">Blocked Jobs</span></h2>
+              <h2 className={`text-lg font-bold mb-4 uppercase tracking-tighter transition-all cursor-pointer ${filterStatusGroup === 'HOLD' ? 'text-red-300' : 'neon-crimson'}`} onClick={() => toggleStatusFilter('HOLD')}>ON HOLD <span className="block text-[10px] font-bold text-red-400/40 uppercase tracking-widest mt-0.5">Blocked Jobs</span></h2>
               <div className="space-y-4">
                 {queues.HOLD.map(ro => (
                   <ROCard 
@@ -1037,9 +1037,9 @@ const handleROGenerated = (newRO: RepairOrder) => {
             )}
 
             {(!filterStatusGroup || filterStatusGroup === 'BILLING') && (
-            <div className="relative overflow-visible glass rounded-2xl p-6 pt-10 mt-6 border-t-2 border-t-purple-400/40 border-white/5 cursor-pointer transition-all hover:border-purple-400/30" onClick={() => toggleStatusFilter('BILLING')}>
+            <div className="relative overflow-visible glass rounded-2xl p-6 pt-10 mt-6 border-t-2 border-t-purple-400/40 border-white/5 transition-all hover:border-purple-400/30">
               <FolderTab count={queues.BILLING.length} borderColor="border-purple-400" textColor="text-purple-400" />
-              <h2 className={`text-lg font-bold mb-4 uppercase tracking-tighter transition-all ${filterStatusGroup === 'BILLING' ? 'text-purple-300' : 'neon-steel'}`}>BILLING <span className="block text-[10px] font-bold text-blue-400/40 uppercase tracking-widest mt-0.5">Ready to Close</span></h2>
+              <h2 className={`text-lg font-bold mb-4 uppercase tracking-tighter transition-all cursor-pointer ${filterStatusGroup === 'BILLING' ? 'text-purple-300' : 'neon-steel'}`} onClick={() => toggleStatusFilter('BILLING')}>BILLING <span className="block text-[10px] font-bold text-blue-400/40 uppercase tracking-widest mt-0.5">Ready to Close</span></h2>
               <div className="space-y-4">
                 {queues.BILLING.map(ro => (
                   <ROCard 
