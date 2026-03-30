@@ -632,7 +632,7 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs 
             </section>
 
             <section className="glass p-6 rounded-2xl border-white/5 h-fit">
-              <EvidenceInputBlock title="Final Labor Conclusion" notes={laborNote} onNotesChange={setLaborNote} onTakePhoto={() => handleUploadEvidence(null, 'photo')} onTakeVideo={() => handleUploadEvidence(null, 'video')} onRecordAudio={() => handleOpenAudioRecorder(null)} placeholder="Final summary of all services performed (Required for exit gate)..." />
+              <EvidenceInputBlock title="4 C's — Complaint, Cause, Correction, Confirmation" notes={laborNote} onNotesChange={setLaborNote} onTakePhoto={() => handleUploadEvidence(null, 'photo')} onTakeVideo={() => handleUploadEvidence(null, 'video')} onRecordAudio={() => handleOpenAudioRecorder(null)} placeholder="Final summary of all services performed (Required for exit gate)..." />
               <div className="flex gap-2 mt-6">
                 <button disabled={repairOrder.status !== ROStatus.ACTIVE} onClick={() => setIsHaltModalOpen(true)} className="px-4 py-3 rounded-lg font-bold uppercase tracking-widest text-xs transition-all bg-slate-800 text-slate-400 border border-white/10 hover:border-orange-500/50 hover:text-orange-400 disabled:opacity-30 disabled:cursor-not-allowed">Halt</button>
                 <button disabled={!isFinalizable} onClick={handleFinalize} className={`flex-1 py-4 rounded-xl font-black uppercase tracking-widest text-sm transition-all shadow-2xl ${isFinalizable ? 'bg-neon-seafoam text-slate-900 hover:scale-105 active:scale-95' : 'bg-slate-800 text-slate-500 grayscale cursor-not-allowed'}`}>Send for Billing</button>

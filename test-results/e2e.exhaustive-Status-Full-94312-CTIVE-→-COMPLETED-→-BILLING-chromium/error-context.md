@@ -7,11 +7,11 @@
     - generic [ref=e8]:
       - generic [ref=e9]:
         - generic [ref=e10]: Customer
-        - text: State Machine 1774881548340
+        - text: State Machine 1774883705092
       - generic [ref=e12]: Vessel
       - generic [ref=e13]:
         - generic [ref=e14]: Engine S/N
-        - text: SN-1774881548643
+        - text: SN-1774883705429
     - generic [ref=e16]:
       - generic [ref=e17]:
         - text: Pierre
@@ -27,10 +27,10 @@
       - generic [ref=e30]:
         - generic [ref=e31]:
           - heading "Active Bay Deck" [level=2] [ref=e32]
-          - paragraph [ref=e33]: "Order: RO-1774881549104 • State Machine 1774881548340 •"
+          - paragraph [ref=e33]: "Order: RO-1774883705952 • State Machine 1774883705092 •"
         - generic [ref=e35]:
           - generic [ref=e36]: Active Labor Clock
-          - text: 00:02:55
+          - text: 00:02:53
       - generic [ref=e37]:
         - generic [ref=e38]:
           - generic [ref=e39]:
@@ -80,7 +80,7 @@
                   - button "Add" [disabled] [ref=e97]
           - generic [ref=e98]:
             - generic [ref=e99]:
-              - heading "Final Labor Conclusion" [level=4] [ref=e100]
+              - heading "4 C's — Complaint, Cause, Correction, Confirmation" [level=4] [ref=e100]
               - generic [ref=e101]:
                 - textbox "Final summary of all services performed (Required for exit gate)..." [ref=e102]
                 - button "Dictate Notes" [ref=e104] [cursor=pointer]:
