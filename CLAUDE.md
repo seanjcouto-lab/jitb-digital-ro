@@ -2,7 +2,7 @@
 
 This is the single source of truth for all Claude Code sessions on this project.
 If behavior differs from this document, this document is correct. The implementation is wrong.
-Last updated: March 29, 2026
+Last updated: March 30, 2026
 
 ---
 
@@ -92,18 +92,26 @@ Last updated: March 29, 2026
 
 ## DEMO PERSONAS (DEV ONLY)
 
-Danny (SM), Pierre (Tech), Mike (Admin/Owner) — used in dev login shortcuts and Playwright tests.
+Danny (Admin), Danny (SM), Pierre (Tech) — dev login buttons in LoginScreen. No "Mike" button exists. Tests use `Danny (Admin)` for Owner/Admin role and Parts Manager nav access.
 
 ---
 
-## CURRENT BUILD STATE (MARCH 29 2026)
+## CURRENT BUILD STATE (MARCH 30 2026)
 
-- **77 Playwright tests passing, 2 skipped**
+- **125 Playwright tests passing, 2 skipped, 0 failed**
 - 2 skipped: `parts.workflow` tests — need dedicated test `shop_id` in Supabase with controlled inventory seeding
 - Playwright MUST run before and after every change — no exceptions
 - All work on `develop` branch — PRs to `main` when stable
 
-### Completed this session (March 29 2026 — full day)
+### Completed this session (March 30 2026)
+
+- **Exhaustive E2E test suite**: `tests/e2e.exhaustive.spec.ts` — 65 tests covering Auth, RO Creation, Status machine, Tech, SM, Billing, Parts, Board, Vessel DNA, Persistence, Edge, Smoke. Committed at `b280949`
+- **Test suite fixes**: `loginOwner` → `Danny (Admin)`, `loginParts` → `Danny (Admin)`, `completeJob` → `Send for Billing`, `loginTech` accepts `No Active Job` or `Active Bay Deck`, Persistence tests re-login after reload, Smoke test uses `Danny (Admin)` for Parts Manager nav
+- **Column onClick isolation**: `toggleStatusFilter` moved from outer column div to h2 heading in all 5 SM board columns — prevents card button clicks from triggering column filter
+- **Customer name carry-forward**: `ProfileOnboardingForm` useState initializer now seeds `contacts[0].fullName` from `initialData.customerName` when no full contacts array present
+- **Sticky Save & Generate RO button**: Fixed bottom bar in `ProfileOnboardingForm` — always visible regardless of scroll position
+
+### Completed previous session (March 29 2026 — full day)
 
 - **Subscription gating**: `active`, `pilot`, `trial`, `grace` allowed — `null` passes through (no shop record in test env). Lives in `App.tsx` + `services/shopContextService.ts`
 - **Naming cleanup**: "New Service Profile Onboarding" → "New Customer", "Initialize Profile" → "New Customer" — 6 files updated including 3 Playwright tests
@@ -118,12 +126,13 @@ Danny (SM), Pierre (Tech), Mike (Admin/Owner) — used in dev login shortcuts an
 
 ### Next session queue (priority order)
 
-1. Date picker in `ROGenerationView` + `ProfileOnboardingForm`
-2. Scheduled date on SM cards
-3. Calendar week view build
-4. Calendar month view
-5. Vercel deployment
-6. Left sidebar nav (post-pilot)
+1. Vercel deployment
+2. Headed Playwright demo script
+3. Date picker in `ROGenerationView` + `ProfileOnboardingForm`
+4. Scheduled date on SM cards
+5. Calendar week view build
+6. Calendar month view
+7. Left sidebar nav (post-pilot)
 
 ---
 
