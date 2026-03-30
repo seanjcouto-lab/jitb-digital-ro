@@ -110,6 +110,9 @@ Danny (Admin), Danny (SM), Pierre (Tech) — dev login buttons in LoginScreen. N
 - **Column onClick isolation**: `toggleStatusFilter` moved from outer column div to h2 heading in all 5 SM board columns — prevents card button clicks from triggering column filter
 - **Customer name carry-forward**: `ProfileOnboardingForm` useState initializer now seeds `contacts[0].fullName` from `initialData.customerName` when no full contacts array present
 - **Sticky Save & Generate RO button**: Fixed bottom bar in `ProfileOnboardingForm` — always visible regardless of scroll position
+- **4 C's label**: `TechnicianPage.tsx` — "Final Labor Conclusion" renamed to "4 C's — Complaint, Cause, Correction, Confirmation"
+- **Supabase credentials hardcoded**: `supabaseClient.ts` — URL and publishable key hardcoded for Vercel deployment (`.env` still gitignored)
+- **Merged develop → main**: `main` is at `c6e4c3b`, fully up to date
 
 ### Completed previous session (March 29 2026 — full day)
 
