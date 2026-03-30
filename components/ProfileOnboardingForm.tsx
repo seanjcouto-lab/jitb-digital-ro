@@ -61,9 +61,12 @@ const trashBtn = "p-2 bg-slate-800/50 rounded-lg text-slate-500 hover:bg-red-500
 const addBtn = "w-full border border-dashed border-amber-400/30 text-amber-400 bg-transparent hover:bg-amber-400/10 rounded-lg py-3 text-sm font-bold transition-colors text-center";
 
 const ProfileOnboardingForm: React.FC<ProfileOnboardingFormProps> = ({ initialData, onProfileComplete }) => {
-  const [profileData, setProfileData] = useState<any>(() =>
-    initialData && Array.isArray(initialData.contacts) ? initialData : buildInitialState()
-  );
+  const [profileData, setProfileData] = useState<any>(() => {
+    if (initialData && Array.isArray(initialData.contacts)) return initialData;
+    const state = buildInitialState();
+    if (initialData?.customerName) state.contacts[0].fullName = initialData.customerName;
+    return state;
+  });
 
   const onFocus = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setTimeout(() => e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
@@ -442,8 +445,10 @@ const ProfileOnboardingForm: React.FC<ProfileOnboardingFormProps> = ({ initialDa
         </div>
 
         {/* ── SUBMIT ────────────────────────────────────────────────────────── */}
-        <div className="pt-6 border-t border-white/10">
-          <button onClick={handleSubmit} className="w-full bg-neon-seafoam text-slate-900 font-black py-4 rounded-xl shadow-[0_0_30px_rgba(45,212,191,0.2)] hover:scale-[1.02] active:scale-95 transition-all uppercase tracking-widest text-sm">SAVE & GENERATE RO</button>
+        <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-slate-900/95 backdrop-blur border-t border-white/10">
+          <button type="button" onClick={handleSubmit} className="w-full px-3 py-3 rounded-lg bg-neon-seafoam text-slate-900 text-sm font-black uppercase tracking-widest hover:scale-105 transition-all">
+            SAVE & GENERATE RO
+          </button>
         </div>
 
       </div>
