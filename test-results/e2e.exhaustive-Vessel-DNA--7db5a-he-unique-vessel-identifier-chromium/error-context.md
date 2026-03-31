@@ -30,7 +30,7 @@
               - generic [ref=e39]:
                 - textbox "Customer Search" [active] [ref=e40]:
                   - /placeholder: Search by Name, HIN, or Serial...
-                  - text: UNIQUE-SN-1774898451376
+                  - text: UNIQUE-SN-1774957895182
                 - img [ref=e42]
             - generic [ref=e45]:
               - img [ref=e47]

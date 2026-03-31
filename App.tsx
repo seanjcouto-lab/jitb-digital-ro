@@ -140,6 +140,10 @@ const App: React.FC = () => {
   }, [activeRole, loggedInUser]);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [activeRole]);
+
+  useEffect(() => {
     appConfigService.saveConfig(config);
   }, [config]);
 
