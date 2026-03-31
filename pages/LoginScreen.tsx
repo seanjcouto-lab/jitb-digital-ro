@@ -109,6 +109,7 @@ const LoginScreen: React.FC<Props> = ({ onLogin }) => {
             )}
           </div>
 
+          {import.meta.env.DEV && (
           <div className="mt-8 pt-6 border-t border-white/5">
             <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-4 text-center">Development Access</p>
             <div className="grid grid-cols-2 gap-2">
@@ -135,6 +136,7 @@ const LoginScreen: React.FC<Props> = ({ onLogin }) => {
               </button>
             </div>
           </div>
+          )}
         </form>
       </div>
     </div>
