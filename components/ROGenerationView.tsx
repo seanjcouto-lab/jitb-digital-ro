@@ -23,6 +23,7 @@ const initialProfileState = {
   engineMake: '',
   engineModel: '',
   engineYear: '',
+  engineHours: '',
   engineHorsepower: '',
   engineSerial: '',
 };
@@ -195,6 +196,7 @@ const ROGenerationView: React.FC<ROGenerationViewProps> = ({ profileData, onROGe
       engineMake: currentProfileData.engineMake || null,
       engineModel: currentProfileData.engineModel || null,
       engineYear: currentProfileData.engineYear || null,
+      engineHours: currentProfileData.engineHours ? Number(currentProfileData.engineHours) : null,
       engineHorsepower: currentProfileData.engineHorsepower || null,
       engineSerial: currentProfileData.engineSerial,
       selectedPackages,

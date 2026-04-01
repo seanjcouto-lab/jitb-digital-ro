@@ -42,6 +42,7 @@ export interface RepairOrderCreateInput {
   engineMake: string | null;
   engineModel: string | null;
   engineYear: string | null;
+  engineHours?: number | string | null;
   engineHorsepower: string | null;
   engineSerial: string;
 

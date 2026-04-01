@@ -197,6 +197,7 @@ const ProfileOnboardingForm: React.FC<ProfileOnboardingFormProps> = ({ initialDa
       engineMake: e0.engineMake || '',
       engineModel: e0.engineModel || '',
       engineYear: e0.engineYear || '',
+      engineHours: e0.engineHours || '',
       engineHorsepower: e0.engineHorsepower || '',
       engineSerial: e0.engineSerial || '',
     };

@@ -274,7 +274,7 @@ export const repairOrderService = {
       engineMake: input.engineMake || null,
       engineModel: input.engineModel || null,
       engineYear: input.engineYear || null,
-      engineHours: input.engineHours ?? null,
+      engineHours: input.engineHours ? Number(input.engineHours) : null,
       engineHorsepower: input.engineHorsepower || null,
       technicianId: null,
       technicianName: null,
