@@ -2,7 +2,7 @@
 
 This is the single source of truth for all Claude Code sessions on this project.
 If behavior differs from this document, this document is correct. The implementation is wrong.
-Last updated: April 1, 2026
+Last updated: April 1, 2026 (evening)
 
 ---
 
@@ -103,9 +103,9 @@ All Playwright tests reference these button labels: `'Test SM'`, `'Test Tech'`, 
 
 ---
 
-## CURRENT BUILD STATE (APRIL 1 2026)
+## CURRENT BUILD STATE (APRIL 1 2026 — EVENING)
 
-- **Test suite: 36 passed, 86 failed, 8 skipped** — `tests/jaxtr.spec.ts`, second run after fixes. Still being worked through.
+- **Test suite: 44 passed, 78 failed, 8 skipped** — `tests/jaxtr.spec.ts`, third run after fixes. Improved from 36/86.
 - Playwright MUST run before and after every change — no exceptions
 - All work on `develop` branch — PRs to `main` when stable
 
@@ -116,17 +116,41 @@ All Playwright tests reference these button labels: `'Test SM'`, `'Test Tech'`, 
 - **All old spec files deleted**: `tests/*.spec.ts` (24 files) — all previous Playwright test specs removed. Parker AI service specs were being picked up by Playwright runner; fresh start eliminates this.
 - **New test suite created**: `tests/jaxtr.spec.ts` — 130 tests (T01–T130) covering Auth, RO Creation, SM Board, Tech Workflow, Parts, Billing, Vessel DNA, Persistence, Edge Cases, Metrics.
 - **Test suite fixes applied**:
-  - `createBasicRO` helper: added type-2-chars step before waiting for "New Customer" button (only renders when `query.length > 1 && noResults`)
-  - `locator('text=Sign In')` → `getByRole('heading', { name: 'Sign In' })` at 9 locations (strict mode fix — both `<h1>` and submit `<button>` matched)
-- **Admin gate (pending)**: `pages/AdminPage.tsx` gate was implemented then reverted via `git checkout -- .`. Needs to be re-applied. Requires `loggedInUser` prop added to `AdminPage` interface and passed from `App.tsx` line 295.
+  - `createBasicRO` helper + all 14 inline test flows: added `fill('NEWTEST')` step before `waitForSelector('text=New Customer')` — "New Customer" only renders when `query.length > 1 && noResults`
+  - `locator('text=Sign In')` → `getByRole('heading', { name: 'Sign In' })` at 9 locations (strict mode fix)
+  - T07: added `selectBay` as third `.or()` option — impersonated Tech lands on "Select Technician Bay" first
+  - T08: `button[title="PARTS_MANAGER"]` → `button[title="PARTS MANAGER"]` (space, not underscore) — `roleKey.replace('_', ' ')` generates spaces
+- **Admin gate (pending)**: `pages/AdminPage.tsx` gate was implemented then reverted. Needs re-applying. Requires `loggedInUser` prop added to `AdminPage` interface and passed from `App.tsx` line 295.
+- **EngineIdentityLine component**: `components/EngineIdentityLine.tsx` — single shared component renders `2019 Yamaha F150 · 320 hrs · S/N: ABC123 · 150HP`. Wired into SM board cards, Tech queue cards, Tech active job header, Parts Manager screen cards, Parts print/requisition, Vessel DNA view.
+- **engineHours wired end to end**:
+  - `types.ts` — `engineHours?: number | null` added to `RepairOrder` and `VesselHistory`
+  - `types/RepairOrderCreateInput.ts` — `engineHours` added to interface
+  - `components/ProfileOnboardingForm.tsx` — `engineHours` added to merge object passed to `onProfileComplete` (was the root cause — field captured but dropped at submit)
+  - `components/ROGenerationView.tsx` — `engineHours` added to `initialProfileState` and mapped to `input`
+  - `services/repairOrderService.ts` — `engineHours: input.engineHours ? Number(input.engineHours) : null`
+  - `utils/supabaseMapper.ts` — `engine_hours: ro.engineHours` added
+  - `data/roStore.ts` — `engineHours: row.engine_hours ?? null` added
+  - Supabase `repair_orders` table — `engine_hours numeric` column added manually via dashboard
 
-### Known remaining test failures (86 as of last run)
+### Critical lesson learned this session — DO NOT REPEAT
 
-The next wave of failures needs diagnosis. Likely issues:
+**The engineHours saga took 3+ hours due to piecemeal diagnosis.** The correct approach for "field not displaying" bugs:
+1. Start at the input field in the form — confirm it exists and is bound
+2. Trace the merge/submit function — confirm the field is included in the output object
+3. Trace the `CreateInput` type — confirm the field exists in the contract
+4. Trace `createRepairOrder` — confirm the field is mapped onto the RO
+5. Trace the mapper — confirm it writes to Supabase
+6. Trace the store read-back — confirm it reads from Supabase
+7. Trace the display component — confirm it renders
+**Never patch one layer at a time. Trace the full chain first, then patch all gaps in one pass.**
+
+### Known remaining test failures (78 as of last run)
+
 - Tech workflow selectors (button text mismatches for Start Job, directives, Send for Billing)
 - Persistence tests — re-login after reload flow
 - Billing/collections selectors
-- T06–T08 toolbar tests — toolbar now renders (DEVELOPER privilege fixed) but button `title` values may be wrong: `roleKey.replace('_', ' ')` makes titles `"SERVICE MANAGER"`, `"PARTS MANAGER"` (spaces not underscores)
+- T10 — Admin gate not re-applied yet; no "Access Denied" renders
+- `.grid button` selector in billing tests intercepts pointer events from a modal overlay
 
 ### Skipped tests in jaxtr.spec.ts (8 total)
 
@@ -149,16 +173,24 @@ T112 — Offline/PWA test requiring service worker
 
 ### Next session queue (priority order)
 
-1. Continue fixing `tests/jaxtr.spec.ts` — 86 still failing. Start by running with `--reporter=list` and pulling first 5 failures to diagnose next pattern.
+1. Continue fixing `tests/jaxtr.spec.ts` — 78 still failing. Run with `--reporter=list` and pull first 5 failures to diagnose next pattern.
 2. Re-apply admin gate to `pages/AdminPage.tsx` + wire `loggedInUser` prop in `App.tsx` (see details in completed section above)
-3. Commit everything: LoginScreen changes + spec deletions + jaxtr.spec.ts + CLAUDE.md
-4. Vercel deployment
-5. Headed Playwright demo script
-6. Date picker in `ROGenerationView` + `ProfileOnboardingForm`
-7. Scheduled date on SM cards
-8. Calendar week view build
-9. Calendar month view
-10. Left sidebar nav (post-pilot)
+3. Vercel deployment
+4. Headed Playwright demo script
+5. Date picker in `ROGenerationView` + `ProfileOnboardingForm`
+6. Scheduled date on SM cards
+7. Calendar week view build
+8. Calendar month view
+9. Left sidebar nav (post-pilot)
+
+### Backlog items added April 1 2026 (evening)
+
+- **Nav sticky on all pages + role-specific icons**: Tech: Tech/DNA/Calendar | SM: Dock/NewRO/Parts/DNA/Calendar | PM: Parts/Inventory/DNA | Owner: all except dev tools
+- **Mobile button overlap** — buttons overlapping on small screens, needs audit and fix
+- **Customer directory** — master list view of all customers
+- **Customer CSV import** — bulk import customers from CSV
+- **Media audit** — trace where photos/video/audio from `EvidenceInputBlock` actually land (localStorage? IndexedDB? nowhere?)
+- **Vessel DNA boat image** — confirm purpose of boat image field or remove it
 
 ---
 
