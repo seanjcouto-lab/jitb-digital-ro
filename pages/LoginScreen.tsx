@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { supabaseAuthService, AuthResult } from '../services/supabaseAuthService';
-import { LoggedInUser } from '../types';
+import { LoggedInUser, UserPrivilege } from '../types';
 
 interface Props {
   onLogin: (user: LoggedInUser) => void;
@@ -112,27 +112,27 @@ const LoginScreen: React.FC<Props> = ({ onLogin }) => {
           {import.meta.env.DEV && (
           <div className="mt-8 pt-6 border-t border-white/5">
             <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-4 text-center">Development Access</p>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-3 gap-2">
               <button
                 type="button"
-                onClick={() => onLogin({ id: 'dev-admin', name: 'Danny', role: 'ADMIN' as any, privileges: ['DEVELOPER' as any], shopId: '00000000-0000-0000-0000-000000000001' })}
+                onClick={() => onLogin({ id: 'dev-sm', name: 'Test SM', role: 'SERVICE_MANAGER' as any, privileges: [UserPrivilege.DEVELOPER], shopId: '00000000-0000-0000-0000-000000000001' })}
                 className="py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-lg transition-colors border border-white/5"
               >
-                Danny (Admin)
+                Test SM
               </button>
               <button
                 type="button"
-                onClick={() => onLogin({ id: 'dev-sm', name: 'Danny', role: 'SERVICE_MANAGER' as any, privileges: [], shopId: '00000000-0000-0000-0000-000000000001' })}
+                onClick={() => onLogin({ id: 'dev-tech', name: 'Test Tech', role: 'TECHNICIAN' as any, privileges: [], shopId: '00000000-0000-0000-0000-000000000001', techId: 'tech-1' })}
                 className="py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-lg transition-colors border border-white/5"
               >
-                Danny (SM)
+                Test Tech
               </button>
               <button
                 type="button"
-                onClick={() => onLogin({ id: 'dev-tech', name: 'Pierre', role: 'TECHNICIAN' as any, privileges: [], shopId: '00000000-0000-0000-0000-000000000001', techId: 'tech-1' })}
+                onClick={() => onLogin({ id: 'dev-parts', name: 'Test Parts', role: 'PARTS_MANAGER' as any, privileges: [], shopId: '00000000-0000-0000-0000-000000000001' })}
                 className="py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-lg transition-colors border border-white/5"
               >
-                Pierre (Tech)
+                Test Parts
               </button>
             </div>
           </div>

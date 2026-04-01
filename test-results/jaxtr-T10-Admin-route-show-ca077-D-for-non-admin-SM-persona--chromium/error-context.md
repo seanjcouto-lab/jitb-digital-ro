@@ -1,0 +1,88 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - button "Home" [ref=e5] [cursor=pointer]:
+      - img [ref=e6]
+    - button "SERVICE MANAGER" [ref=e9] [cursor=pointer]:
+      - img [ref=e10]
+    - button "PARTS MANAGER" [ref=e13] [cursor=pointer]:
+      - img [ref=e14]
+    - button "INVENTORY MANAGER" [ref=e17] [cursor=pointer]:
+      - img [ref=e18]
+    - button "TECHNICIAN" [ref=e20] [cursor=pointer]:
+      - img [ref=e21]
+    - button "BILLING" [ref=e23] [cursor=pointer]:
+      - img [ref=e24]
+    - button "Vessel DNA" [ref=e26] [cursor=pointer]:
+      - img [ref=e27]
+    - button "METRICS" [ref=e32] [cursor=pointer]:
+      - img [ref=e33]
+    - button "ADMIN" [active] [ref=e35] [cursor=pointer]:
+      - img [ref=e36]
+  - banner [ref=e38]:
+    - img "Logo" [ref=e40]
+    - generic [ref=e44]:
+      - generic [ref=e45]: "DEV VIEW: ADMIN"
+      - button "Exit Dev View" [ref=e46] [cursor=pointer]
+    - generic [ref=e48]:
+      - generic [ref=e49]:
+        - text: Test SM
+        - generic [ref=e50]: Technician
+      - button "Logout" [ref=e51] [cursor=pointer]:
+        - img [ref=e52]
+      - button "Enter Fullscreen" [ref=e54] [cursor=pointer]:
+        - img [ref=e55]
+      - button "Comms Link" [ref=e57] [cursor=pointer]:
+        - img [ref=e58]
+  - main [ref=e60]:
+    - generic [ref=e61]:
+      - generic [ref=e62]:
+        - heading "White-Label Configuration" [level=2] [ref=e63]
+        - generic [ref=e64]:
+          - generic [ref=e65]:
+            - generic [ref=e66]:
+              - generic [ref=e67]: Platform Identity (Company Name)
+              - textbox "e.g. Bob's Marine Services" [ref=e68]
+            - generic [ref=e69]:
+              - generic [ref=e70]: Brand Asset (Logo URL)
+              - textbox "https://..." [ref=e71]: https://raw.githubusercontent.com/seanjcouto-lab/jitb-digital-ro/main/public/assets/logo-dark.png
+            - generic [ref=e72]:
+              - generic [ref=e73]: Default Hourly Labor Rate
+              - generic [ref=e74]:
+                - generic [ref=e75]: $
+                - spinbutton [ref=e76]: "150"
+            - generic [ref=e77]:
+              - generic [ref=e78]: Sales Tax Rate (%)
+              - generic [ref=e79]:
+                - generic [ref=e80]: "%"
+                - spinbutton [ref=e81]: "6.25"
+            - generic [ref=e82]:
+              - generic [ref=e83]: Invoice Override PIN
+              - textbox "4-digit PIN" [ref=e84]: "1234"
+              - paragraph [ref=e85]: Required to unlock price editing on invoices.
+          - generic [ref=e86]:
+            - generic [ref=e87]: Theme Colors
+            - generic [ref=e88]:
+              - generic [ref=e89]:
+                - generic [ref=e90]: Primary
+                - textbox [ref=e91]: "#2dd4bf"
+              - generic [ref=e92]:
+                - generic [ref=e93]: Secondary
+                - textbox [ref=e94]: "#38bdf8"
+              - generic [ref=e95]:
+                - generic [ref=e96]: Accent
+                - textbox [ref=e97]: "#ef4444"
+            - paragraph [ref=e98]: Theme colors are applied application-wide in real-time.
+      - generic [ref=e99]:
+        - heading "System Administration & Data" [level=2] [ref=e100]
+        - generic [ref=e102]:
+          - heading "Manual Data Management" [level=3] [ref=e103]
+          - button "Export Application Data" [ref=e104] [cursor=pointer]
+          - paragraph [ref=e105]: Downloads a local JSON file of all current repair orders, inventory, and configuration.
+          - generic [ref=e106]:
+            - heading "⚠ Diagnostic Tools (Temporary)" [level=3] [ref=e107]
+            - button "Run RO Persistence Test" [ref=e108] [cursor=pointer]
+            - paragraph [ref=e109]: Creates a test RO and verifies the full persistence chain. Check browser console for step-by-step results.
+```

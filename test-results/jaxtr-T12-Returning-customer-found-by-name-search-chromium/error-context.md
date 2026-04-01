@@ -1,0 +1,102 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - button "Home" [ref=e5] [cursor=pointer]:
+      - img [ref=e6]
+    - button "SERVICE MANAGER" [ref=e9] [cursor=pointer]:
+      - img [ref=e10]
+    - button "PARTS MANAGER" [ref=e13] [cursor=pointer]:
+      - img [ref=e14]
+    - button "INVENTORY MANAGER" [ref=e17] [cursor=pointer]:
+      - img [ref=e18]
+    - button "TECHNICIAN" [ref=e20] [cursor=pointer]:
+      - img [ref=e21]
+    - button "BILLING" [ref=e23] [cursor=pointer]:
+      - img [ref=e24]
+    - button "Vessel DNA" [ref=e26] [cursor=pointer]:
+      - img [ref=e27]
+    - button "METRICS" [ref=e32] [cursor=pointer]:
+      - img [ref=e33]
+    - button "ADMIN" [ref=e35] [cursor=pointer]:
+      - img [ref=e36]
+  - banner [ref=e38]:
+    - img "Logo" [ref=e40]
+    - generic [ref=e45]: SYSTEM IDLE // SERVICE MANAGER
+    - generic [ref=e47]:
+      - generic [ref=e48]:
+        - text: Test SM
+        - generic [ref=e49]: Technician
+      - button "Logout" [ref=e50] [cursor=pointer]:
+        - img [ref=e51]
+      - button "Enter Fullscreen" [ref=e53] [cursor=pointer]:
+        - img [ref=e54]
+      - button "Comms Link" [ref=e56] [cursor=pointer]:
+        - img [ref=e57]
+  - main [ref=e59]:
+    - generic [ref=e60]:
+      - generic [ref=e62]:
+        - heading "The Dock" [level=2] [ref=e63]
+        - paragraph [ref=e64]: Service Manager Command Console
+      - generic [ref=e65]:
+        - generic [ref=e68]:
+          - generic [ref=e69]:
+            - generic:
+              - img
+            - generic [ref=e70]:
+              - generic [ref=e72]: Customer Search
+              - generic [ref=e73]:
+                - textbox "Customer Search" [active] [ref=e74]:
+                  - /placeholder: Search by Name, HIN, or Serial...
+                  - text: Returning Name Search
+                - img [ref=e76]
+            - generic [ref=e79]:
+              - img [ref=e81]
+              - paragraph [ref=e83]: "Identity Protocol Failure: No Match Found"
+              - generic [ref=e84]:
+                - button "New Customer" [ref=e85] [cursor=pointer]
+                - button "Load Mock Profile" [ref=e86] [cursor=pointer]
+          - button "↑ collapse search" [ref=e91] [cursor=pointer]
+        - generic [ref=e92]:
+          - generic [ref=e93]:
+            - generic [ref=e94]:
+              - generic [ref=e95]: "0"
+              - generic [ref=e96]: jobs
+            - heading "STAGED Awaiting Assignment" [level=2] [ref=e98] [cursor=pointer]:
+              - text: STAGED
+              - generic [ref=e99]: Awaiting Assignment
+            - paragraph [ref=e101]: Queue empty.
+          - generic [ref=e102]:
+            - generic [ref=e103]:
+              - generic [ref=e104]: "0"
+              - generic [ref=e105]: jobs
+            - heading "PARTS DEPT Waiting on Parts" [level=2] [ref=e106] [cursor=pointer]:
+              - text: PARTS DEPT
+              - generic [ref=e107]: Waiting on Parts
+            - paragraph [ref=e109]: Queue empty.
+          - generic [ref=e110]:
+            - generic [ref=e111]:
+              - generic [ref=e112]: "0"
+              - generic [ref=e113]: jobs
+            - heading "DEPLOYMENT DECK In Progress" [level=2] [ref=e114] [cursor=pointer]:
+              - text: DEPLOYMENT DECK
+              - generic [ref=e115]: In Progress
+            - paragraph [ref=e117]: Deck clear.
+          - generic [ref=e118]:
+            - generic [ref=e119]:
+              - generic [ref=e120]: "0"
+              - generic [ref=e121]: jobs
+            - heading "ON HOLD Blocked Jobs" [level=2] [ref=e122] [cursor=pointer]:
+              - text: ON HOLD
+              - generic [ref=e123]: Blocked Jobs
+            - paragraph [ref=e125]: None.
+          - generic [ref=e126]:
+            - generic [ref=e127]:
+              - generic [ref=e128]: "0"
+              - generic [ref=e129]: jobs
+            - heading "BILLING Ready to Close" [level=2] [ref=e130] [cursor=pointer]:
+              - text: BILLING
+              - generic [ref=e131]: Ready to Close
+            - paragraph [ref=e133]: Billing queue clear.
+```

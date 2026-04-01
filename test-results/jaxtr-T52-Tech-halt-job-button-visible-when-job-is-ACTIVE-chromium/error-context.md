@@ -1,0 +1,109 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - button "Home" [ref=e5] [cursor=pointer]:
+      - img [ref=e6]
+    - button "SERVICE MANAGER" [ref=e9] [cursor=pointer]:
+      - img [ref=e10]
+    - button "PARTS MANAGER" [ref=e13] [cursor=pointer]:
+      - img [ref=e14]
+    - button "INVENTORY MANAGER" [ref=e17] [cursor=pointer]:
+      - img [ref=e18]
+    - button "TECHNICIAN" [ref=e20] [cursor=pointer]:
+      - img [ref=e21]
+    - button "BILLING" [ref=e23] [cursor=pointer]:
+      - img [ref=e24]
+    - button "Vessel DNA" [ref=e26] [cursor=pointer]:
+      - img [ref=e27]
+    - button "METRICS" [ref=e32] [cursor=pointer]:
+      - img [ref=e33]
+    - button "ADMIN" [ref=e35] [cursor=pointer]:
+      - img [ref=e36]
+  - banner [ref=e38]:
+    - img "Logo" [ref=e40]
+    - generic [ref=e45]: SYSTEM IDLE // SERVICE MANAGER
+    - generic [ref=e47]:
+      - generic [ref=e48]:
+        - text: Test SM
+        - generic [ref=e49]: Technician
+      - button "Logout" [ref=e50] [cursor=pointer]:
+        - img [ref=e51]
+      - button "Enter Fullscreen" [ref=e53] [cursor=pointer]:
+        - img [ref=e54]
+      - button "Comms Link" [ref=e56] [cursor=pointer]:
+        - img [ref=e57]
+  - main [ref=e59]:
+    - generic [ref=e60]:
+      - generic [ref=e62]:
+        - heading "The Dock" [level=2] [ref=e63]
+        - paragraph [ref=e64]: Service Manager Command Console
+      - generic [ref=e65]:
+        - button "Customer Search click to expand" [ref=e68] [cursor=pointer]:
+          - img [ref=e69]
+          - generic [ref=e72]: Customer Search
+          - generic [ref=e73]: click to expand
+        - generic [ref=e74]:
+          - generic [ref=e75]:
+            - generic [ref=e76]:
+              - generic [ref=e77]: "1"
+              - generic [ref=e78]: jobs
+            - heading "STAGED Awaiting Assignment" [level=2] [ref=e80] [cursor=pointer]:
+              - text: STAGED
+              - generic [ref=e81]: Awaiting Assignment
+            - generic [ref=e83] [cursor=pointer]:
+              - generic [ref=e85]:
+                - generic [ref=e86]:
+                  - generic [ref=e87]: RO-1775051943916
+                  - heading "NEWCUST" [level=4] [ref=e88]
+                - paragraph
+              - generic [ref=e90]: READY FOR_TECH
+              - generic [ref=e91]:
+                - generic [ref=e92]: ⏱
+                - generic [ref=e93]: Just now
+              - generic [ref=e95]: 1 Directives
+              - button "ASSIGN TECH" [active] [ref=e98]
+          - generic [ref=e99]:
+            - generic [ref=e100]:
+              - generic [ref=e101]: "0"
+              - generic [ref=e102]: jobs
+            - heading "PARTS DEPT Waiting on Parts" [level=2] [ref=e103] [cursor=pointer]:
+              - text: PARTS DEPT
+              - generic [ref=e104]: Waiting on Parts
+            - paragraph [ref=e106]: Queue empty.
+          - generic [ref=e107]:
+            - generic [ref=e108]:
+              - generic [ref=e109]: "0"
+              - generic [ref=e110]: jobs
+            - heading "DEPLOYMENT DECK In Progress" [level=2] [ref=e111] [cursor=pointer]:
+              - text: DEPLOYMENT DECK
+              - generic [ref=e112]: In Progress
+            - paragraph [ref=e114]: Deck clear.
+          - generic [ref=e115]:
+            - generic [ref=e116]:
+              - generic [ref=e117]: "0"
+              - generic [ref=e118]: jobs
+            - heading "ON HOLD Blocked Jobs" [level=2] [ref=e119] [cursor=pointer]:
+              - text: ON HOLD
+              - generic [ref=e120]: Blocked Jobs
+            - paragraph [ref=e122]: None.
+          - generic [ref=e123]:
+            - generic [ref=e124]:
+              - generic [ref=e125]: "0"
+              - generic [ref=e126]: jobs
+            - heading "BILLING Ready to Close" [level=2] [ref=e127] [cursor=pointer]:
+              - text: BILLING
+              - generic [ref=e128]: Ready to Close
+            - paragraph [ref=e130]: Billing queue clear.
+      - generic [ref=e132]:
+        - heading "Assign Technician" [level=3] [ref=e133]
+        - paragraph [ref=e134]: Assign an available technician to RO RO-1775051943916.
+        - generic [ref=e135]:
+          - button "Pierre" [ref=e136] [cursor=pointer]
+          - button "Johnny" [ref=e137] [cursor=pointer]
+          - button "Isaiah" [ref=e138] [cursor=pointer]
+          - button "Danny" [ref=e139] [cursor=pointer]
+          - button "Sean" [ref=e140] [cursor=pointer]
+        - button "Cancel" [ref=e141] [cursor=pointer]
+```

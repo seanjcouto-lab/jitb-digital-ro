@@ -1,0 +1,148 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - button "Home" [ref=e5] [cursor=pointer]:
+      - img [ref=e6]
+    - button "SERVICE MANAGER" [ref=e9] [cursor=pointer]:
+      - img [ref=e10]
+    - button "PARTS MANAGER" [ref=e13] [cursor=pointer]:
+      - img [ref=e14]
+    - button "INVENTORY MANAGER" [ref=e17] [cursor=pointer]:
+      - img [ref=e18]
+    - button "TECHNICIAN" [ref=e20] [cursor=pointer]:
+      - img [ref=e21]
+    - button "BILLING" [ref=e23] [cursor=pointer]:
+      - img [ref=e24]
+    - button "Vessel DNA" [ref=e26] [cursor=pointer]:
+      - img [ref=e27]
+    - button "METRICS" [ref=e32] [cursor=pointer]:
+      - img [ref=e33]
+    - button "ADMIN" [ref=e35] [cursor=pointer]:
+      - img [ref=e36]
+  - banner [ref=e38]:
+    - img "Logo" [ref=e40]
+    - generic [ref=e45]: SYSTEM IDLE // SERVICE MANAGER
+    - generic [ref=e47]:
+      - generic [ref=e48]:
+        - text: Test SM
+        - generic [ref=e49]: Technician
+      - button "Logout" [ref=e50] [cursor=pointer]:
+        - img [ref=e51]
+      - button "Enter Fullscreen" [ref=e53] [cursor=pointer]:
+        - img [ref=e54]
+      - button "Comms Link" [ref=e56] [cursor=pointer]:
+        - img [ref=e57]
+  - main [ref=e59]:
+    - generic [ref=e60]:
+      - generic [ref=e62]:
+        - heading "The Dock" [level=2] [ref=e63]
+        - paragraph [ref=e64]: Service Manager Command Console
+      - generic [ref=e65]:
+        - button "Customer Search click to expand" [ref=e68] [cursor=pointer]:
+          - img [ref=e69]
+          - generic [ref=e72]: Customer Search
+          - generic [ref=e73]: click to expand
+        - generic [ref=e74]:
+          - generic [ref=e75]:
+            - generic [ref=e76]:
+              - generic [ref=e77]: "5"
+              - generic [ref=e78]: jobs
+            - heading "STAGED Awaiting Assignment" [level=2] [ref=e80] [cursor=pointer]:
+              - text: STAGED
+              - generic [ref=e81]: Awaiting Assignment
+            - generic [ref=e82]:
+              - generic [ref=e83] [cursor=pointer]:
+                - generic [ref=e85]:
+                  - generic [ref=e86]:
+                    - generic [ref=e87]: RO-1775052221389
+                    - heading "NEWCUST" [level=4] [ref=e88]
+                  - paragraph
+                - generic [ref=e90]: READY FOR_TECH
+                - generic [ref=e91]:
+                  - generic [ref=e92]: ⏱
+                  - generic [ref=e93]: Just now
+                - generic [ref=e95]: 1 Directives
+                - button "ASSIGN TECH" [ref=e98]
+              - generic [ref=e99] [cursor=pointer]:
+                - generic [ref=e101]:
+                  - generic [ref=e102]:
+                    - generic [ref=e103]: RO-1775052218905
+                    - heading "NEWCUST" [level=4] [ref=e104]
+                  - paragraph
+                - generic [ref=e106]: READY FOR_TECH
+                - generic [ref=e107]:
+                  - generic [ref=e108]: ⏱
+                  - generic [ref=e109]: Just now
+                - generic [ref=e111]: 1 Directives
+                - button "ASSIGN TECH" [ref=e114]
+              - generic [ref=e115] [cursor=pointer]:
+                - generic [ref=e117]:
+                  - generic [ref=e118]:
+                    - generic [ref=e119]: RO-1775052217329
+                    - heading "NEWCUST" [level=4] [ref=e120]
+                  - paragraph
+                - generic [ref=e122]: READY FOR_TECH
+                - generic [ref=e123]:
+                  - generic [ref=e124]: ⏱
+                  - generic [ref=e125]: Just now
+                - generic [ref=e127]: 1 Directives
+                - button "ASSIGN TECH" [ref=e130]
+              - generic [ref=e131] [cursor=pointer]:
+                - generic [ref=e133]:
+                  - generic [ref=e134]:
+                    - generic [ref=e135]: RO-1775052215809
+                    - heading "NEWCUST" [level=4] [ref=e136]
+                  - paragraph
+                - generic [ref=e138]: READY FOR_TECH
+                - generic [ref=e139]:
+                  - generic [ref=e140]: ⏱
+                  - generic [ref=e141]: Just now
+                - generic [ref=e143]: 1 Directives
+                - button "ASSIGN TECH" [ref=e146]
+              - generic [ref=e147] [cursor=pointer]:
+                - generic [ref=e149]:
+                  - generic [ref=e150]:
+                    - generic [ref=e151]: RO-1775052214259
+                    - heading "NEWCUST" [level=4] [ref=e152]
+                  - paragraph
+                - generic [ref=e154]: READY FOR_TECH
+                - generic [ref=e155]:
+                  - generic [ref=e156]: ⏱
+                  - generic [ref=e157]: Just now
+                - generic [ref=e159]: 1 Directives
+                - button "ASSIGN TECH" [ref=e162]
+          - generic [ref=e163]:
+            - generic [ref=e164]:
+              - generic [ref=e165]: "0"
+              - generic [ref=e166]: jobs
+            - heading "PARTS DEPT Waiting on Parts" [level=2] [ref=e167] [cursor=pointer]:
+              - text: PARTS DEPT
+              - generic [ref=e168]: Waiting on Parts
+            - paragraph [ref=e170]: Queue empty.
+          - generic [ref=e171]:
+            - generic [ref=e172]:
+              - generic [ref=e173]: "0"
+              - generic [ref=e174]: jobs
+            - heading "DEPLOYMENT DECK In Progress" [level=2] [ref=e175] [cursor=pointer]:
+              - text: DEPLOYMENT DECK
+              - generic [ref=e176]: In Progress
+            - paragraph [ref=e178]: Deck clear.
+          - generic [ref=e179]:
+            - generic [ref=e180]:
+              - generic [ref=e181]: "0"
+              - generic [ref=e182]: jobs
+            - heading "ON HOLD Blocked Jobs" [level=2] [ref=e183] [cursor=pointer]:
+              - text: ON HOLD
+              - generic [ref=e184]: Blocked Jobs
+            - paragraph [ref=e186]: None.
+          - generic [ref=e187]:
+            - generic [ref=e188]:
+              - generic [ref=e189]: "0"
+              - generic [ref=e190]: jobs
+            - heading "BILLING Ready to Close" [level=2] [ref=e191] [cursor=pointer]:
+              - text: BILLING
+              - generic [ref=e192]: Ready to Close
+            - paragraph [ref=e194]: Billing queue clear.
+```

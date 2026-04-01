@@ -2,7 +2,7 @@
 
 This is the single source of truth for all Claude Code sessions on this project.
 If behavior differs from this document, this document is correct. The implementation is wrong.
-Last updated: March 30, 2026
+Last updated: April 1, 2026
 
 ---
 
@@ -53,7 +53,7 @@ Last updated: March 30, 2026
 
 ## FROZEN FILES — NEVER MODIFY WITHOUT EXPLICIT DIRECTION
 
-- `pages/LoginScreen.tsx`
+- `pages/LoginScreen.tsx` — dev persona buttons were explicitly updated April 1 2026 (named → anonymous). Now re-frozen.
 - `pages/UpdatePasswordScreen.tsx`
 - `services/supabaseAuthService.ts`
 
@@ -92,29 +92,49 @@ Last updated: March 30, 2026
 
 ## DEMO PERSONAS (DEV ONLY)
 
-Danny (Admin), Danny (SM), Pierre (Tech) — dev login buttons in LoginScreen. No "Mike" button exists. Tests use `Danny (Admin)` for Owner/Admin role and Parts Manager nav access.
+Three anonymous test personas — dev login buttons in `pages/LoginScreen.tsx`, visible only when `import.meta.env.DEV` is true, stripped from production builds:
+
+- **Test SM** — `id: 'dev-sm'`, role: `SERVICE_MANAGER`, `privileges: [UserPrivilege.DEVELOPER]`, `shopId: DEFAULT_SHOP_ID` — DEVELOPER privilege required so `isDev()` returns true and dev toolbar renders
+- **Test Tech** — `id: 'dev-tech'`, role: `TECHNICIAN`, `privileges: []`, `shopId: DEFAULT_SHOP_ID`, `techId: 'tech-1'`
+- **Test Parts** — `id: 'dev-parts'`, role: `PARTS_MANAGER`, `privileges: []`, `shopId: DEFAULT_SHOP_ID`
+
+No Admin persona exists in dev buttons. No named staff personas (Danny, Pierre) — replaced April 1 2026.
+All Playwright tests reference these button labels: `'Test SM'`, `'Test Tech'`, `'Test Parts'`.
 
 ---
 
-## CURRENT BUILD STATE (MARCH 30 2026)
+## CURRENT BUILD STATE (APRIL 1 2026)
 
-- **125 Playwright tests passing, 2 skipped, 0 failed**
-- 2 skipped: `parts.workflow` tests — need dedicated test `shop_id` in Supabase with controlled inventory seeding
+- **Test suite: 36 passed, 86 failed, 8 skipped** — `tests/jaxtr.spec.ts`, second run after fixes. Still being worked through.
 - Playwright MUST run before and after every change — no exceptions
 - All work on `develop` branch — PRs to `main` when stable
 
-### Completed this session (March 30 2026)
+### Completed this session (April 1 2026)
 
-- **Exhaustive E2E test suite**: `tests/e2e.exhaustive.spec.ts` — 65 tests covering Auth, RO Creation, Status machine, Tech, SM, Billing, Parts, Board, Vessel DNA, Persistence, Edge, Smoke. Committed at `b280949`
-- **Test suite fixes**: `loginOwner` → `Danny (Admin)`, `loginParts` → `Danny (Admin)`, `completeJob` → `Send for Billing`, `loginTech` accepts `No Active Job` or `Active Bay Deck`, Persistence tests re-login after reload, Smoke test uses `Danny (Admin)` for Parts Manager nav
-- **Column onClick isolation**: `toggleStatusFilter` moved from outer column div to h2 heading in all 5 SM board columns — prevents card button clicks from triggering column filter
-- **Customer name carry-forward**: `ProfileOnboardingForm` useState initializer now seeds `contacts[0].fullName` from `initialData.customerName` when no full contacts array present
-- **Sticky Save & Generate RO button**: Fixed bottom bar in `ProfileOnboardingForm` — always visible regardless of scroll position
-- **4 C's label**: `TechnicianPage.tsx` — "Final Labor Conclusion" renamed to "4 C's — Complaint, Cause, Correction, Confirmation"
-- **Supabase credentials hardcoded**: `supabaseClient.ts` — URL and publishable key hardcoded for Vercel deployment (`.env` still gitignored)
-- **Merged develop → main**: `main` is at `c6e4c3b`, fully up to date
+- **Dev persona overhaul**: `pages/LoginScreen.tsx` — replaced named personas (Danny Admin, Danny SM, Pierre Tech) with three anonymous test personas: Test SM, Test Tech, Test Parts. No admin persona in dev buttons.
+- **Test SM gets DEVELOPER privilege**: `pages/LoginScreen.tsx` line 118 — `privileges: [UserPrivilege.DEVELOPER]` added so `isDev()` returns true and dev toolbar renders in tests. `UserPrivilege` imported from `../types`.
+- **All old spec files deleted**: `tests/*.spec.ts` (24 files) — all previous Playwright test specs removed. Parker AI service specs were being picked up by Playwright runner; fresh start eliminates this.
+- **New test suite created**: `tests/jaxtr.spec.ts` — 130 tests (T01–T130) covering Auth, RO Creation, SM Board, Tech Workflow, Parts, Billing, Vessel DNA, Persistence, Edge Cases, Metrics.
+- **Test suite fixes applied**:
+  - `createBasicRO` helper: added type-2-chars step before waiting for "New Customer" button (only renders when `query.length > 1 && noResults`)
+  - `locator('text=Sign In')` → `getByRole('heading', { name: 'Sign In' })` at 9 locations (strict mode fix — both `<h1>` and submit `<button>` matched)
+- **Admin gate (pending)**: `pages/AdminPage.tsx` gate was implemented then reverted via `git checkout -- .`. Needs to be re-applied. Requires `loggedInUser` prop added to `AdminPage` interface and passed from `App.tsx` line 295.
 
-### Completed previous session (March 29 2026 — full day)
+### Known remaining test failures (86 as of last run)
+
+The next wave of failures needs diagnosis. Likely issues:
+- Tech workflow selectors (button text mismatches for Start Job, directives, Send for Billing)
+- Persistence tests — re-login after reload flow
+- Billing/collections selectors
+- T06–T08 toolbar tests — toolbar now renders (DEVELOPER privilege fixed) but button `title` values may be wrong: `roleKey.replace('_', ' ')` makes titles `"SERVICE MANAGER"`, `"PARTS MANAGER"` (spaces not underscores)
+
+### Skipped tests in jaxtr.spec.ts (8 total)
+
+T74, T75, T76, T77, T78 — Parts workflow tests requiring seeded inventory in a dedicated test shop
+T89, T90 — Billing disputed/collections tests requiring full billing flow
+T112 — Offline/PWA test requiring service worker
+
+### Completed previous session (March 30 2026)
 
 - **Subscription gating**: `active`, `pilot`, `trial`, `grace` allowed — `null` passes through (no shop record in test env). Lives in `App.tsx` + `services/shopContextService.ts`
 - **Naming cleanup**: "New Service Profile Onboarding" → "New Customer", "Initialize Profile" → "New Customer" — 6 files updated including 3 Playwright tests
@@ -129,13 +149,16 @@ Danny (Admin), Danny (SM), Pierre (Tech) — dev login buttons in LoginScreen. N
 
 ### Next session queue (priority order)
 
-1. Vercel deployment
-2. Headed Playwright demo script
-3. Date picker in `ROGenerationView` + `ProfileOnboardingForm`
-4. Scheduled date on SM cards
-5. Calendar week view build
-6. Calendar month view
-7. Left sidebar nav (post-pilot)
+1. Continue fixing `tests/jaxtr.spec.ts` — 86 still failing. Start by running with `--reporter=list` and pulling first 5 failures to diagnose next pattern.
+2. Re-apply admin gate to `pages/AdminPage.tsx` + wire `loggedInUser` prop in `App.tsx` (see details in completed section above)
+3. Commit everything: LoginScreen changes + spec deletions + jaxtr.spec.ts + CLAUDE.md
+4. Vercel deployment
+5. Headed Playwright demo script
+6. Date picker in `ROGenerationView` + `ProfileOnboardingForm`
+7. Scheduled date on SM cards
+8. Calendar week view build
+9. Calendar month view
+10. Left sidebar nav (post-pilot)
 
 ---
 

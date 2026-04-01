@@ -1,0 +1,2688 @@
+
+Running 130 tests using 4 workers
+
+  ok   3 [chromium] › tests\jaxtr.spec.ts:91:1 › T01: App loads and shows login screen (4.3s)
+  ok   2 [chromium] › tests\jaxtr.spec.ts:112:1 › T04: Test Parts logs in and lands on Parts Command (4.6s)
+  ok   4 [chromium] › tests\jaxtr.spec.ts:103:1 › T03: Test Tech logs in and lands on Technician view (4.6s)
+  ok   1 [chromium] › tests\jaxtr.spec.ts:96:1 › T02: Test SM logs in and lands on The Dock (4.7s)
+  ok   5 [chromium] › tests\jaxtr.spec.ts:119:1 › T05: SM logout returns to login screen (2.1s)
+  ok   6 [chromium] › tests\jaxtr.spec.ts:132:1 › T06: Role impersonation toolbar visible after SM login (2.0s)
+  ok   7 [chromium] › tests\jaxtr.spec.ts:138:1 › T07: Switching to Tech role via toolbar changes view (2.1s)
+  ok   8 [chromium] › tests\jaxtr.spec.ts:149:1 › T08: Switching to Parts role via toolbar changes view (2.2s)
+  ok   9 [chromium] › tests\jaxtr.spec.ts:156:1 › T09: Session restores after page reload (2.2s)
+  x   11 [chromium] › tests\jaxtr.spec.ts:180:1 › T11: New customer RO creation end to end (8.4s)
+  x   12 [chromium] › tests\jaxtr.spec.ts:202:1 › T12: Returning customer found by name search (9.3s)
+  x   13 [chromium] › tests\jaxtr.spec.ts:216:1 › T13: Customer found by engine serial search (8.7s)
+  x   10 [chromium] › tests\jaxtr.spec.ts:169:1 › T10: Admin route shows ACCESS DENIED for non-admin (SM persona) (12.5s)
+  ok  14 [chromium] › tests\jaxtr.spec.ts:227:1 › T14: RO creation with service package selected (3.6s)
+  ok  16 [chromium] › tests\jaxtr.spec.ts:272:1 › T16: RO creation with multiple directives (3.2s)
+  ok  18 [chromium] › tests\jaxtr.spec.ts:295:1 › T17: Signature capture canvas renders on RO form (2.5s)
+  x   17 [chromium] › tests\jaxtr.spec.ts:311:1 › T18: RO appears on SM board immediately after creation (10.9s)
+  x   19 [chromium] › tests\jaxtr.spec.ts:317:1 › T19: RO shows correct customer name on card (10.7s)
+  ok  21 [chromium] › tests\jaxtr.spec.ts:331:1 › T21: Scheduled date field visible in RO creation form (2.3s)
+  x   20 [chromium] › tests\jaxtr.spec.ts:323:1 › T20: RO shows correct status badge on card (10.6s)
+  ok  22 [chromium] › tests\jaxtr.spec.ts:363:1 › T23: New RO button visible on SM board (1.8s)
+  ok  24 [chromium] › tests\jaxtr.spec.ts:377:1 › T25: ProfileOnboardingForm renders with vessel and engine fields (2.2s)
+  x   26 [chromium] › tests\jaxtr.spec.ts:391:1 › T26: All 5 board columns render on SM page (1.9s)
+  ok  27 [chromium] › tests\jaxtr.spec.ts:400:1 › T27: Column job counter increments when RO added (2.8s)
+  x   15 [chromium] › tests\jaxtr.spec.ts:250:1 › T15: RO creation with manual directive added (30.1s)
+  x   25 [chromium] › tests\jaxtr.spec.ts:369:1 › T24: RO with no parts goes to READY_FOR_TECH (shown in Staged column) (11.1s)
+  x   23 [chromium] › tests\jaxtr.spec.ts:353:1 › T22: Two ROs for same customer both appear on board (12.5s)
+  ok  29 [chromium] › tests\jaxtr.spec.ts:418:1 › T29: Customer search expands on click (2.2s)
+  ok  31 [chromium] › tests\jaxtr.spec.ts:437:1 › T31: Customer search collapses after navigating away (2.4s)
+  ok  32 [chromium] › tests\jaxtr.spec.ts:451:1 › T32: Assign tech to RO — Assign Tech button visible on staged card (3.3s)
+  x   28 [chromium] › tests\jaxtr.spec.ts:409:1 › T28: Age tinting class is applied based on timestamp (11.0s)
+  x   30 [chromium] › tests\jaxtr.spec.ts:426:1 › T30: Customer search finds RO by name (9.6s)
+  x   35 [chromium] › tests\jaxtr.spec.ts:486:1 › T35: Card expands to show directives on click (10.5s)
+  x   33 [chromium] › tests\jaxtr.spec.ts:457:1 › T33: Assign tech — tech modal opens and tech name appears on card (30.1s)
+  x   34 [chromium] › tests\jaxtr.spec.ts:470:1 › T34: Hold job moves to On Hold column (30.0s)
+  x   36 [chromium] › tests\jaxtr.spec.ts:510:1 › T36: Expanded card shows Engine section (30.1s)
+  x   40 [chromium] › tests\jaxtr.spec.ts:555:1 › T40: Billing column visible on SM board (1.9s)
+  x   39 [chromium] › tests\jaxtr.spec.ts:547:1 › T39: Multiple ROs coexist without data bleed (11.8s)
+  x   37 [chromium] › tests\jaxtr.spec.ts:519:1 › T37: Parts pending badge appears when parts missing (30.1s)
+  ok  42 [chromium] › tests\jaxtr.spec.ts:576:1 › T42: Collapsed card shows ASSIGN TECH button not HOLD button (3.0s)
+  x   38 [chromium] › tests\jaxtr.spec.ts:535:1 › T38: RO card does not vanish after status change (30.1s)
+  ok  45 [chromium] › tests\jaxtr.spec.ts:632:1 › T45: SM board shows correct column headers (1.6s)
+  x   41 [chromium] › tests\jaxtr.spec.ts:560:1 › T41: SM can add manual part to RO via expanded card (30.1s)
+  x   43 [chromium] › tests\jaxtr.spec.ts:588:1 › T43: Resume job from hold returns to board (30.0s)
+  x   44 [chromium] › tests\jaxtr.spec.ts:608:1 › T44: Unassign tech from RO via hold column (30.1s)
+  x   46 [chromium] › tests\jaxtr.spec.ts:643:1 › T46: Tech sees assigned jobs in queue (Your Queue) (30.1s)
+  x   47 [chromium] › tests\jaxtr.spec.ts:667:1 › T47: Tech can start job from queue — Active Bay Deck appears (30.1s)
+  x   48 [chromium] › tests\jaxtr.spec.ts:696:1 › T48: Active Bay Deck shows correct customer name (30.2s)
+  x   49 [chromium] › tests\jaxtr.spec.ts:723:1 › T49: Directives locked until job clock started (30.1s)
+  x   50 [chromium] › tests\jaxtr.spec.ts:764:1 › T50: Tech completes directive — marked complete (30.1s)
+  x   51 [chromium] › tests\jaxtr.spec.ts:812:1 › T51: Tech can add discovery directive request (30.1s)
+  x   52 [chromium] › tests\jaxtr.spec.ts:848:1 › T52: Tech halt job button visible when job is ACTIVE (30.1s)
+  x   53 [chromium] › tests\jaxtr.spec.ts:878:1 › T53: 4 Cs conclusion section visible on technician active job (30.1s)
+  x   54 [chromium] › tests\jaxtr.spec.ts:903:1 › T54: Send for Billing disabled until conclusion notes filled (30.1s)
+  x   55 [chromium] › tests\jaxtr.spec.ts:935:1 › T55: Send for Billing enabled after filling 4 Cs notes (30.0s)
+  x   56 [chromium] › tests\jaxtr.spec.ts:971:1 › T56: Active Bay Deck shows correct engine serial (30.1s)
+  x   57 [chromium] › tests\jaxtr.spec.ts:998:1 › T57: Tech sends for billing — RO moves out of tech view (30.1s)
+  x   58 [chromium] › tests\jaxtr.spec.ts:1038:1 › T58: Multiple directives — completing one does not complete both (30.1s)
+  x   59 [chromium] › tests\jaxtr.spec.ts:1093:1 › T59: Tech queue shows queued job in read-only expand (30.2s)
+  x   60 [chromium] › tests\jaxtr.spec.ts:1116:1 › T60: Tech exit from job returns to queue not lost (30.1s)
+  x   61 [chromium] › tests\jaxtr.spec.ts:1159:1 › T61: Bay Manifest parts section visible on active job (30.1s)
+  x   62 [chromium] › tests\jaxtr.spec.ts:1184:1 › T62: Service Directives section visible on active job (30.1s)
+  ok  66 [chromium] › tests\jaxtr.spec.ts:1301:1 › T66: Parts Command page renders with Fulfillment Queue (1.9s)
+  x   63 [chromium] › tests\jaxtr.spec.ts:1209:1 › T63: Active labor clock shows when job is ACTIVE (30.1s)
+  x   67 [chromium] › tests\jaxtr.spec.ts:1306:1 › T67: Parts page shows Awaiting Parts queue section (9.6s)
+  ok  68 [chromium] › tests\jaxtr.spec.ts:1315:1 › T68: Bulk import inventory button visible on Parts page (1.7s)
+  ok  70 [chromium] › tests\jaxtr.spec.ts:1321:1 › T69: View Clipboard button visible on Parts page (1.7s)
+  x   64 [chromium] › tests\jaxtr.spec.ts:1240:1 › T64: Only one active job at a time — second job stays in queue (30.1s)
+  x   65 [chromium] › tests\jaxtr.spec.ts:1272:1 › T65: Change Tech button visible on active job header (30.1s)
+  ok  72 [chromium] › tests\jaxtr.spec.ts:1339:1 › T72: Parts page renders without crashing for fresh login (1.9s)
+  -   73 [chromium] › tests\jaxtr.spec.ts:1353:6 › T74: Parts Manager can mark part as IN_BOX (requires seeded inventory)
+  -   74 [chromium] › tests\jaxtr.spec.ts:1357:6 › T75: Parts Manager can mark part as MISSING (requires seeded inventory)
+  -   75 [chromium] › tests\jaxtr.spec.ts:1361:6 › T76: Parts Manager can mark part as SPECIAL_ORDER (requires seeded inventory)
+  -   76 [chromium] › tests\jaxtr.spec.ts:1365:6 › T77: Missing part flagged by tech appears in PM queue (requires seeded inventory)
+  -   77 [chromium] › tests\jaxtr.spec.ts:1369:6 › T78: PM approves part request — job resumes (requires seeded inventory)
+  x   69 [chromium] › tests\jaxtr.spec.ts:1327:1 › T70: Special orders queue section visible (9.7s)
+  ok  79 [chromium] › tests\jaxtr.spec.ts:1347:1 › T73: Parts page sections do not crash with empty queues (1.8s)
+  x   71 [chromium] › tests\jaxtr.spec.ts:1333:1 › T71: Returns queue visible on Parts page (9.8s)
+  ok  80 [chromium] › tests\jaxtr.spec.ts:1393:1 › T81: Billing page renders via toolbar (1.9s)
+  ok  81 [chromium] › tests\jaxtr.spec.ts:1384:1 › T80: Parts page does not show COMPLETED ROs (2.3s)
+  ok  82 [chromium] › tests\jaxtr.spec.ts:1407:1 › T83: Billing page shows invoice sections (3.3s)
+  x   84 [chromium] › tests\jaxtr.spec.ts:1399:1 › T82: Collections section visible on billing page (11.7s)
+  x   78 [chromium] › tests\jaxtr.spec.ts:1373:1 › T79: Inventory page renders with search (30.0s)
+  x   83 [chromium] › tests\jaxtr.spec.ts:1415:1 › T84: Completed RO appears in SM board BILLING column (30.1s)
+  x   85 [chromium] › tests\jaxtr.spec.ts:1458:1 › T85: Invoice modal opens for PENDING_INVOICE RO in Billing column (30.1s)
+  -   88 [chromium] › tests\jaxtr.spec.ts:1567:6 › T89: Disputed invoice stays in disputed state (requires full billing flow)
+  -   89 [chromium] › tests\jaxtr.spec.ts:1572:6 › T90: Collections escalation stages advance on overdue invoices
+  x   87 [chromium] › tests\jaxtr.spec.ts:1552:1 › T87: Collections log section visible on billing page (10.8s)
+  ok  90 [chromium] › tests\jaxtr.spec.ts:1560:1 › T88: Billing page shows payment status section (3.3s)
+  ok  91 [chromium] › tests\jaxtr.spec.ts:1576:1 › T91: Billing page renders invoice total section (3.3s)
+  ok  92 [chromium] › tests\jaxtr.spec.ts:1588:1 › T93: Billing page shows empty state gracefully (3.1s)
+  ok  94 [chromium] › tests\jaxtr.spec.ts:1583:1 › T92: SM board BILLING column shows Ready to Close subheading (2.8s)
+  x   95 [chromium] › tests\jaxtr.spec.ts:1638:1 › T95: Billing sweep frequency selector visible (4.1s)
+  x   86 [chromium] › tests\jaxtr.spec.ts:1504:1 › T86: Zero dollar invoice allowed to close (verbal auth no parts) (30.1s)
+  ok  97 [chromium] › tests\jaxtr.spec.ts:1657:1 › T97: Vessel DNA search field visible (3.4s)
+  x   96 [chromium] › tests\jaxtr.spec.ts:1649:1 › T96: Vessel DNA page renders via toolbar (DATABASE role) (11.6s)
+  x   98 [chromium] › tests\jaxtr.spec.ts:1665:1 › T98: DB Inspector button visible on DNA page (11.3s)
+  ok 100 [chromium] › tests\jaxtr.spec.ts:1681:1 › T100: Vessel DNA search by customer name returns record (5.0s)
+  x   99 [chromium] › tests\jaxtr.spec.ts:1673:1 › T99: Vessel DNA page shows vessel record after RO creation (11.7s)
+  ok 102 [chromium] › tests\jaxtr.spec.ts:1694:1 › T101: Vessel DNA shows engine details (4.6s)
+  x   93 [chromium] › tests\jaxtr.spec.ts:1598:1 › T94: Invoice finalize button visible on PENDING_INVOICE card in SM board (30.1s)
+  ok 104 [chromium] › tests\jaxtr.spec.ts:1725:1 › T104: Vessel DNA page renders without crash for fresh DB (3.4s)
+  x  101 [chromium] › tests\jaxtr.spec.ts:1708:1 › T102: Vessel DNA record shows correct customer name (12.2s)
+  x  103 [chromium] › tests\jaxtr.spec.ts:1716:1 › T103: Multiple ROs for same vessel appear in history (14.1s)
+  x  106 [chromium] › tests\jaxtr.spec.ts:1733:1 › T105: Vessel DNA history persists after reload (12.5s)
+  x  105 [chromium] › tests\jaxtr.spec.ts:1755:1 › T106: RO persists after page reload (IndexedDB) (14.0s)
+  x  108 [chromium] › tests\jaxtr.spec.ts:1799:1 › T108: Multiple ROs persist after reload (15.0s)
+  x  110 [chromium] › tests\jaxtr.spec.ts:1847:1 › T110: Two ROs created in sequence both persist (14.4s)
+  -  112 [chromium] › tests\jaxtr.spec.ts:1885:6 › T112: Offline: app loads without network (PWA service worker)
+  x  107 [chromium] › tests\jaxtr.spec.ts:1775:1 › T107: RO status persists after page reload (30.1s)
+  ok 114 [chromium] › tests\jaxtr.spec.ts:1897:1 › T114: App does not show stale data from previous test (IndexedDB cleared) (1.7s)
+  x  113 [chromium] › tests\jaxtr.spec.ts:1890:1 › T113: App renders after clearing and re-seeding (10.7s)
+  x  109 [chromium] › tests\jaxtr.spec.ts:1820:1 › T109: Tech assignment persists after reload (30.1s)
+  x  116 [chromium] › tests\jaxtr.spec.ts:1916:1 › T116: Long customer name renders without overflow (10.8s)
+  x  111 [chromium] › tests\jaxtr.spec.ts:1868:1 › T111: Data survives browser back/forward navigation (30.0s)
+  x  117 [chromium] › tests\jaxtr.spec.ts:1923:1 › T117: RO with no parts goes straight to READY_FOR_TECH (Staged column) (10.8s)
+  x  115 [chromium] › tests\jaxtr.spec.ts:1904:1 › T115: RO created then page navigated still shows on return (30.0s)
+  x  118 [chromium] › tests\jaxtr.spec.ts:1931:1 › T118: Rapid RO creation — 3 jobs back to back without errors (14.2s)
+  x  120 [chromium] › tests\jaxtr.spec.ts:1983:1 › T120: Board integrity — 5 ROs in different states coexist (18.5s)
+  x  119 [chromium] › tests\jaxtr.spec.ts:1943:1 › T119: Tech exit — halted job returns to My Halted Jobs not lost (30.1s)
+  x  121 [chromium] › tests\jaxtr.spec.ts:2002:1 › T121: Parts backorder job stays invoiceable — deferral path available (30.1s)
+  x  122 [chromium] › tests\jaxtr.spec.ts:2020:1 › T122: SM discovery approve and reject both work (30.1s)
+  ok 125 [chromium] › tests\jaxtr.spec.ts:2154:1 › T125: Cancel RO creation returns to The Dock without errors (2.2s)
+  ok 126 [chromium] › tests\jaxtr.spec.ts:2181:1 › T127: Financial Health section visible on Metrics page (2.9s)
+  ok 127 [chromium] › tests\jaxtr.spec.ts:2174:1 › T126: Metrics page renders via toolbar (2.8s)
+  ok 128 [chromium] › tests\jaxtr.spec.ts:2188:1 › T128: Total Revenue tile visible on Metrics page (2.8s)
+  x  123 [chromium] › tests\jaxtr.spec.ts:2072:1 › T123: Declined repair deferral path available (30.1s)
+  ok 129 [chromium] › tests\jaxtr.spec.ts:2195:1 › T129: Gross Profit tile visible on Metrics page (3.1s)
+  ok 130 [chromium] › tests\jaxtr.spec.ts:2202:1 › T130: Profit Margin tile visible on Metrics page (3.3s)
+  x  124 [chromium] › tests\jaxtr.spec.ts:2092:1 › T124: Job with two directives completing all enables billing (30.1s)
+
+
+  1) [chromium] › tests\jaxtr.spec.ts:169:1 › T10: Admin route shows ACCESS DENIED for non-admin (SM persona) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=Access Denied')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 10000ms[22m
+    [2m  - waiting for locator('text=Access Denied')[22m
+
+
+      173 |   const adminBtn = page.locator('button[title="ADMIN"]');
+      174 |   await adminBtn.click();
+    > 175 |   await expect(page.locator('text=Access Denied')).toBeVisible({ timeout: 10000 });
+          |                                                    ^
+      176 | });
+      177 |
+      178 | // ─── RO CREATION (T11–T25) ───────────────────────────────────────────────────
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:175:52
+
+    Error Context: test-results\jaxtr-T10-Admin-route-show-ca077-D-for-non-admin-SM-persona--chromium\error-context.md
+
+  2) [chromium] › tests\jaxtr.spec.ts:180:1 › T11: New customer RO creation end to end ─────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=Marina Test Customer')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('text=Marina Test Customer')[22m
+
+
+      197 |
+      198 |   await expect(page.locator('text=The Dock')).toBeVisible({ timeout: 10000 });
+    > 199 |   await expect(page.locator('text=Marina Test Customer')).toBeVisible({ timeout: 5000 });
+          |                                                           ^
+      200 | });
+      201 |
+      202 | test('T12: Returning customer found by name search', async ({ page }) => {
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:199:59
+
+    Error Context: test-results\jaxtr-T11-New-customer-RO-creation-end-to-end-chromium\error-context.md
+
+  3) [chromium] › tests\jaxtr.spec.ts:202:1 › T12: Returning customer found by name search ─────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=Returning Name Search').last()
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('text=Returning Name Search').last()[22m
+
+
+      211 |   await page.waitForTimeout(1000);
+      212 |   const result = page.locator('text=Returning Name Search').last();
+    > 213 |   await expect(result).toBeVisible({ timeout: 5000 });
+          |                        ^
+      214 | });
+      215 |
+      216 | test('T13: Customer found by engine serial search', async ({ page }) => {
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:213:24
+
+    Error Context: test-results\jaxtr-T12-Returning-customer-found-by-name-search-chromium\error-context.md
+
+  4) [chromium] › tests\jaxtr.spec.ts:216:1 › T13: Customer found by engine serial search ──────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=Engine Serial Customer').last()
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('text=Engine Serial Customer').last()[22m
+
+
+      222 |   await searchInput.fill('Engine Serial Customer');
+      223 |   await page.waitForTimeout(1000);
+    > 224 |   await expect(page.locator('text=Engine Serial Customer').last()).toBeVisible({ timeout: 5000 });
+          |                                                                    ^
+      225 | });
+      226 |
+      227 | test('T14: RO creation with service package selected', async ({ page }) => {
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:224:68
+
+    Error Context: test-results\jaxtr-T13-Customer-found-by-engine-serial-search-chromium\error-context.md
+
+  5) [chromium] › tests\jaxtr.spec.ts:250:1 › T15: RO creation with manual directive added ─────────
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.press: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('input[placeholder*="Add custom directive"]')[22m
+
+
+      264 |   await page.click('text=Authorize & Stage Job');
+      265 |   // If directive input has "Add" button, press Enter instead
+    > 266 |   await directiveInput.press('Enter');
+          |                        ^
+      267 |   await page.locator('label:has-text("I Certify Verbal Authorization")').click();
+      268 |   await page.click('text=Authorize & Stage Job');
+      269 |   await expect(page.locator('text=The Dock')).toBeVisible({ timeout: 10000 });
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:266:24
+
+    Error Context: test-results\jaxtr-T15-RO-creation-with-manual-directive-added-chromium\error-context.md
+
+  6) [chromium] › tests\jaxtr.spec.ts:311:1 › T18: RO appears on SM board immediately after creation 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=Immediate Board Customer')
+    Expected: visible
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 8000ms[22m
+    [2m  - waiting for locator('text=Immediate Board Customer')[22m
+
+
+      312 |   await loginSM(page);
+      313 |   await createBasicRO(page, 'Immediate Board Customer');
+    > 314 |   await expect(page.locator('text=Immediate Board Customer')).toBeVisible({ timeout: 8000 });
+          |                                                               ^
+      315 | });
+      316 |
+      317 | test('T19: RO shows correct customer name on card', async ({ page }) => {
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:314:63
+
+    Error Context: test-results\jaxtr-T18-RO-appears-on-SM-board-immediately-after-creation-chromium\error-context.md
+
+  7) [chromium] › tests\jaxtr.spec.ts:317:1 › T19: RO shows correct customer name on card ──────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=Name Display Customer')
+    Expected: visible
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 8000ms[22m
+    [2m  - waiting for locator('text=Name Display Customer')[22m
+
+
+      318 |   await loginSM(page);
+      319 |   await createBasicRO(page, 'Name Display Customer');
+    > 320 |   await expect(page.locator('text=Name Display Customer')).toBeVisible({ timeout: 8000 });
+          |                                                            ^
+      321 | });
+      322 |
+      323 | test('T20: RO shows correct status badge on card', async ({ page }) => {
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:320:60
+
+    Error Context: test-results\jaxtr-T19-RO-shows-correct-customer-name-on-card-chromium\error-context.md
+
+  8) [chromium] › tests\jaxtr.spec.ts:323:1 › T20: RO shows correct status badge on card ───────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=Status Badge Customer').locator('..').locator('..')
+    Expected: visible
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 8000ms[22m
+    [2m  - waiting for locator('text=Status Badge Customer').locator('..').locator('..')[22m
+
+
+      326 |   // Without parts, RO goes to READY_FOR_TECH. Check for status text on card.
+      327 |   const card = page.locator('text=Status Badge Customer').locator('..').locator('..');
+    > 328 |   await expect(card).toBeVisible({ timeout: 8000 });
+          |                      ^
+      329 | });
+      330 |
+      331 | test('T21: Scheduled date field visible in RO creation form', async ({ page }) => {
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:328:22
+
+    Error Context: test-results\jaxtr-T20-RO-shows-correct-status-badge-on-card-chromium\error-context.md
+
+  9) [chromium] › tests\jaxtr.spec.ts:353:1 › T22: Two ROs for same customer both appear on board ──
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=Twin RO Customer').first()
+    Expected: visible
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 8000ms[22m
+    [2m  - waiting for locator('text=Twin RO Customer').first()[22m
+
+
+      356 |   await createBasicRO(page, 'Twin RO Customer');
+      357 |   const cards = page.locator('text=Twin RO Customer');
+    > 358 |   await expect(cards.first()).toBeVisible({ timeout: 8000 });
+          |                               ^
+      359 |   const count = await cards.count();
+      360 |   expect(count).toBeGreaterThanOrEqual(2);
+      361 | });
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:358:31
+
+    Error Context: test-results\jaxtr-T22-Two-ROs-for-same-customer-both-appear-on-board-chromium\error-context.md
+
+  10) [chromium] › tests\jaxtr.spec.ts:369:1 › T24: RO with no parts goes to READY_FOR_TECH (shown in Staged column) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=No Parts Customer')
+    Expected: visible
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 8000ms[22m
+    [2m  - waiting for locator('text=No Parts Customer')[22m
+
+
+      372 |   // Should appear in STAGED column (Awaiting Assignment) since no tech assigned
+      373 |   await expect(page.locator('text=STAGED').first()).toBeVisible({ timeout: 8000 });
+    > 374 |   await expect(page.locator('text=No Parts Customer')).toBeVisible({ timeout: 8000 });
+          |                                                        ^
+      375 | });
+      376 |
+      377 | test('T25: ProfileOnboardingForm renders with vessel and engine fields', async ({ page }) => {
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:374:56
+
+    Error Context: test-results\jaxtr-T24-RO-with-no-parts-0fa9b-ECH-shown-in-Staged-column--chromium\error-context.md
+
+  11) [chromium] › tests\jaxtr.spec.ts:391:1 › T26: All 5 board columns render on SM page ──────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=BILLING')
+    Expected: visible
+    Error: strict mode violation: locator('text=BILLING') resolved to 2 elements:
+        1) <h2 class="text-lg font-bold mb-4 uppercase tracking-tighter transition-all cursor-pointer neon-steel">…</h2> aka getByRole('heading', { name: 'BILLING Ready to Close' })
+        2) <p class="text-slate-600 italic text-sm text-center py-4 font-medium">Billing queue clear.</p> aka getByText('Billing queue clear.')
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 8000ms[22m
+    [2m  - waiting for locator('text=BILLING')[22m
+
+
+      395 |   await expect(page.locator('text=DEPLOYMENT DECK')).toBeVisible({ timeout: 8000 });
+      396 |   await expect(page.locator('text=ON HOLD')).toBeVisible({ timeout: 8000 });
+    > 397 |   await expect(page.locator('text=BILLING')).toBeVisible({ timeout: 8000 });
+          |                                              ^
+      398 | });
+      399 |
+      400 | test('T27: Column job counter increments when RO added', async ({ page }) => {
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:397:46
+
+    Error Context: test-results\jaxtr-T26-All-5-board-columns-render-on-SM-page-chromium\error-context.md
+
+  12) [chromium] › tests\jaxtr.spec.ts:409:1 › T28: Age tinting class is applied based on timestamp 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=Age Tint Customer').locator('../..')
+    Expected: visible
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 8000ms[22m
+    [2m  - waiting for locator('text=Age Tint Customer').locator('../..')[22m
+
+
+      412 |   // A freshly created card has no age class — it just renders without extra border
+      413 |   const card = page.locator('text=Age Tint Customer').locator('../..');
+    > 414 |   await expect(card).toBeVisible({ timeout: 8000 });
+          |                      ^
+      415 |   // The card element exists and rendered — age class logic exists in getAgeClass()
+      416 | });
+      417 |
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:414:22
+
+    Error Context: test-results\jaxtr-T28-Age-tinting-class-is-applied-based-on-timestamp-chromium\error-context.md
+
+  13) [chromium] › tests\jaxtr.spec.ts:426:1 › T30: Customer search finds RO by name ───────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=Searchable Name Customer').last()
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('text=Searchable Name Customer').last()[22m
+
+
+      432 |   await searchInput.fill('Searchable Name');
+      433 |   await page.waitForTimeout(1000);
+    > 434 |   await expect(page.locator('text=Searchable Name Customer').last()).toBeVisible({ timeout: 5000 });
+          |                                                                      ^
+      435 | });
+      436 |
+      437 | test('T31: Customer search collapses after navigating away', async ({ page }) => {
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:434:70
+
+    Error Context: test-results\jaxtr-T30-Customer-search-finds-RO-by-name-chromium\error-context.md
+
+  14) [chromium] › tests\jaxtr.spec.ts:457:1 › T33: Assign tech — tech modal opens and tech name appears on card 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.grid button').first()[22m
+    [2m    - locator resolved to <button class="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    49 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      463 |   // Click first tech in the modal grid
+      464 |   const techBtn = page.locator('.grid button').first();
+    > 465 |   await techBtn.click();
+          |                 ^
+      466 |   await page.waitForTimeout(1000);
+      467 |   await expect(page.locator('text=TECH:').first()).toBeVisible({ timeout: 8000 });
+      468 | });
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:465:17
+
+    Error Context: test-results\jaxtr-T33-Assign-tech-—-te-9f981-d-tech-name-appears-on-card-chromium\error-context.md
+
+  15) [chromium] › tests\jaxtr.spec.ts:470:1 › T34: Hold job moves to On Hold column ───────────────
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('text=Hold Test Customer').first()[22m
+
+
+      473 |   // Expand the card
+      474 |   const card = page.locator('text=Hold Test Customer').first();
+    > 475 |   await card.click();
+          |              ^
+      476 |   await page.waitForTimeout(500);
+      477 |   // Click HOLD in expanded view
+      478 |   const holdBtn = page.locator('button:has-text("HOLD")').first();
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:475:14
+
+    Error Context: test-results\jaxtr-T34-Hold-job-moves-to-On-Hold-column-chromium\error-context.md
+
+  16) [chromium] › tests\jaxtr.spec.ts:486:1 › T35: Card expands to show directives on click ───────
+
+    TimeoutError: page.waitForSelector: Timeout 8000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('text=Expand Card Customer') to be visible[22m
+
+
+      501 |   await page.locator('label:has-text("I Certify Verbal Authorization")').click();
+      502 |   await page.click('text=Authorize & Stage Job');
+    > 503 |   await page.waitForSelector('text=Expand Card Customer', { timeout: 8000 });
+          |              ^
+      504 |   // Click card to expand
+      505 |   await page.locator('text=Expand Card Customer').first().click();
+      506 |   await page.waitForTimeout(500);
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:503:14
+
+    Error Context: test-results\jaxtr-T35-Card-expands-to-show-directives-on-click-chromium\error-context.md
+
+  17) [chromium] › tests\jaxtr.spec.ts:510:1 › T36: Expanded card shows Engine section ─────────────
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('text=Engine Detail Customer').first()[22m
+
+
+      511 |   await loginSM(page);
+      512 |   await createBasicRO(page, 'Engine Detail Customer');
+    > 513 |   await page.locator('text=Engine Detail Customer').first().click();
+          |                                                             ^
+      514 |   await page.waitForTimeout(500);
+      515 |   // Engine section header
+      516 |   await expect(page.locator('text=Engine').first()).toBeVisible({ timeout: 5000 });
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:513:61
+
+    Error Context: test-results\jaxtr-T36-Expanded-card-shows-Engine-section-chromium\error-context.md
+
+  18) [chromium] › tests\jaxtr.spec.ts:519:1 › T37: Parts pending badge appears when parts missing ─
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('text=Parts Badge Customer').first()[22m
+
+
+      521 |   // Create RO with a part via custom add on card
+      522 |   await createBasicRO(page, 'Parts Badge Customer');
+    > 523 |   await page.locator('text=Parts Badge Customer').first().click();
+          |                                                           ^
+      524 |   await page.waitForTimeout(500);
+      525 |   // Add a custom part via the card's part search
+      526 |   const partInput = page.locator('input[placeholder*="Search or add part"]').first();
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:523:59
+
+    Error Context: test-results\jaxtr-T37-Parts-pending-badge-appears-when-parts-missing-chromium\error-context.md
+
+  19) [chromium] › tests\jaxtr.spec.ts:535:1 › T38: RO card does not vanish after status change ────
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.grid button').first()[22m
+    [2m    - locator resolved to <button class="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    50 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      539 |   await assignBtn.click();
+      540 |   await page.waitForSelector('text=Assign Technician', { timeout: 8000 });
+    > 541 |   await page.locator('.grid button').first().click();
+          |                                              ^
+      542 |   await page.waitForTimeout(1000);
+      543 |   // Card should still be visible, now in Deployment Deck
+      544 |   await expect(page.locator('text=No Vanish Customer')).toBeVisible({ timeout: 8000 });
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:541:46
+
+    Error Context: test-results\jaxtr-T38-RO-card-does-not-vanish-after-status-change-chromium\error-context.md
+
+  20) [chromium] › tests\jaxtr.spec.ts:547:1 › T39: Multiple ROs coexist without data bleed ────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=First Coexist Customer')
+    Expected: visible
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 8000ms[22m
+    [2m  - waiting for locator('text=First Coexist Customer')[22m
+
+
+      549 |   await createBasicRO(page, 'First Coexist Customer');
+      550 |   await createBasicRO(page, 'Second Coexist Customer');
+    > 551 |   await expect(page.locator('text=First Coexist Customer')).toBeVisible({ timeout: 8000 });
+          |                                                             ^
+      552 |   await expect(page.locator('text=Second Coexist Customer')).toBeVisible({ timeout: 8000 });
+      553 | });
+      554 |
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:551:61
+
+    Error Context: test-results\jaxtr-T39-Multiple-ROs-coexist-without-data-bleed-chromium\error-context.md
+
+  21) [chromium] › tests\jaxtr.spec.ts:555:1 › T40: Billing column visible on SM board ─────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=BILLING')
+    Expected: visible
+    Error: strict mode violation: locator('text=BILLING') resolved to 2 elements:
+        1) <h2 class="text-lg font-bold mb-4 uppercase tracking-tighter transition-all cursor-pointer neon-steel">…</h2> aka getByRole('heading', { name: 'BILLING Ready to Close' })
+        2) <p class="text-slate-600 italic text-sm text-center py-4 font-medium">Billing queue clear.</p> aka getByText('Billing queue clear.')
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 8000ms[22m
+    [2m  - waiting for locator('text=BILLING')[22m
+
+
+      555 | test('T40: Billing column visible on SM board', async ({ page }) => {
+      556 |   await loginSM(page);
+    > 557 |   await expect(page.locator('text=BILLING')).toBeVisible({ timeout: 8000 });
+          |                                              ^
+      558 | });
+      559 |
+      560 | test('T41: SM can add manual part to RO via expanded card', async ({ page }) => {
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:557:46
+
+    Error Context: test-results\jaxtr-T40-Billing-column-visible-on-SM-board-chromium\error-context.md
+
+  22) [chromium] › tests\jaxtr.spec.ts:560:1 › T41: SM can add manual part to RO via expanded card ─
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('text=Manual Part SM Customer').first()[22m
+
+
+      561 |   await loginSM(page);
+      562 |   await createBasicRO(page, 'Manual Part SM Customer');
+    > 563 |   await page.locator('text=Manual Part SM Customer').first().click();
+          |                                                              ^
+      564 |   await page.waitForTimeout(500);
+      565 |   const partInput = page.locator('input[placeholder*="Search or add part"]').first();
+      566 |   if (await partInput.count() > 0) {
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:563:62
+
+    Error Context: test-results\jaxtr-T41-SM-can-add-manual-part-to-RO-via-expanded-card-chromium\error-context.md
+
+  23) [chromium] › tests\jaxtr.spec.ts:588:1 › T43: Resume job from hold returns to board ──────────
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('text=Resume From Hold Customer').first()[22m
+
+
+      590 |   await createBasicRO(page, 'Resume From Hold Customer');
+      591 |   // Expand and hold
+    > 592 |   await page.locator('text=Resume From Hold Customer').first().click();
+          |                                                                ^
+      593 |   await page.waitForTimeout(500);
+      594 |   const holdBtn = page.locator('button:has-text("HOLD")').first();
+      595 |   if (await holdBtn.count() > 0) {
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:592:64
+
+    Error Context: test-results\jaxtr-T43-Resume-job-from-hold-returns-to-board-chromium\error-context.md
+
+  24) [chromium] › tests\jaxtr.spec.ts:608:1 › T44: Unassign tech from RO via hold column ──────────
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.grid button').first()[22m
+    [2m    - locator resolved to <button class="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    49 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      612 |   await page.locator('button:has-text("ASSIGN TECH")').first().click();
+      613 |   await page.waitForSelector('text=Assign Technician', { timeout: 8000 });
+    > 614 |   await page.locator('.grid button').first().click();
+          |                                              ^
+      615 |   await page.waitForTimeout(1000);
+      616 |   // Expand card and hold
+      617 |   await page.locator('text=Unassign Tech Customer').first().click();
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:614:46
+
+    Error Context: test-results\jaxtr-T44-Unassign-tech-from-RO-via-hold-column-chromium\error-context.md
+
+  25) [chromium] › tests\jaxtr.spec.ts:643:1 › T46: Tech sees assigned jobs in queue (Your Queue) ──
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.grid button').first()[22m
+    [2m    - locator resolved to <button class="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    50 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      647 |   await page.locator('button:has-text("ASSIGN TECH")').first().click();
+      648 |   await page.waitForSelector('text=Assign Technician', { timeout: 8000 });
+    > 649 |   await page.locator('.grid button').first().click();
+          |                                              ^
+      650 |   await page.waitForTimeout(1000);
+      651 |
+      652 |   // Switch to tech view
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:649:46
+
+    Error Context: test-results\jaxtr-T46-Tech-sees-assigned-jobs-in-queue-Your-Queue--chromium\error-context.md
+
+  26) [chromium] › tests\jaxtr.spec.ts:667:1 › T47: Tech can start job from queue — Active Bay Deck appears 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.grid button').first()[22m
+    [2m    - locator resolved to <button class="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    50 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      670 |   await page.locator('button:has-text("ASSIGN TECH")').first().click();
+      671 |   await page.waitForSelector('text=Assign Technician', { timeout: 8000 });
+    > 672 |   await page.locator('.grid button').first().click();
+          |                                              ^
+      673 |   await page.waitForTimeout(1000);
+      674 |
+      675 |   // Go to tech view
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:672:46
+
+    Error Context: test-results\jaxtr-T47-Tech-can-start-j-759be-e-—-Active-Bay-Deck-appears-chromium\error-context.md
+
+  27) [chromium] › tests\jaxtr.spec.ts:696:1 › T48: Active Bay Deck shows correct customer name ────
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.grid button').first()[22m
+    [2m    - locator resolved to <button class="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    49 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+    [2m    - waiting for element to be visible, enabled and stable[22m
+
+
+      699 |   await page.locator('button:has-text("ASSIGN TECH")').first().click();
+      700 |   await page.waitForSelector('text=Assign Technician', { timeout: 8000 });
+    > 701 |   await page.locator('.grid button').first().click();
+          |                                              ^
+      702 |   await page.waitForTimeout(1000);
+      703 |
+      704 |   await page.locator('button[title="TECHNICIAN"]').click();
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:701:46
+
+    Error Context: test-results\jaxtr-T48-Active-Bay-Deck-shows-correct-customer-name-chromium\error-context.md
+
+  28) [chromium] › tests\jaxtr.spec.ts:723:1 › T49: Directives locked until job clock started ──────
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.grid button').first()[22m
+    [2m    - locator resolved to <button class="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    47 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      741 |   await page.locator('button:has-text("ASSIGN TECH")').first().click();
+      742 |   await page.waitForSelector('text=Assign Technician', { timeout: 8000 });
+    > 743 |   await page.locator('.grid button').first().click();
+          |                                              ^
+      744 |   await page.waitForTimeout(1000);
+      745 |
+      746 |   await page.locator('button[title="TECHNICIAN"]').click();
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:743:46
+
+    Error Context: test-results\jaxtr-T49-Directives-locked-until-job-clock-started-chromium\error-context.md
+
+  29) [chromium] › tests\jaxtr.spec.ts:764:1 › T50: Tech completes directive — marked complete ─────
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.grid button').first()[22m
+    [2m    - locator resolved to <button class="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    49 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      781 |   await page.locator('button:has-text("ASSIGN TECH")').first().click();
+      782 |   await page.waitForSelector('text=Assign Technician', { timeout: 8000 });
+    > 783 |   await page.locator('.grid button').first().click();
+          |                                              ^
+      784 |   await page.waitForTimeout(1000);
+      785 |
+      786 |   await page.locator('button[title="TECHNICIAN"]').click();
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:783:46
+
+    Error Context: test-results\jaxtr-T50-Tech-completes-directive-—-marked-complete-chromium\error-context.md
+
+  30) [chromium] › tests\jaxtr.spec.ts:812:1 › T51: Tech can add discovery directive request ───────
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.grid button').first()[22m
+    [2m    - locator resolved to <button class="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    48 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      815 |   await page.locator('button:has-text("ASSIGN TECH")').first().click();
+      816 |   await page.waitForSelector('text=Assign Technician', { timeout: 8000 });
+    > 817 |   await page.locator('.grid button').first().click();
+          |                                              ^
+      818 |   await page.waitForTimeout(1000);
+      819 |
+      820 |   await page.locator('button[title="TECHNICIAN"]').click();
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:817:46
+
+    Error Context: test-results\jaxtr-T51-Tech-can-add-discovery-directive-request-chromium\error-context.md
+
+  31) [chromium] › tests\jaxtr.spec.ts:848:1 › T52: Tech halt job button visible when job is ACTIVE 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.grid button').first()[22m
+    [2m    - locator resolved to <button class="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    48 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      851 |   await page.locator('button:has-text("ASSIGN TECH")').first().click();
+      852 |   await page.waitForSelector('text=Assign Technician', { timeout: 8000 });
+    > 853 |   await page.locator('.grid button').first().click();
+          |                                              ^
+      854 |   await page.waitForTimeout(1000);
+      855 |
+      856 |   await page.locator('button[title="TECHNICIAN"]').click();
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:853:46
+
+    Error Context: test-results\jaxtr-T52-Tech-halt-job-button-visible-when-job-is-ACTIVE-chromium\error-context.md
+
+  32) [chromium] › tests\jaxtr.spec.ts:878:1 › T53: 4 Cs conclusion section visible on technician active job 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.grid button').first()[22m
+    [2m    - locator resolved to <button class="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    48 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      881 |   await page.locator('button:has-text("ASSIGN TECH")').first().click();
+      882 |   await page.waitForSelector('text=Assign Technician', { timeout: 8000 });
+    > 883 |   await page.locator('.grid button').first().click();
+          |                                              ^
+      884 |   await page.waitForTimeout(1000);
+      885 |
+      886 |   await page.locator('button[title="TECHNICIAN"]').click();
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:883:46
+
+    Error Context: test-results\jaxtr-T53-4-Cs-conclusion--29202-le-on-technician-active-job-chromium\error-context.md
+
+  33) [chromium] › tests\jaxtr.spec.ts:903:1 › T54: Send for Billing disabled until conclusion notes filled 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.grid button').first()[22m
+    [2m    - locator resolved to <button class="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    50 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      906 |   await page.locator('button:has-text("ASSIGN TECH")').first().click();
+      907 |   await page.waitForSelector('text=Assign Technician', { timeout: 8000 });
+    > 908 |   await page.locator('.grid button').first().click();
+          |                                              ^
+      909 |   await page.waitForTimeout(1000);
+      910 |
+      911 |   await page.locator('button[title="TECHNICIAN"]').click();
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:908:46
+
+    Error Context: test-results\jaxtr-T54-Send-for-Billing-672b6-til-conclusion-notes-filled-chromium\error-context.md
+
+  34) [chromium] › tests\jaxtr.spec.ts:935:1 › T55: Send for Billing enabled after filling 4 Cs notes 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.grid button').first()[22m
+    [2m    - locator resolved to <button class="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    50 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      938 |   await page.locator('button:has-text("ASSIGN TECH")').first().click();
+      939 |   await page.waitForSelector('text=Assign Technician', { timeout: 8000 });
+    > 940 |   await page.locator('.grid button').first().click();
+          |                                              ^
+      941 |   await page.waitForTimeout(1000);
+      942 |
+      943 |   await page.locator('button[title="TECHNICIAN"]').click();
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:940:46
+
+    Error Context: test-results\jaxtr-T55-Send-for-Billing-enabled-after-filling-4-Cs-notes-chromium\error-context.md
+
+  35) [chromium] › tests\jaxtr.spec.ts:971:1 › T56: Active Bay Deck shows correct engine serial ────
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.grid button').first()[22m
+    [2m    - locator resolved to <button class="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    49 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      974 |   await page.locator('button:has-text("ASSIGN TECH")').first().click();
+      975 |   await page.waitForSelector('text=Assign Technician', { timeout: 8000 });
+    > 976 |   await page.locator('.grid button').first().click();
+          |                                              ^
+      977 |   await page.waitForTimeout(1000);
+      978 |
+      979 |   await page.locator('button[title="TECHNICIAN"]').click();
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:976:46
+
+    Error Context: test-results\jaxtr-T56-Active-Bay-Deck-shows-correct-engine-serial-chromium\error-context.md
+
+  36) [chromium] › tests\jaxtr.spec.ts:998:1 › T57: Tech sends for billing — RO moves out of tech view 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.grid button').first()[22m
+    [2m    - locator resolved to <button class="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    49 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      1001 |   await page.locator('button:has-text("ASSIGN TECH")').first().click();
+      1002 |   await page.waitForSelector('text=Assign Technician', { timeout: 8000 });
+    > 1003 |   await page.locator('.grid button').first().click();
+           |                                              ^
+      1004 |   await page.waitForTimeout(1000);
+      1005 |
+      1006 |   await page.locator('button[title="TECHNICIAN"]').click();
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1003:46
+
+    Error Context: test-results\jaxtr-T57-Tech-sends-for-billing-—-RO-moves-out-of-tech-view-chromium\error-context.md
+
+  37) [chromium] › tests\jaxtr.spec.ts:1038:1 › T58: Multiple directives — completing one does not complete both 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.grid button').first()[22m
+    [2m    - locator resolved to <button class="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    48 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      1058 |   await page.locator('button:has-text("ASSIGN TECH")').first().click();
+      1059 |   await page.waitForSelector('text=Assign Technician', { timeout: 8000 });
+    > 1060 |   await page.locator('.grid button').first().click();
+           |                                              ^
+      1061 |   await page.waitForTimeout(1000);
+      1062 |
+      1063 |   await page.locator('button[title="TECHNICIAN"]').click();
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1060:46
+
+    Error Context: test-results\jaxtr-T58-Multiple-directi-568ef--one-does-not-complete-both-chromium\error-context.md
+
+  38) [chromium] › tests\jaxtr.spec.ts:1093:1 › T59: Tech queue shows queued job in read-only expand 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.grid button').first()[22m
+    [2m    - locator resolved to <button class="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    49 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      1096 |   await page.locator('button:has-text("ASSIGN TECH")').first().click();
+      1097 |   await page.waitForSelector('text=Assign Technician', { timeout: 8000 });
+    > 1098 |   await page.locator('.grid button').first().click();
+           |                                              ^
+      1099 |   await page.waitForTimeout(1000);
+      1100 |
+      1101 |   await page.locator('button[title="TECHNICIAN"]').click();
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1098:46
+
+    Error Context: test-results\jaxtr-T59-Tech-queue-shows-queued-job-in-read-only-expand-chromium\error-context.md
+
+  39) [chromium] › tests\jaxtr.spec.ts:1116:1 › T60: Tech exit from job returns to queue not lost ──
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.grid button').first()[22m
+    [2m    - locator resolved to <button class="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    48 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      1119 |   await page.locator('button:has-text("ASSIGN TECH")').first().click();
+      1120 |   await page.waitForSelector('text=Assign Technician', { timeout: 8000 });
+    > 1121 |   await page.locator('.grid button').first().click();
+           |                                              ^
+      1122 |   await page.waitForTimeout(1000);
+      1123 |
+      1124 |   await page.locator('button[title="TECHNICIAN"]').click();
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1121:46
+
+    Error Context: test-results\jaxtr-T60-Tech-exit-from-job-returns-to-queue-not-lost-chromium\error-context.md
+
+  40) [chromium] › tests\jaxtr.spec.ts:1159:1 › T61: Bay Manifest parts section visible on active job 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.grid button').first()[22m
+    [2m    - locator resolved to <button class="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    49 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      1162 |   await page.locator('button:has-text("ASSIGN TECH")').first().click();
+      1163 |   await page.waitForSelector('text=Assign Technician', { timeout: 8000 });
+    > 1164 |   await page.locator('.grid button').first().click();
+           |                                              ^
+      1165 |   await page.waitForTimeout(1000);
+      1166 |
+      1167 |   await page.locator('button[title="TECHNICIAN"]').click();
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1164:46
+
+    Error Context: test-results\jaxtr-T61-Bay-Manifest-parts-section-visible-on-active-job-chromium\error-context.md
+
+  41) [chromium] › tests\jaxtr.spec.ts:1184:1 › T62: Service Directives section visible on active job 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.grid button').first()[22m
+    [2m    - locator resolved to <button class="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    50 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      1187 |   await page.locator('button:has-text("ASSIGN TECH")').first().click();
+      1188 |   await page.waitForSelector('text=Assign Technician', { timeout: 8000 });
+    > 1189 |   await page.locator('.grid button').first().click();
+           |                                              ^
+      1190 |   await page.waitForTimeout(1000);
+      1191 |
+      1192 |   await page.locator('button[title="TECHNICIAN"]').click();
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1189:46
+
+    Error Context: test-results\jaxtr-T62-Service-Directives-section-visible-on-active-job-chromium\error-context.md
+
+  42) [chromium] › tests\jaxtr.spec.ts:1209:1 › T63: Active labor clock shows when job is ACTIVE ───
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.grid button').first()[22m
+    [2m    - locator resolved to <button class="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    50 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      1212 |   await page.locator('button:has-text("ASSIGN TECH")').first().click();
+      1213 |   await page.waitForSelector('text=Assign Technician', { timeout: 8000 });
+    > 1214 |   await page.locator('.grid button').first().click();
+           |                                              ^
+      1215 |   await page.waitForTimeout(1000);
+      1216 |
+      1217 |   await page.locator('button[title="TECHNICIAN"]').click();
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1214:46
+
+    Error Context: test-results\jaxtr-T63-Active-labor-clock-shows-when-job-is-ACTIVE-chromium\error-context.md
+
+  43) [chromium] › tests\jaxtr.spec.ts:1240:1 › T64: Only one active job at a time — second job stays in queue 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.grid button').first()[22m
+    [2m    - locator resolved to <button class="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    46 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      1248 |     await assignBtns.first().click();
+      1249 |     await page.waitForSelector('text=Assign Technician', { timeout: 8000 });
+    > 1250 |     await page.locator('.grid button').first().click();
+           |                                                ^
+      1251 |     await page.waitForTimeout(1000);
+      1252 |   }
+      1253 |   if (await assignBtns.count() >= 1) {
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1250:48
+
+    Error Context: test-results\jaxtr-T64-Only-one-active--fa0de-—-second-job-stays-in-queue-chromium\error-context.md
+
+  44) [chromium] › tests\jaxtr.spec.ts:1272:1 › T65: Change Tech button visible on active job header 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.grid button').first()[22m
+    [2m    - locator resolved to <button class="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    50 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      1276 |   await page.locator('button:has-text("ASSIGN TECH")').first().click();
+      1277 |   await page.waitForSelector('text=Assign Technician', { timeout: 8000 });
+    > 1278 |   await page.locator('.grid button').first().click();
+           |                                              ^
+      1279 |   await page.waitForTimeout(1000);
+      1280 |
+      1281 |   await page.locator('button[title="TECHNICIAN"]').click();
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1278:46
+
+    Error Context: test-results\jaxtr-T65-Change-Tech-button-visible-on-active-job-header-chromium\error-context.md
+
+  45) [chromium] › tests\jaxtr.spec.ts:1306:1 › T67: Parts page shows Awaiting Parts queue section ─
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=Fulfillment Queue, text=Awaiting Parts, text=Parts Queue').first()
+    Expected: visible
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 8000ms[22m
+    [2m  - waiting for locator('text=Fulfillment Queue, text=Awaiting Parts, text=Parts Queue').first()[22m
+
+
+      1310 |   // Various queue headings
+      1311 |   const fulfillment = page.locator('text=Fulfillment Queue, text=Awaiting Parts, text=Parts Queue');
+    > 1312 |   await expect(fulfillment.first()).toBeVisible({ timeout: 8000 });
+           |                                     ^
+      1313 | });
+      1314 |
+      1315 | test('T68: Bulk import inventory button visible on Parts page', async ({ page }) => {
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1312:37
+
+    Error Context: test-results\jaxtr-T67-Parts-page-shows-Awaiting-Parts-queue-section-chromium\error-context.md
+
+  46) [chromium] › tests\jaxtr.spec.ts:1327:1 › T70: Special orders queue section visible ──────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=Special Order, text=Special Orders').first()
+    Expected: visible
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 8000ms[22m
+    [2m  - waiting for locator('text=Special Order, text=Special Orders').first()[22m
+
+
+      1328 |   await loginParts(page);
+      1329 |   const specialOrders = page.locator('text=Special Order, text=Special Orders');
+    > 1330 |   await expect(specialOrders.first()).toBeVisible({ timeout: 8000 });
+           |                                       ^
+      1331 | });
+      1332 |
+      1333 | test('T71: Returns queue visible on Parts page', async ({ page }) => {
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1330:39
+
+    Error Context: test-results\jaxtr-T70-Special-orders-queue-section-visible-chromium\error-context.md
+
+  47) [chromium] › tests\jaxtr.spec.ts:1333:1 › T71: Returns queue visible on Parts page ───────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=Return, text=Returns').first()
+    Expected: visible
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 8000ms[22m
+    [2m  - waiting for locator('text=Return, text=Returns').first()[22m
+
+
+      1334 |   await loginParts(page);
+      1335 |   const returns = page.locator('text=Return, text=Returns');
+    > 1336 |   await expect(returns.first()).toBeVisible({ timeout: 8000 });
+           |                                 ^
+      1337 | });
+      1338 |
+      1339 | test('T72: Parts page renders without crashing for fresh login', async ({ page }) => {
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1336:33
+
+    Error Context: test-results\jaxtr-T71-Returns-queue-visible-on-Parts-page-chromium\error-context.md
+
+  48) [chromium] › tests\jaxtr.spec.ts:1373:1 › T79: Inventory page renders with search ────────────
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('button[title="INVENTORY_MANAGER"]')[22m
+
+
+      1375 |   // Navigate to Inventory via toolbar
+      1376 |   const invBtn = page.locator('button[title="INVENTORY_MANAGER"]');
+    > 1377 |   await invBtn.click();
+           |                ^
+      1378 |   await page.waitForTimeout(1000);
+      1379 |   // Inventory page or some table/search
+      1380 |   const invPage = page.locator('text=Inventory, text=inventory, text=Master Inventory');
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1377:16
+
+    Error Context: test-results\jaxtr-T79-Inventory-page-renders-with-search-chromium\error-context.md
+
+  49) [chromium] › tests\jaxtr.spec.ts:1399:1 › T82: Collections section visible on billing page ───
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=Collections, text=Oracle').first()
+    Expected: visible
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 8000ms[22m
+    [2m  - waiting for locator('text=Collections, text=Oracle').first()[22m
+
+
+      1402 |   await page.waitForTimeout(1000);
+      1403 |   const collections = page.locator('text=Collections, text=Oracle');
+    > 1404 |   await expect(collections.first()).toBeVisible({ timeout: 8000 });
+           |                                     ^
+      1405 | });
+      1406 |
+      1407 | test('T83: Billing page shows invoice sections', async ({ page }) => {
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1404:37
+
+    Error Context: test-results\jaxtr-T82-Collections-section-visible-on-billing-page-chromium\error-context.md
+
+  50) [chromium] › tests\jaxtr.spec.ts:1415:1 › T84: Completed RO appears in SM board BILLING column 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.grid button').first()[22m
+    [2m    - locator resolved to <button class="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    48 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      1418 |   await page.locator('button:has-text("ASSIGN TECH")').first().click();
+      1419 |   await page.waitForSelector('text=Assign Technician', { timeout: 8000 });
+    > 1420 |   await page.locator('.grid button').first().click();
+           |                                              ^
+      1421 |   await page.waitForTimeout(1000);
+      1422 |
+      1423 |   await page.locator('button[title="TECHNICIAN"]').click();
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1420:46
+
+    Error Context: test-results\jaxtr-T84-Completed-RO-appears-in-SM-board-BILLING-column-chromium\error-context.md
+
+  51) [chromium] › tests\jaxtr.spec.ts:1458:1 › T85: Invoice modal opens for PENDING_INVOICE RO in Billing column 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.grid button').first()[22m
+    [2m    - locator resolved to <button class="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    48 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+    [2m    - waiting for element to be visible, enabled and stable[22m
+    [2m    - element is visible, enabled and stable[22m
+    [2m    - scrolling into view if needed[22m
+    [2m    - done scrolling[22m
+
+
+      1461 |   await page.locator('button:has-text("ASSIGN TECH")').first().click();
+      1462 |   await page.waitForSelector('text=Assign Technician', { timeout: 8000 });
+    > 1463 |   await page.locator('.grid button').first().click();
+           |                                              ^
+      1464 |   await page.waitForTimeout(1000);
+      1465 |
+      1466 |   await page.locator('button[title="TECHNICIAN"]').click();
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1463:46
+
+    Error Context: test-results\jaxtr-T85-Invoice-modal-op-bf0f7-NVOICE-RO-in-Billing-column-chromium\error-context.md
+
+  52) [chromium] › tests\jaxtr.spec.ts:1504:1 › T86: Zero dollar invoice allowed to close (verbal auth no parts) 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.grid button').first()[22m
+    [2m    - locator resolved to <button class="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    50 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      1507 |   await page.locator('button:has-text("ASSIGN TECH")').first().click();
+      1508 |   await page.waitForSelector('text=Assign Technician', { timeout: 8000 });
+    > 1509 |   await page.locator('.grid button').first().click();
+           |                                              ^
+      1510 |   await page.waitForTimeout(1000);
+      1511 |
+      1512 |   await page.locator('button[title="TECHNICIAN"]').click();
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1509:46
+
+    Error Context: test-results\jaxtr-T86-Zero-dollar-invo-ebedf-close-verbal-auth-no-parts--chromium\error-context.md
+
+  53) [chromium] › tests\jaxtr.spec.ts:1552:1 › T87: Collections log section visible on billing page 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=Collections, text=Oracle, text=collection').first()
+    Expected: visible
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 8000ms[22m
+    [2m  - waiting for locator('text=Collections, text=Oracle, text=collection').first()[22m
+
+
+      1555 |   await page.waitForTimeout(1000);
+      1556 |   const collectionsSection = page.locator('text=Collections, text=Oracle, text=collection');
+    > 1557 |   await expect(collectionsSection.first()).toBeVisible({ timeout: 8000 });
+           |                                            ^
+      1558 | });
+      1559 |
+      1560 | test('T88: Billing page shows payment status section', async ({ page }) => {
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1557:44
+
+    Error Context: test-results\jaxtr-T87-Collections-log-section-visible-on-billing-page-chromium\error-context.md
+
+  54) [chromium] › tests\jaxtr.spec.ts:1598:1 › T94: Invoice finalize button visible on PENDING_INVOICE card in SM board 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.grid button').first()[22m
+    [2m    - locator resolved to <button class="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    48 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      1601 |   await page.locator('button:has-text("ASSIGN TECH")').first().click();
+      1602 |   await page.waitForSelector('text=Assign Technician', { timeout: 8000 });
+    > 1603 |   await page.locator('.grid button').first().click();
+           |                                              ^
+      1604 |   await page.waitForTimeout(1000);
+      1605 |
+      1606 |   await page.locator('button[title="TECHNICIAN"]').click();
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1603:46
+
+    Error Context: test-results\jaxtr-T94-Invoice-finalize-f85c3-NG-INVOICE-card-in-SM-board-chromium\error-context.md
+
+  55) [chromium] › tests\jaxtr.spec.ts:1638:1 › T95: Billing sweep frequency selector visible ──────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: select, text=Weekly, text=Daily, text=Monthly >> nth=0
+    Expected: visible
+    Error: Unexpected token "=" while parsing css selector "select, text=Weekly, text=Daily, text=Monthly". Did you mean to CSS.escape it?
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 8000ms[22m
+    [2m  - waiting for select, text=Weekly, text=Daily, text=Monthly >> nth=0[22m
+
+
+      1642 |   // Sweep frequency select or settings
+      1643 |   const sweepControl = page.locator('select, text=Weekly, text=Daily, text=Monthly');
+    > 1644 |   await expect(sweepControl.first()).toBeVisible({ timeout: 8000 });
+           |                                      ^
+      1645 | });
+      1646 |
+      1647 | // ─── VESSEL DNA (T96–T105) ────────────────────────────────────────────────────
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1644:38
+
+    Error Context: test-results\jaxtr-T95-Billing-sweep-frequency-selector-visible-chromium\error-context.md
+
+  56) [chromium] › tests\jaxtr.spec.ts:1649:1 › T96: Vessel DNA page renders via toolbar (DATABASE role) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=Vessel DNA, text=DNA, text=Database').first()
+    Expected: visible
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 8000ms[22m
+    [2m  - waiting for locator('text=Vessel DNA, text=DNA, text=Database').first()[22m
+
+
+      1652 |   await dnaBtn.click();
+      1653 |   await page.waitForTimeout(1000);
+    > 1654 |   await expect(page.locator('text=Vessel DNA, text=DNA, text=Database').first()).toBeVisible({ timeout: 8000 });
+           |                                                                                  ^
+      1655 | });
+      1656 |
+      1657 | test('T97: Vessel DNA search field visible', async ({ page }) => {
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1654:82
+
+    Error Context: test-results\jaxtr-T96-Vessel-DNA-page-renders-via-toolbar-DATABASE-role--chromium\error-context.md
+
+  57) [chromium] › tests\jaxtr.spec.ts:1665:1 › T98: DB Inspector button visible on DNA page ───────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=DB Inspector, text=Inspector').first()
+    Expected: visible
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 8000ms[22m
+    [2m  - waiting for locator('text=DB Inspector, text=Inspector').first()[22m
+
+
+      1668 |   await page.waitForTimeout(1000);
+      1669 |   const dbBtn = page.locator('text=DB Inspector, text=Inspector');
+    > 1670 |   await expect(dbBtn.first()).toBeVisible({ timeout: 8000 });
+           |                               ^
+      1671 | });
+      1672 |
+      1673 | test('T99: Vessel DNA page shows vessel record after RO creation', async ({ page }) => {
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1670:31
+
+    Error Context: test-results\jaxtr-T98-DB-Inspector-button-visible-on-DNA-page-chromium\error-context.md
+
+  58) [chromium] › tests\jaxtr.spec.ts:1673:1 › T99: Vessel DNA page shows vessel record after RO creation 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=DNA Record Customer')
+    Expected: visible
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 8000ms[22m
+    [2m  - waiting for locator('text=DNA Record Customer')[22m
+
+
+      1676 |   await page.locator('button[title="Vessel DNA"]').click();
+      1677 |   await page.waitForTimeout(1000);
+    > 1678 |   await expect(page.locator('text=DNA Record Customer')).toBeVisible({ timeout: 8000 });
+           |                                                          ^
+      1679 | });
+      1680 |
+      1681 | test('T100: Vessel DNA search by customer name returns record', async ({ page }) => {
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1678:58
+
+    Error Context: test-results\jaxtr-T99-Vessel-DNA-page--b7916-el-record-after-RO-creation-chromium\error-context.md
+
+  59) [chromium] › tests\jaxtr.spec.ts:1708:1 › T102: Vessel DNA record shows correct customer name 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=Vessel Name Check Customer')
+    Expected: visible
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 8000ms[22m
+    [2m  - waiting for locator('text=Vessel Name Check Customer')[22m
+
+
+      1711 |   await page.locator('button[title="Vessel DNA"]').click();
+      1712 |   await page.waitForTimeout(1000);
+    > 1713 |   await expect(page.locator('text=Vessel Name Check Customer')).toBeVisible({ timeout: 8000 });
+           |                                                                 ^
+      1714 | });
+      1715 |
+      1716 | test('T103: Multiple ROs for same vessel appear in history', async ({ page }) => {
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1713:65
+
+    Error Context: test-results\jaxtr-T102-Vessel-DNA-record-shows-correct-customer-name-chromium\error-context.md
+
+  60) [chromium] › tests\jaxtr.spec.ts:1716:1 › T103: Multiple ROs for same vessel appear in history 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=History Vessel Customer')
+    Expected: visible
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 8000ms[22m
+    [2m  - waiting for locator('text=History Vessel Customer')[22m
+
+
+      1720 |   await page.locator('button[title="Vessel DNA"]').click();
+      1721 |   await page.waitForTimeout(1000);
+    > 1722 |   await expect(page.locator('text=History Vessel Customer')).toBeVisible({ timeout: 8000 });
+           |                                                              ^
+      1723 | });
+      1724 |
+      1725 | test('T104: Vessel DNA page renders without crash for fresh DB', async ({ page }) => {
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1722:62
+
+    Error Context: test-results\jaxtr-T103-Multiple-ROs-for-same-vessel-appear-in-history-chromium\error-context.md
+
+  61) [chromium] › tests\jaxtr.spec.ts:1733:1 › T105: Vessel DNA history persists after reload ─────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=Persist DNA Customer')
+    Expected: visible
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 8000ms[22m
+    [2m  - waiting for locator('text=Persist DNA Customer')[22m
+
+
+      1741 |   await page.locator('button[title="Vessel DNA"]').click();
+      1742 |   await page.waitForTimeout(1000);
+    > 1743 |   await expect(page.locator('text=Persist DNA Customer')).toBeVisible({ timeout: 8000 });
+           |                                                           ^
+      1744 |
+      1745 |   await page.reload();
+      1746 |   await page.waitForTimeout(2000);
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1743:59
+
+    Error Context: test-results\jaxtr-T105-Vessel-DNA-history-persists-after-reload-chromium\error-context.md
+
+  62) [chromium] › tests\jaxtr.spec.ts:1755:1 › T106: RO persists after page reload (IndexedDB) ────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=Persist Customer')
+    Expected: visible
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 8000ms[22m
+    [2m  - waiting for locator('text=Persist Customer')[22m
+
+
+      1770 |   }
+      1771 |
+    > 1772 |   await expect(page.locator('text=Persist Customer')).toBeVisible({ timeout: 8000 });
+           |                                                       ^
+      1773 | });
+      1774 |
+      1775 | test('T107: RO status persists after page reload', async ({ page }) => {
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1772:55
+
+    Error Context: test-results\jaxtr-T106-RO-persists-after-page-reload-IndexedDB--chromium\error-context.md
+
+  63) [chromium] › tests\jaxtr.spec.ts:1775:1 › T107: RO status persists after page reload ─────────
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.grid button').first()[22m
+    [2m    - locator resolved to <button class="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    50 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      1783 |   await page.locator('button:has-text("ASSIGN TECH")').first().click();
+      1784 |   await page.waitForSelector('text=Assign Technician', { timeout: 8000 });
+    > 1785 |   await page.locator('.grid button').first().click();
+           |                                              ^
+      1786 |   await page.waitForTimeout(1000);
+      1787 |
+      1788 |   await page.reload();
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1785:46
+
+    Error Context: test-results\jaxtr-T107-RO-status-persists-after-page-reload-chromium\error-context.md
+
+  64) [chromium] › tests\jaxtr.spec.ts:1799:1 › T108: Multiple ROs persist after reload ────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=Multi Persist One')
+    Expected: visible
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 8000ms[22m
+    [2m  - waiting for locator('text=Multi Persist One')[22m
+
+
+      1814 |   }
+      1815 |
+    > 1816 |   await expect(page.locator('text=Multi Persist One')).toBeVisible({ timeout: 8000 });
+           |                                                        ^
+      1817 |   await expect(page.locator('text=Multi Persist Two')).toBeVisible({ timeout: 8000 });
+      1818 | });
+      1819 |
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1816:56
+
+    Error Context: test-results\jaxtr-T108-Multiple-ROs-persist-after-reload-chromium\error-context.md
+
+  65) [chromium] › tests\jaxtr.spec.ts:1820:1 › T109: Tech assignment persists after reload ────────
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.grid button').first()[22m
+    [2m    - locator resolved to <button class="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    50 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      1827 |   await page.locator('button:has-text("ASSIGN TECH")').first().click();
+      1828 |   await page.waitForSelector('text=Assign Technician', { timeout: 8000 });
+    > 1829 |   await page.locator('.grid button').first().click();
+           |                                              ^
+      1830 |   await page.waitForTimeout(1000);
+      1831 |
+      1832 |   // Confirm TECH: text appeared before reload
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1829:46
+
+    Error Context: test-results\jaxtr-T109-Tech-assignment-persists-after-reload-chromium\error-context.md
+
+  66) [chromium] › tests\jaxtr.spec.ts:1847:1 › T110: Two ROs created in sequence both persist ─────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=Seq Persist Alpha')
+    Expected: visible
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 8000ms[22m
+    [2m  - waiting for locator('text=Seq Persist Alpha')[22m
+
+
+      1862 |   }
+      1863 |
+    > 1864 |   await expect(page.locator('text=Seq Persist Alpha')).toBeVisible({ timeout: 8000 });
+           |                                                        ^
+      1865 |   await expect(page.locator('text=Seq Persist Beta')).toBeVisible({ timeout: 8000 });
+      1866 | });
+      1867 |
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1864:56
+
+    Error Context: test-results\jaxtr-T110-Two-ROs-created-in-sequence-both-persist-chromium\error-context.md
+
+  67) [chromium] › tests\jaxtr.spec.ts:1868:1 › T111: Data survives browser back/forward navigation 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('button[title="SERVICE_MANAGER"]')[22m
+
+
+      1877 |   await page.locator('button[title="Vessel DNA"]').click();
+      1878 |   await page.waitForTimeout(500);
+    > 1879 |   await page.locator('button[title="SERVICE_MANAGER"]').click();
+           |                                                         ^
+      1880 |   await page.waitForTimeout(500);
+      1881 |
+      1882 |   await expect(page.locator('text=Nav Persist Customer')).toBeVisible({ timeout: 8000 });
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1879:57
+
+    Error Context: test-results\jaxtr-T111-Data-survives-browser-back-forward-navigation-chromium\error-context.md
+
+  68) [chromium] › tests\jaxtr.spec.ts:1890:1 › T113: App renders after clearing and re-seeding ────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=Seed Test Customer')
+    Expected: visible
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 8000ms[22m
+    [2m  - waiting for locator('text=Seed Test Customer')[22m
+
+
+      1892 |   await expect(page.locator('text=The Dock')).toBeVisible({ timeout: 10000 });
+      1893 |   await createBasicRO(page, 'Seed Test Customer');
+    > 1894 |   await expect(page.locator('text=Seed Test Customer')).toBeVisible({ timeout: 8000 });
+           |                                                         ^
+      1895 | });
+      1896 |
+      1897 | test('T114: App does not show stale data from previous test (IndexedDB cleared)', async ({ page }) => {
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1894:57
+
+    Error Context: test-results\jaxtr-T113-App-renders-after-clearing-and-re-seeding-chromium\error-context.md
+
+  69) [chromium] › tests\jaxtr.spec.ts:1904:1 › T115: RO created then page navigated still shows on return 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('button[title="SERVICE_MANAGER"]')[22m
+
+
+      1907 |   await page.locator('button[title="BILLING"]').click();
+      1908 |   await page.waitForTimeout(500);
+    > 1909 |   await page.locator('button[title="SERVICE_MANAGER"]').click();
+           |                                                         ^
+      1910 |   await page.waitForTimeout(500);
+      1911 |   await expect(page.locator('text=Navigate Return Customer')).toBeVisible({ timeout: 8000 });
+      1912 | });
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1909:57
+
+    Error Context: test-results\jaxtr-T115-RO-created-then-503b7-gated-still-shows-on-return-chromium\error-context.md
+
+  70) [chromium] › tests\jaxtr.spec.ts:1916:1 › T116: Long customer name renders without overflow ──
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=Alexander Bartholome')
+    Expected: visible
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 8000ms[22m
+    [2m  - waiting for locator('text=Alexander Bartholome')[22m
+
+
+      1918 |   const longName = 'Alexander Bartholomew Washington-Cromwell III';
+      1919 |   await createBasicRO(page, longName);
+    > 1920 |   await expect(page.locator(`text=${longName.substring(0, 20)}`)).toBeVisible({ timeout: 8000 });
+           |                                                                   ^
+      1921 | });
+      1922 |
+      1923 | test('T117: RO with no parts goes straight to READY_FOR_TECH (Staged column)', async ({ page }) => {
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1920:67
+
+    Error Context: test-results\jaxtr-T116-Long-customer-name-renders-without-overflow-chromium\error-context.md
+
+  71) [chromium] › tests\jaxtr.spec.ts:1923:1 › T117: RO with no parts goes straight to READY_FOR_TECH (Staged column) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=No Parts RO Customer')
+    Expected: visible
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 8000ms[22m
+    [2m  - waiting for locator('text=No Parts RO Customer')[22m
+
+
+      1926 |   // No parts means READY_FOR_TECH, appears in STAGED column (no tech assigned)
+      1927 |   await expect(page.locator('text=STAGED').first()).toBeVisible({ timeout: 8000 });
+    > 1928 |   await expect(page.locator('text=No Parts RO Customer')).toBeVisible({ timeout: 8000 });
+           |                                                           ^
+      1929 | });
+      1930 |
+      1931 | test('T118: Rapid RO creation — 3 jobs back to back without errors', async ({ page }) => {
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1928:59
+
+    Error Context: test-results\jaxtr-T117-RO-with-no-part-837da-ADY-FOR-TECH-Staged-column--chromium\error-context.md
+
+  72) [chromium] › tests\jaxtr.spec.ts:1931:1 › T118: Rapid RO creation — 3 jobs back to back without errors 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=Rapid One')
+    Expected: visible
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 8000ms[22m
+    [2m  - waiting for locator('text=Rapid One')[22m
+
+
+      1934 |   await createBasicRO(page, 'Rapid Two');
+      1935 |   await createBasicRO(page, 'Rapid Three');
+    > 1936 |   await expect(page.locator('text=Rapid One')).toBeVisible({ timeout: 8000 });
+           |                                                ^
+      1937 |   await expect(page.locator('text=Rapid Two')).toBeVisible({ timeout: 8000 });
+      1938 |   await expect(page.locator('text=Rapid Three')).toBeVisible({ timeout: 8000 });
+      1939 |   const errors = page.locator('text=Uncaught, text=Something went wrong');
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1936:48
+
+    Error Context: test-results\jaxtr-T118-Rapid-RO-creati-3e1f5-back-to-back-without-errors-chromium\error-context.md
+
+  73) [chromium] › tests\jaxtr.spec.ts:1943:1 › T119: Tech exit — halted job returns to My Halted Jobs not lost 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.grid button').first()[22m
+    [2m    - locator resolved to <button class="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    48 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+    [2m    - waiting for element to be visible, enabled and stable[22m
+
+
+      1946 |   await page.locator('button:has-text("ASSIGN TECH")').first().click();
+      1947 |   await page.waitForSelector('text=Assign Technician', { timeout: 8000 });
+    > 1948 |   await page.locator('.grid button').first().click();
+           |                                              ^
+      1949 |   await page.waitForTimeout(1000);
+      1950 |
+      1951 |   await page.locator('button[title="TECHNICIAN"]').click();
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1948:46
+
+    Error Context: test-results\jaxtr-T119-Tech-exit-—-hal-d454e--to-My-Halted-Jobs-not-lost-chromium\error-context.md
+
+  74) [chromium] › tests\jaxtr.spec.ts:1983:1 › T120: Board integrity — 5 ROs in different states coexist 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=Board State One')
+    Expected: visible
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 8000ms[22m
+    [2m  - waiting for locator('text=Board State One')[22m
+
+
+      1990 |   await createBasicRO(page, 'Board State Five');
+      1991 |
+    > 1992 |   await expect(page.locator('text=Board State One')).toBeVisible({ timeout: 8000 });
+           |                                                      ^
+      1993 |   await expect(page.locator('text=Board State Five')).toBeVisible({ timeout: 8000 });
+      1994 |
+      1995 |   // All 5 columns still visible
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:1992:54
+
+    Error Context: test-results\jaxtr-T120-Board-integrity-6e2d7-in-different-states-coexist-chromium\error-context.md
+
+  75) [chromium] › tests\jaxtr.spec.ts:2002:1 › T121: Parts backorder job stays invoiceable — deferral path available 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('text=Backorder Customer').first()[22m
+
+
+      2004 |   await createBasicRO(page, 'Backorder Customer');
+      2005 |   // Expand card and put on hold (simulates stuck state)
+    > 2006 |   await page.locator('text=Backorder Customer').first().click();
+           |                                                         ^
+      2007 |   await page.waitForTimeout(500);
+      2008 |   const holdBtn = page.locator('button:has-text("HOLD")').first();
+      2009 |   if (await holdBtn.count() > 0) {
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:2006:57
+
+    Error Context: test-results\jaxtr-T121-Parts-backorder-e1b17-e-—-deferral-path-available-chromium\error-context.md
+
+  76) [chromium] › tests\jaxtr.spec.ts:2020:1 › T122: SM discovery approve and reject both work ────
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.grid button').first()[22m
+    [2m    - locator resolved to <button class="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    50 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      2023 |   await page.locator('button:has-text("ASSIGN TECH")').first().click();
+      2024 |   await page.waitForSelector('text=Assign Technician', { timeout: 8000 });
+    > 2025 |   await page.locator('.grid button').first().click();
+           |                                              ^
+      2026 |   await page.waitForTimeout(1000);
+      2027 |
+      2028 |   await page.locator('button[title="TECHNICIAN"]').click();
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:2025:46
+
+    Error Context: test-results\jaxtr-T122-SM-discovery-approve-and-reject-both-work-chromium\error-context.md
+
+  77) [chromium] › tests\jaxtr.spec.ts:2072:1 › T123: Declined repair deferral path available ──────
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('text=Declined Repair Customer').first()[22m
+
+
+      2073 |   await loginSM(page);
+      2074 |   await createBasicRO(page, 'Declined Repair Customer');
+    > 2075 |   await page.locator('text=Declined Repair Customer').first().click();
+           |                                                               ^
+      2076 |   await page.waitForTimeout(500);
+      2077 |   const holdBtn = page.locator('button:has-text("HOLD")').first();
+      2078 |   if (await holdBtn.count() > 0) {
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:2075:63
+
+    Error Context: test-results\jaxtr-T123-Declined-repair-deferral-path-available-chromium\error-context.md
+
+  78) [chromium] › tests\jaxtr.spec.ts:2092:1 › T124: Job with two directives completing all enables billing 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.grid button').first()[22m
+    [2m    - locator resolved to <button class="flex-1 px-4 py-2 rounded-lg bg-neon-seafoam text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">ASSIGN TECH</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    48 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-in fade-in duration-300 p-4">…</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+    [2m    - waiting for element to be visible, enabled and stable[22m
+
+
+      2112 |   await page.locator('button:has-text("ASSIGN TECH")').first().click();
+      2113 |   await page.waitForSelector('text=Assign Technician', { timeout: 8000 });
+    > 2114 |   await page.locator('.grid button').first().click();
+           |                                              ^
+      2115 |   await page.waitForTimeout(1000);
+      2116 |
+      2117 |   await page.locator('button[title="TECHNICIAN"]').click();
+        at C:\Users\seans\OneDrive\Desktop\JITB 312 835PM LAST ONE\JITB_MASTER\tests\jaxtr.spec.ts:2114:46
+
+    Error Context: test-results\jaxtr-T124-Job-with-two-di-2b168-pleting-all-enables-billing-chromium\error-context.md
+
+  78 failed
+    [chromium] › tests\jaxtr.spec.ts:169:1 › T10: Admin route shows ACCESS DENIED for non-admin (SM persona) 
+    [chromium] › tests\jaxtr.spec.ts:180:1 › T11: New customer RO creation end to end ──────────────
+    [chromium] › tests\jaxtr.spec.ts:202:1 › T12: Returning customer found by name search ──────────
+    [chromium] › tests\jaxtr.spec.ts:216:1 › T13: Customer found by engine serial search ───────────
+    [chromium] › tests\jaxtr.spec.ts:250:1 › T15: RO creation with manual directive added ──────────
+    [chromium] › tests\jaxtr.spec.ts:311:1 › T18: RO appears on SM board immediately after creation 
+    [chromium] › tests\jaxtr.spec.ts:317:1 › T19: RO shows correct customer name on card ───────────
+    [chromium] › tests\jaxtr.spec.ts:323:1 › T20: RO shows correct status badge on card ────────────
+    [chromium] › tests\jaxtr.spec.ts:353:1 › T22: Two ROs for same customer both appear on board ───
+    [chromium] › tests\jaxtr.spec.ts:369:1 › T24: RO with no parts goes to READY_FOR_TECH (shown in Staged column) 
+    [chromium] › tests\jaxtr.spec.ts:391:1 › T26: All 5 board columns render on SM page ────────────
+    [chromium] › tests\jaxtr.spec.ts:409:1 › T28: Age tinting class is applied based on timestamp ──
+    [chromium] › tests\jaxtr.spec.ts:426:1 › T30: Customer search finds RO by name ─────────────────
+    [chromium] › tests\jaxtr.spec.ts:457:1 › T33: Assign tech — tech modal opens and tech name appears on card 
+    [chromium] › tests\jaxtr.spec.ts:470:1 › T34: Hold job moves to On Hold column ─────────────────
+    [chromium] › tests\jaxtr.spec.ts:486:1 › T35: Card expands to show directives on click ─────────
+    [chromium] › tests\jaxtr.spec.ts:510:1 › T36: Expanded card shows Engine section ───────────────
+    [chromium] › tests\jaxtr.spec.ts:519:1 › T37: Parts pending badge appears when parts missing ───
+    [chromium] › tests\jaxtr.spec.ts:535:1 › T38: RO card does not vanish after status change ──────
+    [chromium] › tests\jaxtr.spec.ts:547:1 › T39: Multiple ROs coexist without data bleed ──────────
+    [chromium] › tests\jaxtr.spec.ts:555:1 › T40: Billing column visible on SM board ───────────────
+    [chromium] › tests\jaxtr.spec.ts:560:1 › T41: SM can add manual part to RO via expanded card ───
+    [chromium] › tests\jaxtr.spec.ts:588:1 › T43: Resume job from hold returns to board ────────────
+    [chromium] › tests\jaxtr.spec.ts:608:1 › T44: Unassign tech from RO via hold column ────────────
+    [chromium] › tests\jaxtr.spec.ts:643:1 › T46: Tech sees assigned jobs in queue (Your Queue) ────
+    [chromium] › tests\jaxtr.spec.ts:667:1 › T47: Tech can start job from queue — Active Bay Deck appears 
+    [chromium] › tests\jaxtr.spec.ts:696:1 › T48: Active Bay Deck shows correct customer name ──────
+    [chromium] › tests\jaxtr.spec.ts:723:1 › T49: Directives locked until job clock started ────────
+    [chromium] › tests\jaxtr.spec.ts:764:1 › T50: Tech completes directive — marked complete ───────
+    [chromium] › tests\jaxtr.spec.ts:812:1 › T51: Tech can add discovery directive request ─────────
+    [chromium] › tests\jaxtr.spec.ts:848:1 › T52: Tech halt job button visible when job is ACTIVE ──
+    [chromium] › tests\jaxtr.spec.ts:878:1 › T53: 4 Cs conclusion section visible on technician active job 
+    [chromium] › tests\jaxtr.spec.ts:903:1 › T54: Send for Billing disabled until conclusion notes filled 
+    [chromium] › tests\jaxtr.spec.ts:935:1 › T55: Send for Billing enabled after filling 4 Cs notes 
+    [chromium] › tests\jaxtr.spec.ts:971:1 › T56: Active Bay Deck shows correct engine serial ──────
+    [chromium] › tests\jaxtr.spec.ts:998:1 › T57: Tech sends for billing — RO moves out of tech view 
+    [chromium] › tests\jaxtr.spec.ts:1038:1 › T58: Multiple directives — completing one does not complete both 
+    [chromium] › tests\jaxtr.spec.ts:1093:1 › T59: Tech queue shows queued job in read-only expand ─
+    [chromium] › tests\jaxtr.spec.ts:1116:1 › T60: Tech exit from job returns to queue not lost ────
+    [chromium] › tests\jaxtr.spec.ts:1159:1 › T61: Bay Manifest parts section visible on active job 
+    [chromium] › tests\jaxtr.spec.ts:1184:1 › T62: Service Directives section visible on active job 
+    [chromium] › tests\jaxtr.spec.ts:1209:1 › T63: Active labor clock shows when job is ACTIVE ─────
+    [chromium] › tests\jaxtr.spec.ts:1240:1 › T64: Only one active job at a time — second job stays in queue 
+    [chromium] › tests\jaxtr.spec.ts:1272:1 › T65: Change Tech button visible on active job header ─
+    [chromium] › tests\jaxtr.spec.ts:1306:1 › T67: Parts page shows Awaiting Parts queue section ───
+    [chromium] › tests\jaxtr.spec.ts:1327:1 › T70: Special orders queue section visible ────────────
+    [chromium] › tests\jaxtr.spec.ts:1333:1 › T71: Returns queue visible on Parts page ─────────────
+    [chromium] › tests\jaxtr.spec.ts:1373:1 › T79: Inventory page renders with search ──────────────
+    [chromium] › tests\jaxtr.spec.ts:1399:1 › T82: Collections section visible on billing page ─────
+    [chromium] › tests\jaxtr.spec.ts:1415:1 › T84: Completed RO appears in SM board BILLING column ─
+    [chromium] › tests\jaxtr.spec.ts:1458:1 › T85: Invoice modal opens for PENDING_INVOICE RO in Billing column 
+    [chromium] › tests\jaxtr.spec.ts:1504:1 › T86: Zero dollar invoice allowed to close (verbal auth no parts) 
+    [chromium] › tests\jaxtr.spec.ts:1552:1 › T87: Collections log section visible on billing page ─
+    [chromium] › tests\jaxtr.spec.ts:1598:1 › T94: Invoice finalize button visible on PENDING_INVOICE card in SM board 
+    [chromium] › tests\jaxtr.spec.ts:1638:1 › T95: Billing sweep frequency selector visible ────────
+    [chromium] › tests\jaxtr.spec.ts:1649:1 › T96: Vessel DNA page renders via toolbar (DATABASE role) 
+    [chromium] › tests\jaxtr.spec.ts:1665:1 › T98: DB Inspector button visible on DNA page ─────────
+    [chromium] › tests\jaxtr.spec.ts:1673:1 › T99: Vessel DNA page shows vessel record after RO creation 
+    [chromium] › tests\jaxtr.spec.ts:1708:1 › T102: Vessel DNA record shows correct customer name ──
+    [chromium] › tests\jaxtr.spec.ts:1716:1 › T103: Multiple ROs for same vessel appear in history ─
+    [chromium] › tests\jaxtr.spec.ts:1733:1 › T105: Vessel DNA history persists after reload ───────
+    [chromium] › tests\jaxtr.spec.ts:1755:1 › T106: RO persists after page reload (IndexedDB) ──────
+    [chromium] › tests\jaxtr.spec.ts:1775:1 › T107: RO status persists after page reload ───────────
+    [chromium] › tests\jaxtr.spec.ts:1799:1 › T108: Multiple ROs persist after reload ──────────────
+    [chromium] › tests\jaxtr.spec.ts:1820:1 › T109: Tech assignment persists after reload ──────────
+    [chromium] › tests\jaxtr.spec.ts:1847:1 › T110: Two ROs created in sequence both persist ───────
+    [chromium] › tests\jaxtr.spec.ts:1868:1 › T111: Data survives browser back/forward navigation ──
+    [chromium] › tests\jaxtr.spec.ts:1890:1 › T113: App renders after clearing and re-seeding ──────
+    [chromium] › tests\jaxtr.spec.ts:1904:1 › T115: RO created then page navigated still shows on return 
+    [chromium] › tests\jaxtr.spec.ts:1916:1 › T116: Long customer name renders without overflow ────
+    [chromium] › tests\jaxtr.spec.ts:1923:1 › T117: RO with no parts goes straight to READY_FOR_TECH (Staged column) 
+    [chromium] › tests\jaxtr.spec.ts:1931:1 › T118: Rapid RO creation — 3 jobs back to back without errors 
+    [chromium] › tests\jaxtr.spec.ts:1943:1 › T119: Tech exit — halted job returns to My Halted Jobs not lost 
+    [chromium] › tests\jaxtr.spec.ts:1983:1 › T120: Board integrity — 5 ROs in different states coexist 
+    [chromium] › tests\jaxtr.spec.ts:2002:1 › T121: Parts backorder job stays invoiceable — deferral path available 
+    [chromium] › tests\jaxtr.spec.ts:2020:1 › T122: SM discovery approve and reject both work ──────
+    [chromium] › tests\jaxtr.spec.ts:2072:1 › T123: Declined repair deferral path available ────────
+    [chromium] › tests\jaxtr.spec.ts:2092:1 › T124: Job with two directives completing all enables billing 
+  8 skipped
+  44 passed (8.4m)

@@ -1,0 +1,43 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - img "Logo" [ref=e6]
+    - generic [ref=e11]: SYSTEM IDLE // PARTS MANAGER
+    - generic [ref=e13]:
+      - generic [ref=e14]:
+        - text: Test Parts
+        - generic [ref=e15]: Technician
+      - button "Logout" [ref=e16] [cursor=pointer]:
+        - img [ref=e17]
+      - button "Enter Fullscreen" [ref=e19] [cursor=pointer]:
+        - img [ref=e20]
+      - button "Comms Link" [ref=e22] [cursor=pointer]:
+        - img [ref=e23]
+  - main [ref=e25]:
+    - generic [ref=e26]:
+      - generic [ref=e27]:
+        - generic [ref=e28]:
+          - heading "Parts Command" [level=2] [ref=e29]
+          - paragraph [ref=e30]: Fulfillment & Requisition Hub
+        - generic [ref=e31]:
+          - button "Bulk Import Inventory" [ref=e32] [cursor=pointer]
+          - button "View The Clipboard" [ref=e33] [cursor=pointer]
+      - generic [ref=e34]:
+        - generic [ref=e35]:
+          - heading "Fulfillment Queue (0)" [level=2] [ref=e36]:
+            - text: Fulfillment Queue
+            - generic [ref=e37]: (0)
+          - paragraph [ref=e40]: No new staged jobs requiring parts.
+        - generic [ref=e42]:
+          - heading "Awaiting Parts (0)" [level=2] [ref=e43]:
+            - text: Awaiting Parts
+            - generic [ref=e44]: (0)
+          - paragraph [ref=e47]: No jobs with missing or special order parts.
+      - generic [ref=e48]:
+        - heading "Returns Queue (0)" [level=2] [ref=e49]:
+          - text: Returns Queue
+          - generic [ref=e50]: (0)
+        - paragraph [ref=e53]: No jobs are awaiting part returns.
+```

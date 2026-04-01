@@ -1,0 +1,70 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - button "Home" [ref=e5] [cursor=pointer]:
+      - img [ref=e6]
+    - button "SERVICE MANAGER" [ref=e9] [cursor=pointer]:
+      - img [ref=e10]
+    - button "PARTS MANAGER" [ref=e13] [cursor=pointer]:
+      - img [ref=e14]
+    - button "INVENTORY MANAGER" [ref=e17] [cursor=pointer]:
+      - img [ref=e18]
+    - button "TECHNICIAN" [ref=e20] [cursor=pointer]:
+      - img [ref=e21]
+    - button "BILLING" [active] [ref=e23] [cursor=pointer]:
+      - img [ref=e24]
+    - button "Vessel DNA" [ref=e26] [cursor=pointer]:
+      - img [ref=e27]
+    - button "METRICS" [ref=e32] [cursor=pointer]:
+      - img [ref=e33]
+    - button "ADMIN" [ref=e35] [cursor=pointer]:
+      - img [ref=e36]
+  - banner [ref=e38]:
+    - img "Logo" [ref=e40]
+    - generic [ref=e44]:
+      - generic [ref=e45]: "DEV VIEW: BILLING"
+      - button "Exit Dev View" [ref=e46] [cursor=pointer]
+    - generic [ref=e48]:
+      - generic [ref=e49]:
+        - text: Test SM
+        - generic [ref=e50]: Technician
+      - button "Logout" [ref=e51] [cursor=pointer]:
+        - img [ref=e52]
+      - button "Enter Fullscreen" [ref=e54] [cursor=pointer]:
+        - img [ref=e55]
+      - button "Comms Link" [ref=e57] [cursor=pointer]:
+        - img [ref=e58]
+  - main [ref=e60]:
+    - generic [ref=e61]:
+      - generic [ref=e63]:
+        - heading "Billing & Collections" [level=2] [ref=e64]
+        - paragraph [ref=e65]: Accounts Receivable Command Center
+      - generic [ref=e66]:
+        - generic [ref=e67]:
+          - heading "Completed Invoices" [level=3] [ref=e68]
+          - table [ref=e70]:
+            - rowgroup [ref=e71]:
+              - row "RO ID Customer Invoiced Balance Due Status" [ref=e72]:
+                - columnheader "RO ID" [ref=e73]
+                - columnheader "Customer" [ref=e74]
+                - columnheader "Invoiced" [ref=e75]
+                - columnheader "Balance Due" [ref=e76]
+                - columnheader "Status" [ref=e77]
+                - columnheader [ref=e78]
+            - rowgroup
+        - generic [ref=e79]:
+          - heading "Collections Oracle" [level=3] [ref=e80]
+          - paragraph [ref=e81]: Agent monitors overdue accounts and takes action based on the configured frequency.
+          - generic [ref=e82]:
+            - generic [ref=e83]:
+              - generic [ref=e84]: Sweep Frequency
+              - combobox [ref=e85]:
+                - option "Daily"
+                - option "Weekly" [selected]
+                - option "Bi-Weekly"
+                - option "Monthly"
+            - button "Engage Sweep Now" [ref=e86] [cursor=pointer]
+          - paragraph [ref=e88]: Oracle is standing by...
+```

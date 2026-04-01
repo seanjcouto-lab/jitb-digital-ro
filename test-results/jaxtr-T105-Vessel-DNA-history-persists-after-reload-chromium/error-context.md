@@ -1,0 +1,53 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - button "Home" [ref=e5] [cursor=pointer]:
+      - img [ref=e6]
+    - button "SERVICE MANAGER" [ref=e9] [cursor=pointer]:
+      - img [ref=e10]
+    - button "PARTS MANAGER" [ref=e13] [cursor=pointer]:
+      - img [ref=e14]
+    - button "INVENTORY MANAGER" [ref=e17] [cursor=pointer]:
+      - img [ref=e18]
+    - button "TECHNICIAN" [ref=e20] [cursor=pointer]:
+      - img [ref=e21]
+    - button "BILLING" [ref=e23] [cursor=pointer]:
+      - img [ref=e24]
+    - button "Vessel DNA" [active] [ref=e26] [cursor=pointer]:
+      - img [ref=e27]
+    - button "METRICS" [ref=e32] [cursor=pointer]:
+      - img [ref=e33]
+    - button "ADMIN" [ref=e35] [cursor=pointer]:
+      - img [ref=e36]
+  - banner [ref=e38]:
+    - img "Logo" [ref=e40]
+    - generic [ref=e44]:
+      - generic [ref=e45]: "DEV VIEW: Vessel DNA"
+      - button "Exit Dev View" [ref=e46] [cursor=pointer]
+    - generic [ref=e48]:
+      - generic [ref=e49]:
+        - text: Test SM
+        - generic [ref=e50]: Technician
+      - button "Logout" [ref=e51] [cursor=pointer]:
+        - img [ref=e52]
+      - button "Enter Fullscreen" [ref=e54] [cursor=pointer]:
+        - img [ref=e55]
+      - button "Comms Link" [ref=e57] [cursor=pointer]:
+        - img [ref=e58]
+  - main [ref=e60]:
+    - generic [ref=e61]:
+      - generic [ref=e62]:
+        - generic [ref=e63]:
+          - heading "Vessel DNA Database" [level=2] [ref=e64]
+          - paragraph [ref=e65]: Historical Service Record Oracle
+        - button "DB Inspector" [ref=e66] [cursor=pointer]
+      - generic [ref=e67]:
+        - generic [ref=e68]:
+          - generic [ref=e69]: Vessel Identity Scan
+          - generic [ref=e70]:
+            - textbox "Search Name, HIN, Engine S/N, Phone..." [ref=e71]
+            - img [ref=e72]
+        - paragraph [ref=e76]: Awaiting Oracle Query...
+```
