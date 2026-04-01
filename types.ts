@@ -226,6 +226,7 @@ export interface RepairOrder {
   engineMake: string | null;
   engineModel: string | null;
   engineYear: string | null;
+  engineHours?: number | null;
   engineHorsepower: string | null;
   // For new features
   requests: RORequest[] | null;
@@ -261,6 +262,7 @@ export interface VesselHistory {
   engineMake: string;
   engineModel: string;
   engineYear: string;
+  engineHours?: number;
   engineHorsepower: string;
   engineSerial: string;
   pastROs: {

@@ -9,6 +9,7 @@ import VesselDNAView from '../components/VesselDNAView';
 import OracleSearchView from '../components/OracleSearchView';
 import ProfileOnboardingForm from '../components/ProfileOnboardingForm';
 import ROGenerationView from '../components/ROGenerationView';
+import { EngineIdentityLine } from '../components/EngineIdentityLine';
 import { ServiceManagerService } from '../services/serviceManagerService';
 import { vesselService } from '../services/vesselService';
 import { repairOrderService } from '../services/repairOrderService';
@@ -246,11 +247,7 @@ const RODetail = ({
       {/* Engine Identity */}
       <div className="mb-4 p-3 rounded-xl bg-white/3 border border-white/5">
         <p className="text-[9px] font-bold uppercase tracking-widest text-slate-500 mb-1">Engine</p>
-        <p className="text-[11px] font-bold text-slate-200">{ro.engineYear} {ro.engineMake} {ro.engineModel}</p>
-        <div className="flex gap-3 mt-0.5">
-          {ro.engineSerial && <span className="text-[11px] font-mono font-bold text-neon-seafoam">S/N: {ro.engineSerial}</span>}
-          {ro.engineHorsepower && <span className="text-[10px] text-slate-500">{ro.engineHorsepower}HP</span>}
-        </div>
+        <EngineIdentityLine engineYear={ro.engineYear} engineMake={ro.engineMake} engineModel={ro.engineModel} engineHours={ro.engineHours} engineSerial={ro.engineSerial} engineHorsepower={ro.engineHorsepower} />
       </div>
       <div>
         <h5 className="font-bold text-slate-400 uppercase tracking-wider text-[10px] mb-2 flex justify-between items-center">

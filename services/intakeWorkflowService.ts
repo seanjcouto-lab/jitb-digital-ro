@@ -65,6 +65,7 @@ export const intakeWorkflowService = {
         engineMake: '',
         engineModel: '',
         engineYear: '',
+        engineHours: undefined,
         engineHorsepower: '',
         engineSerial: '',
       },

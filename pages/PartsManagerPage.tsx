@@ -7,6 +7,7 @@ import SectionHeader from '../components/SectionHeader';
 import { printRequisition } from '../utils/printRequisition';
 import InventoryImportModal from '../components/InventoryImportModal';
 import NotUsedReasonModal from '../components/NotUsedReasonModal';
+import { EngineIdentityLine } from '../components/EngineIdentityLine';
 
 interface PartsManagerPageProps {
   repairOrders: RepairOrder[];
@@ -67,8 +68,8 @@ const handlePrint = () => {
                             <p className="font-bold">{new Date().toLocaleDateString()}</p>
                             <p className="font-bold text-slate-500 uppercase text-[10px] mt-3">Technician / Bay</p>
                             <p className="font-bold uppercase">{ro.technicianName || 'ADMIN / PARTS DEPT'}</p>
-                            <p className="font-bold text-slate-500 uppercase text-[10px] mt-1">Engine Serial</p>
-                            <p className="font-mono font-bold uppercase">{ro.engineSerial}</p>
+                            <p className="font-bold text-slate-500 uppercase text-[10px] mt-1">Engine</p>
+                            <EngineIdentityLine engineYear={ro.engineYear} engineMake={ro.engineMake} engineModel={ro.engineModel} engineHours={ro.engineHours} engineSerial={ro.engineSerial} engineHorsepower={ro.engineHorsepower} className="font-mono font-bold text-[11px] text-slate-800" />
                         </div>
                     </div>
 
@@ -298,6 +299,7 @@ const ROCard: React.FC<ROCardProps> = ({
                   <span className="text-[9px] font-mono text-slate-500">{ro.id}</span>
                   <h3 className="text-base font-bold text-slate-200 mt-0.5">{ro.customerName}</h3>
                   <p className="text-[9px] text-slate-400 font-bold uppercase tracking-tight">{ro.vesselName}</p>
+                  <EngineIdentityLine engineYear={ro.engineYear} engineMake={ro.engineMake} engineModel={ro.engineModel} engineHours={ro.engineHours} engineSerial={ro.engineSerial} engineHorsepower={ro.engineHorsepower} className="text-[9px] text-slate-400 font-bold mt-0.5" />
                 </div>
                 <div className="flex items-center gap-2">
                   <div className={`px-3 py-1 rounded text-[10px] font-black uppercase border ${statusInfo.pillClass}`}>{statusInfo.text}</div>

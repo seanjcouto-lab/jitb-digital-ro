@@ -68,6 +68,7 @@ export async function loadFromSupabase(shopId: string): Promise<void> {
         engineMake: row.engine_make ?? null,
         engineModel: row.engine_model ?? null,
         engineYear: row.engine_year ?? null,
+        engineHours: row.engine_hours ?? null,
         engineHorsepower: row.engine_horsepower ?? null,
         technicianId: row.technician_id ?? null,
         technicianName: row.technician_name ?? null,

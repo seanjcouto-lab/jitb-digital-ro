@@ -1,6 +1,7 @@
 import React from 'react';
 import { VesselHistory, RepairOrder } from '../types';
 import SectionHeader from './SectionHeader';
+import { EngineIdentityLine } from './EngineIdentityLine';
 
 interface VesselDNAViewProps {
   vessel: VesselHistory;
@@ -92,12 +93,8 @@ const VesselDNAView: React.FC<VesselDNAViewProps> = ({ vessel, allROs, onClose }
                   <SectionHeader title="Propulsion Scan" />
                   <div className="text-xs space-y-3 text-slate-300 font-medium">
                       <div className="flex justify-between border-b border-white/5 pb-1">
-                        <span className="text-slate-500 uppercase tracking-tighter">Engine</span> 
-                        <span className="text-white font-bold">{vessel.engineMake} {vessel.engineHorsepower}HP</span>
-                      </div>
-                      <div className="flex justify-between border-b border-white/5 pb-1">
-                        <span className="text-slate-500 uppercase tracking-tighter">Serial</span> 
-                        <span className="text-neon-steel font-mono">{vessel.engineSerial}</span>
+                        <span className="text-slate-500 uppercase tracking-tighter">Engine</span>
+                        <EngineIdentityLine engineYear={vessel.engineYear} engineMake={vessel.engineMake} engineModel={vessel.engineModel} engineHours={vessel.engineHours} engineSerial={vessel.engineSerial} engineHorsepower={vessel.engineHorsepower} className="text-[11px] font-bold text-white" />
                       </div>
                   </div>
               </section>

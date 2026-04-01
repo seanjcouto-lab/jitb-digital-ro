@@ -39,6 +39,7 @@ export function mapROToSupabase(ro: RepairOrder) {
       engine_make: ro.engineMake,
       engine_model: ro.engineModel,
       engine_year: ro.engineYear,
+      engine_hours: ro.engineHours,
       engine_horsepower: ro.engineHorsepower,
       technician_id: ro.technicianId,
       technician_name: ro.technicianName,

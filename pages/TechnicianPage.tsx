@@ -3,6 +3,7 @@ import { RepairOrder, ROStatus, PartStatus, Directive, Part, RORequest, Inventor
 import { TechnicianService } from '../services/technicianService';
 import SectionHeader from '../components/SectionHeader';
 import EvidenceInputBlock from '../components/EvidenceInputBlock';
+import { EngineIdentityLine } from '../components/EngineIdentityLine';
 
 interface TechnicianPageProps {
   repairOrder?: RepairOrder;
@@ -408,11 +409,7 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs 
                         {/* Engine identity */}
                         <div className="mb-3 p-2 rounded-lg bg-white/3 border border-white/5">
                           <p className="text-[9px] font-bold uppercase tracking-widest text-slate-500 mb-1">Engine</p>
-                          <p className="text-[11px] font-bold text-slate-200">{ro.engineYear} {ro.engineMake} {ro.engineModel}</p>
-                          <div className="flex gap-3 mt-0.5">
-                            {ro.engineSerial && <span className="text-[11px] font-mono font-bold text-neon-seafoam">S/N: {ro.engineSerial}</span>}
-                            {ro.engineHorsepower && <span className="text-[10px] text-slate-500">{ro.engineHorsepower}HP</span>}
-                          </div>
+                          <EngineIdentityLine engineYear={ro.engineYear} engineMake={ro.engineMake} engineModel={ro.engineModel} engineHours={ro.engineHours} engineSerial={ro.engineSerial} engineHorsepower={ro.engineHorsepower} />
                         </div>
 
                         {/* Directives — read only */}
@@ -500,6 +497,7 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs 
           <div>
             <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Active Bay Deck</h2>
             <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Order: {repairOrder.id} • {repairOrder.customerName} • {repairOrder.vesselName}</p>
+            <EngineIdentityLine engineYear={repairOrder.engineYear} engineMake={repairOrder.engineMake} engineModel={repairOrder.engineModel} engineHours={repairOrder.engineHours} engineSerial={repairOrder.engineSerial} engineHorsepower={repairOrder.engineHorsepower} className="text-[11px] font-bold text-slate-400 mt-0.5" />
           </div>
           <div className="flex items-center gap-6">
             {repairOrder.status !== ROStatus.ACTIVE && (
