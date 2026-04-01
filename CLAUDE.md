@@ -272,11 +272,14 @@ T112 — Offline/PWA test requiring service worker
 
 ## AGENT ROLES
 
+**Current model (confirmed April 1 2026):** Sean works directly with Claude Code. No relay through claude.ai.
+
 | Agent | Responsibility |
 |---|---|
-| Claude (claude.ai) | Reasons, diagnoses, writes code and CC prompts |
-| Claude Code (CC) | Executes all file operations and code changes |
-| Sean | Relays instructions, makes all final decisions, reports results exactly as seen |
+| Claude Code | Reasons, diagnoses, and executes — full chain ownership |
+| Sean | Gives direction, makes all final decisions, approves before commits |
+
+The previous relay model (Claude outside → Sean → CC) was retired after it caused the 3-hour engineHours saga. Direct collaboration is faster, cleaner, and produces fewer gaps.
 
 ---
 
