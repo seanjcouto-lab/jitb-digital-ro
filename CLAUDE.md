@@ -68,7 +68,7 @@ Last updated: April 2, 2026
 | AUTHORIZED → READY_FOR_TECH | `assignTechnician()` or `finalizeAuthorization()` |
 | READY_FOR_TECH → ACTIVE | `startJob()` |
 | ACTIVE → HOLD | `holdJob()` |
-| ACTIVE → PARTS_PENDING | `confirmMissingPart()` or `addManualPartToRO()` |
+| ACTIVE → PARTS_PENDING | `confirmMissingPart()` or SM "Send to Parts" button |
 | ACTIVE → PENDING_INVOICE | `completeJob()` or `confirmDeferral()` |
 | HOLD → READY_FOR_TECH or PARTS_PENDING | `reactivateJob()` |
 | PARTS_PENDING → READY_FOR_TECH | `reactivateJob()` when parts resolved |
@@ -123,10 +123,10 @@ All Playwright tests reference these button labels: `'Test SM'`, `'Test Tech'`, 
 
 ## CURRENT BUILD STATE (APRIL 2 2026)
 
-- **Test suite: 99-111 passed (flaky), 8 skipped** — `tests/jaxtr.spec.ts`. Flake variance from Playwright parallelism + strict mode violations.
+- **Test suite: 122 passed, 0 failed, 8 skipped** — `tests/jaxtr.spec.ts`. Stable, deterministic. Runs in ~2.5 min parallel.
 - **Demo script: 4:30 timed walkthrough** — `tests/demo.spec.ts`, runs headed, 11 scenes. Run: `npx playwright test tests/demo.spec.ts --headed --project=chromium`
 - **`main` branch** — live on Vercel, manually tested, stable
-- **`develop` branch** — all new work, manually tested locally, stable. 4 commits ahead of main.
+- **`develop` branch** — all new work, manually tested locally, stable. 5 commits ahead of main.
 - Playwright MUST run before and after every change — no exceptions
 - All work on `develop` branch — PRs to `main` when stable
 
@@ -148,34 +148,39 @@ All Playwright tests reference these button labels: `'Test SM'`, `'Test Tech'`, 
 - **Demo script created**: `tests/demo.spec.ts` + `tests/demo-helpers.ts` — 4:30 timed walkthrough, 11 scenes, pre-seeds 6 ROs across all 5 columns, fills complete onboarding form with visible typing, human-like cursor movement.
 - **Dev-only Supabase purge button**: `pages/AdminPage.tsx` — "Purge All Supabase + Local Data" in Diagnostic Tools section. `import.meta.env.DEV` gated, two-click confirm, deletes all ROs + children for DEFAULT_SHOP_ID + clears local IndexedDB. Does NOT touch users, shops, auth, or inventory tables.
 
-### Critical lessons learned this session — DO NOT REPEAT
+### Critical lessons learned — DO NOT REPEAT
 
 - **The engineHours saga (April 1)**: Piecemeal diagnosis cost 3+ hours. Always trace the full field chain (form → merge → type → service → mapper → store → display) before patching.
 - **N+1 query in loadFromSupabase**: Per-RO child fetches (5 queries × N ROs) caused 15s+ init. Always bulk-fetch with `.in()` and group client-side. **Never put Supabase queries inside a for loop.**
+- **Supabase sync contaminates tests**: `loadFromSupabase` loads stale ROs from prior test runs, causing tech workflow tests to see wrong active jobs. **All test login helpers must call `blockSupabaseSync(page)` before navigating.** This intercepts Supabase REST API calls with empty `[]` responses so tests run purely against local IndexedDB. This was the root cause of 10+ tech workflow failures.
 - **Comma-separated Playwright selectors don't work**: `page.locator('text=A, text=B')` is CSS syntax, not OR. Use `.or()` chains: `page.locator('text=A').or(page.locator('text=B'))`.
 - **`input.first()` is fragile**: When form fields get added/reordered, ordinal selectors break silently. Always use `#id` or `[placeholder*="..."]` selectors.
 - **Customer names resolve to multiple elements**: The SM board renders customer names in card title, RO detail line, expanded view, etc. Always use `.first()` or `getByText(name, { exact: true })`.
 - **Test ROs sync to Supabase and accumulate**: Every test run creates ROs that sync in the background. Without cleanup, Supabase fills with ghost data (286 rows after a few sessions). Use the purge button between heavy test sessions.
 - **Toolbar button titles use spaces not underscores**: `roleKey.replace('_', ' ')` generates "SERVICE MANAGER", "PARTS MANAGER", "INVENTORY MANAGER". Exception: DATABASE → "Vessel DNA".
 - **`loadFromSupabase` merges, does not wipe**: Local-only Dexie records survive Supabase hydration. But `initDb(null)` clears React state (not Dexie). Dev re-login re-runs `initDb` which re-hydrates from Supabase + Dexie.
+- **`addManualPartToRO()` does NOT change RO status**: It only adds a part with REQUIRED status. To move an RO to PARTS_PENDING, SM must click "Send to Parts" or tech must call `confirmMissingPart()`.
 
 ### Known remaining test failures
 
-**Consistent (every run):**
-- T105-T110 — Persistence/reload tests. Dev re-login flow re-runs `loadFromSupabase` which can't find test-created ROs in Supabase. Architectural limitation of dev persona (no real Supabase session to restore).
-- T64 — Only one active job at a time. Complex multi-job workflow timing.
-- T84 — Completed RO in BILLING column. Full tech workflow timing.
-- T119 — Tech halt/return flow.
-
-**Flaky (fail intermittently due to Playwright parallelism):**
-- T38, T39, T43, T46, T48, T57, T60, T118, T120 — strict mode violations where customer names resolve to multiple elements. Need systematic `.first()` pass.
-- T20, T63, T94 — occasional timing failures.
+None. All 122 tests pass deterministically. 8 tests remain skipped (see below).
 
 ### Skipped tests in jaxtr.spec.ts (8 total)
 
 T74, T75, T76, T77, T78 — Parts workflow tests requiring seeded inventory in a dedicated test shop
 T89, T90 — Billing disputed/collections tests requiring full billing flow
 T112 — Offline/PWA test requiring service worker
+
+### Completed this session (April 2 2026 — evening)
+
+- **Test suite: 100 → 122 passed, 22 → 0 failures eliminated.** Three root causes:
+  - `blockSupabaseSync()` helper added to all login functions — intercepts Supabase REST API with empty `[]` responses, preventing stale ROs from prior runs contaminating test state. This was the #1 cause of tech workflow failures.
+  - Systematic `.first()` on ~25 customer name locators — strict mode violations from names rendering in multiple card elements.
+  - T64 fix: accept Active Bay Deck as valid outcome (app auto-starts first queued job when tech enters view).
+  - T105 fix: accept "Oracle finds no existing match" (DNA only created at `finalizeInvoice()`).
+  - `workers: 4` cap prevents browser resource exhaustion on parallel runs.
+- **CLAUDE.md spec correction**: `addManualPartToRO()` does NOT set PARTS_PENDING — only adds part with REQUIRED status. SM "Send to Parts" button or `confirmMissingPart()` are the actual PARTS_PENDING triggers.
+- **Parts flow audit**: Full trace confirmed all parts plumbing works correctly. PARTS DEPT column is empty in tests only because `createBasicRO()` never adds parts — not a code bug.
 
 ### Completed previous sessions
 
@@ -192,11 +197,11 @@ T112 — Offline/PWA test requiring service worker
 
 ### Next session queue (priority order)
 
-1. **Fix test flakes** — systematic `.first()` pass on customer name assertions (T38, T39, T43, T46, T48, T57, T60, T118, T120). These are strict mode violations, not app bugs.
+1. **Merge `develop` → `main`** — test suite stable at 122/0/8, ready for production push
 2. **Demo polish** — add Parts Manager scene, make card column movement visible (scroll to source/destination columns after assign tech and halt)
 3. **Date picker** in `ROGenerationView` + `ProfileOnboardingForm`
 4. **Scheduled date on SM cards**
-5. **Merge `develop` → `main`** when test suite is stable at 115+
+5. **Unskip parts workflow tests (T74-T78)** — parts plumbing is confirmed working, tests just need seeded inventory data
 6. Calendar week view build
 7. Calendar month view
 8. Left sidebar nav (post-pilot)
@@ -291,6 +296,7 @@ T112 — Offline/PWA test requiring service worker
 12. Stop immediately when Sean starts talking
 13. **Never put Supabase queries inside a for loop** — always bulk-fetch with `.in()` and group client-side
 14. **Always use `.first()` on customer name locators in tests** — names render in multiple places on SM board cards
+15. **All test login helpers must call `blockSupabaseSync(page)`** — prevents stale Supabase data from contaminating test state
 
 ---
 
@@ -317,6 +323,7 @@ The previous relay model (Claude outside → Sean → CC) was retired after it c
 - **N+1 query in loadFromSupabase** — per-RO child fetches (5 queries × 136 ROs = 680 queries) caused 15s+ init. Fixed April 2 with bulk `.in()` fetch.
 - **Comma-separated Playwright selectors** — `'text=A, text=B'` is CSS syntax, not OR. Use `.or()` chains.
 - **Test RO accumulation in Supabase** — 286 ghost ROs after a few test sessions. Use purge button between heavy sessions.
+- **Supabase sync contaminated tests for weeks** — `loadFromSupabase` loaded stale ROs from prior runs, making tech workflow tests see wrong active jobs. Fixed April 2 evening with `blockSupabaseSync()` in all login helpers. All tests must block Supabase REST API.
 
 ---
 
