@@ -2,7 +2,7 @@
 
 This is the single source of truth for all Claude Code sessions on this project.
 If behavior differs from this document, this document is correct. The implementation is wrong.
-Last updated: April 1, 2026 (evening)
+Last updated: April 2, 2026
 
 ---
 
@@ -48,6 +48,7 @@ Last updated: April 1, 2026 (evening)
 - On every mutation: Dexie updates immediately, sync runs in the background.
 - Every record carries `shopId`. All Dexie and Supabase queries are shop-filtered. Full tenant isolation.
 - `domainEventService.ts` is the pub-sub event bus. Metrics and notifications are driven by events — never by direct calls.
+- **Scale target: 300-400 customers, multiple boats per customer, municipal + corporate boats.** The architecture must handle this volume without performance degradation.
 
 ---
 
@@ -78,6 +79,20 @@ Last updated: April 1, 2026 (evening)
 
 ---
 
+## SM BOARD COLUMN MAPPING (ServiceManagerPage.tsx)
+
+| Column | Statuses | Extra Filter | Heading |
+|---|---|---|---|
+| STAGED | READY_FOR_TECH, PARTS_READY | `!ro.technicianId` | STAGED |
+| PARTS DEPT | AUTHORIZED, PARTS_PENDING | — | PARTS DEPT |
+| DEPLOYMENT DECK | ACTIVE, READY_FOR_TECH, PARTS_READY, PARTS_PENDING | `!!ro.technicianId` | DEPLOYMENT DECK |
+| ON HOLD | HOLD | — | ON HOLD |
+| BILLING | PENDING_INVOICE, COMPLETED | `paymentStatus !== PAID` | BILLING |
+
+**Vessel DNA records are only created during `finalizeInvoice()`, NOT at RO creation.** Tests that check DNA after `createBasicRO` will find no records.
+
+---
+
 ## FILE LOCATIONS (CONFIRMED)
 
 | File | Location |
@@ -87,6 +102,9 @@ Last updated: April 1, 2026 (evening)
 | `supabaseSync.ts` | `utils/` |
 | `supabaseMapper.ts` | `utils/` |
 | `RepairOrderCreateInput.ts` | `types/` |
+| `demo-helpers.ts` | `tests/` |
+| `demo.spec.ts` | `tests/` |
+| `jaxtr.spec.ts` | `tests/` |
 
 ---
 
@@ -103,54 +121,55 @@ All Playwright tests reference these button labels: `'Test SM'`, `'Test Tech'`, 
 
 ---
 
-## CURRENT BUILD STATE (APRIL 1 2026 — EVENING)
+## CURRENT BUILD STATE (APRIL 2 2026)
 
-- **Test suite: 44 passed, 78 failed, 8 skipped** — `tests/jaxtr.spec.ts`, third run after fixes. Improved from 36/86.
+- **Test suite: 99-111 passed (flaky), 8 skipped** — `tests/jaxtr.spec.ts`. Flake variance from Playwright parallelism + strict mode violations.
+- **Demo script: 4:30 timed walkthrough** — `tests/demo.spec.ts`, runs headed, 11 scenes. Run: `npx playwright test tests/demo.spec.ts --headed --project=chromium`
+- **`main` branch** — live on Vercel, manually tested, stable
+- **`develop` branch** — all new work, manually tested locally, stable. 4 commits ahead of main.
 - Playwright MUST run before and after every change — no exceptions
 - All work on `develop` branch — PRs to `main` when stable
 
-### Completed this session (April 1 2026)
+### Completed this session (April 2 2026)
 
-- **Dev persona overhaul**: `pages/LoginScreen.tsx` — replaced named personas (Danny Admin, Danny SM, Pierre Tech) with three anonymous test personas: Test SM, Test Tech, Test Parts. No admin persona in dev buttons.
-- **Test SM gets DEVELOPER privilege**: `pages/LoginScreen.tsx` line 118 — `privileges: [UserPrivilege.DEVELOPER]` added so `isDev()` returns true and dev toolbar renders in tests. `UserPrivilege` imported from `../types`.
-- **All old spec files deleted**: `tests/*.spec.ts` (24 files) — all previous Playwright test specs removed. Parker AI service specs were being picked up by Playwright runner; fresh start eliminates this.
-- **New test suite created**: `tests/jaxtr.spec.ts` — 130 tests (T01–T130) covering Auth, RO Creation, SM Board, Tech Workflow, Parts, Billing, Vessel DNA, Persistence, Edge Cases, Metrics.
-- **Test suite fixes applied**:
-  - `createBasicRO` helper + all 14 inline test flows: added `fill('NEWTEST')` step before `waitForSelector('text=New Customer')` — "New Customer" only renders when `query.length > 1 && noResults`
-  - `locator('text=Sign In')` → `getByRole('heading', { name: 'Sign In' })` at 9 locations (strict mode fix)
-  - T07: added `selectBay` as third `.or()` option — impersonated Tech lands on "Select Technician Bay" first
-  - T08: `button[title="PARTS_MANAGER"]` → `button[title="PARTS MANAGER"]` (space, not underscore) — `roleKey.replace('_', ' ')` generates spaces
-- **Admin gate (pending)**: `pages/AdminPage.tsx` gate was implemented then reverted. Needs re-applying. Requires `loggedInUser` prop added to `AdminPage` interface and passed from `App.tsx` line 295.
-- **EngineIdentityLine component**: `components/EngineIdentityLine.tsx` — single shared component renders `2019 Yamaha F150 · 320 hrs · S/N: ABC123 · 150HP`. Wired into SM board cards, Tech queue cards, Tech active job header, Parts Manager screen cards, Parts print/requisition, Vessel DNA view.
-- **engineHours wired end to end**:
-  - `types.ts` — `engineHours?: number | null` added to `RepairOrder` and `VesselHistory`
-  - `types/RepairOrderCreateInput.ts` — `engineHours` added to interface
-  - `components/ProfileOnboardingForm.tsx` — `engineHours` added to merge object passed to `onProfileComplete` (was the root cause — field captured but dropped at submit)
-  - `components/ROGenerationView.tsx` — `engineHours` added to `initialProfileState` and mapped to `input`
-  - `services/repairOrderService.ts` — `engineHours: input.engineHours ? Number(input.engineHours) : null`
-  - `utils/supabaseMapper.ts` — `engine_hours: ro.engineHours` added
-  - `data/roStore.ts` — `engineHours: row.engine_hours ?? null` added
-  - Supabase `repair_orders` table — `engine_hours numeric` column added manually via dashboard
+- **Admin gate applied**: `pages/AdminPage.tsx` — role-based gate (`UserRole.ADMIN`). Non-admin users see "Access Denied". Sean's Supabase login maps to ADMIN role via `supabaseAuthService.ts` line 23. `loggedInUser` prop passed from `App.tsx` line 295.
+- **Test suite: 45 → 115 passed** (70 tests recovered). Fix patterns:
+  - `#customerName` selector replaces `input.first()` — Company Name field was added before Full Name, shifting input order (13 occurrences)
+  - `button:has-text("Pierre")` replaces `.grid button` — modal overlay intercepted pointer events (58 occurrences)
+  - `getByRole('heading', { name: /BILLING/i })` replaces `text=BILLING` — strict mode from "Billing queue clear" text
+  - `.or()` chains replace comma-separated selectors — Playwright interprets commas as CSS, not OR (14 instances)
+  - `button[title="SERVICE MANAGER"]` replaces `button[title="SERVICE_MANAGER"]` — toolbar generates spaces via `roleKey.replace('_', ' ')`
+  - `.first()` added to `.or()` chains resolving to multiple elements
+  - `textarea[placeholder*="Waiting on special tool"]` for halt modal targeting
+  - `button:has-text("Add").first()` not `.last()` for directive requests (two Add buttons on tech page)
+  - DNA tests: search step added since page requires query (no auto-list)
+  - Persistence test timeouts increased to 60s
+- **Init performance: N+1 query eliminated in `loadFromSupabase`**: Previously ran 5 Supabase queries per RO inside a for loop (136 ROs × 5 = 680 queries). Now bulk-fetches all child records in 5 parallel queries using `.in('repair_order_id', allIds)`, groups client-side with hash map. Total: 6 queries. **15s+ init → ~2s.**
+- **Demo script created**: `tests/demo.spec.ts` + `tests/demo-helpers.ts` — 4:30 timed walkthrough, 11 scenes, pre-seeds 6 ROs across all 5 columns, fills complete onboarding form with visible typing, human-like cursor movement.
+- **Dev-only Supabase purge button**: `pages/AdminPage.tsx` — "Purge All Supabase + Local Data" in Diagnostic Tools section. `import.meta.env.DEV` gated, two-click confirm, deletes all ROs + children for DEFAULT_SHOP_ID + clears local IndexedDB. Does NOT touch users, shops, auth, or inventory tables.
 
-### Critical lesson learned this session — DO NOT REPEAT
+### Critical lessons learned this session — DO NOT REPEAT
 
-**The engineHours saga took 3+ hours due to piecemeal diagnosis.** The correct approach for "field not displaying" bugs:
-1. Start at the input field in the form — confirm it exists and is bound
-2. Trace the merge/submit function — confirm the field is included in the output object
-3. Trace the `CreateInput` type — confirm the field exists in the contract
-4. Trace `createRepairOrder` — confirm the field is mapped onto the RO
-5. Trace the mapper — confirm it writes to Supabase
-6. Trace the store read-back — confirm it reads from Supabase
-7. Trace the display component — confirm it renders
-**Never patch one layer at a time. Trace the full chain first, then patch all gaps in one pass.**
+- **The engineHours saga (April 1)**: Piecemeal diagnosis cost 3+ hours. Always trace the full field chain (form → merge → type → service → mapper → store → display) before patching.
+- **N+1 query in loadFromSupabase**: Per-RO child fetches (5 queries × N ROs) caused 15s+ init. Always bulk-fetch with `.in()` and group client-side. **Never put Supabase queries inside a for loop.**
+- **Comma-separated Playwright selectors don't work**: `page.locator('text=A, text=B')` is CSS syntax, not OR. Use `.or()` chains: `page.locator('text=A').or(page.locator('text=B'))`.
+- **`input.first()` is fragile**: When form fields get added/reordered, ordinal selectors break silently. Always use `#id` or `[placeholder*="..."]` selectors.
+- **Customer names resolve to multiple elements**: The SM board renders customer names in card title, RO detail line, expanded view, etc. Always use `.first()` or `getByText(name, { exact: true })`.
+- **Test ROs sync to Supabase and accumulate**: Every test run creates ROs that sync in the background. Without cleanup, Supabase fills with ghost data (286 rows after a few sessions). Use the purge button between heavy test sessions.
+- **Toolbar button titles use spaces not underscores**: `roleKey.replace('_', ' ')` generates "SERVICE MANAGER", "PARTS MANAGER", "INVENTORY MANAGER". Exception: DATABASE → "Vessel DNA".
+- **`loadFromSupabase` merges, does not wipe**: Local-only Dexie records survive Supabase hydration. But `initDb(null)` clears React state (not Dexie). Dev re-login re-runs `initDb` which re-hydrates from Supabase + Dexie.
 
-### Known remaining test failures (78 as of last run)
+### Known remaining test failures
 
-- Tech workflow selectors (button text mismatches for Start Job, directives, Send for Billing)
-- Persistence tests — re-login after reload flow
-- Billing/collections selectors
-- T10 — Admin gate not re-applied yet; no "Access Denied" renders
-- `.grid button` selector in billing tests intercepts pointer events from a modal overlay
+**Consistent (every run):**
+- T105-T110 — Persistence/reload tests. Dev re-login flow re-runs `loadFromSupabase` which can't find test-created ROs in Supabase. Architectural limitation of dev persona (no real Supabase session to restore).
+- T64 — Only one active job at a time. Complex multi-job workflow timing.
+- T84 — Completed RO in BILLING column. Full tech workflow timing.
+- T119 — Tech halt/return flow.
+
+**Flaky (fail intermittently due to Playwright parallelism):**
+- T38, T39, T43, T46, T48, T57, T60, T118, T120 — strict mode violations where customer names resolve to multiple elements. Need systematic `.first()` pass.
+- T20, T63, T94 — occasional timing failures.
 
 ### Skipped tests in jaxtr.spec.ts (8 total)
 
@@ -158,33 +177,33 @@ T74, T75, T76, T77, T78 — Parts workflow tests requiring seeded inventory in a
 T89, T90 — Billing disputed/collections tests requiring full billing flow
 T112 — Offline/PWA test requiring service worker
 
-### Completed previous session (March 30 2026)
+### Completed previous sessions
 
-- **Subscription gating**: `active`, `pilot`, `trial`, `grace` allowed — `null` passes through (no shop record in test env). Lives in `App.tsx` + `services/shopContextService.ts`
-- **Naming cleanup**: "New Service Profile Onboarding" → "New Customer", "Initialize Profile" → "New Customer" — 6 files updated including 3 Playwright tests
-- **Home button**: SVG house icon in dev toolbar pill — resets to native role via `setImpersonatedRole(null)`. Lives in `App.tsx`
-- **Staged cards: HOLD removed from collapsed view** — ASSIGN TECH only when collapsed; HOLD still in expanded view
-- **Engine identity block on expanded cards**: Engine year/make/model + S/N front and center at top of RODetail. `pages/ServiceManagerPage.tsx`
-- **Deployment deck button hierarchy**: REVIEW dominant (solid red) when pending requests present; HOLD dimmed (`opacity-70`)
-- **Tech queue view**: `queuedROsForTech` in `App.tsx` — READY_FOR_TECH jobs assigned to current tech, not active. "Your Queue" section in `TechnicianPage.tsx` — read-only expand, Start Job when no active job
-- **SM board: folder tab column counters**: `FolderTab` component — colored top border, fixed `w-[64px]`, `text-[20px]` count, flush to card top. Colors: blue/amber/teal/red/purple per column
-- **Collapsible Customer Search**: Slim by default, expands on click, collapses after selection. `searchExpanded` state in `ServiceManagerPage.tsx`. Playwright tests updated
-- **Calendar Phase 1**: `scheduledDate` + `arrivalDate` added to `types.ts`, Dexie schema bumped to v9, `supabaseMapper.ts` forward-mapped, `repair_orders` Supabase table columns added
+**April 1 2026 (evening):**
+- Dev persona overhaul, Test SM DEVELOPER privilege, old spec files deleted, new 130-test suite created
+- EngineIdentityLine component, engineHours wired end to end
+- Admin gate implemented then reverted (re-applied April 2)
+
+**March 30 2026:**
+- Subscription gating, naming cleanup, home button, staged cards HOLD removed from collapsed view
+- Engine identity on expanded cards, deployment deck button hierarchy, tech queue view
+- SM board folder tab column counters, collapsible customer search
+- Calendar Phase 1: scheduledDate + arrivalDate fields
 
 ### Next session queue (priority order)
 
-1. Continue fixing `tests/jaxtr.spec.ts` — 78 still failing. Run with `--reporter=list` and pull first 5 failures to diagnose next pattern.
-2. Re-apply admin gate to `pages/AdminPage.tsx` + wire `loggedInUser` prop in `App.tsx` (see details in completed section above)
-3. Vercel deployment
-4. Headed Playwright demo script
-5. Date picker in `ROGenerationView` + `ProfileOnboardingForm`
-6. Scheduled date on SM cards
-7. Calendar week view build
-8. Calendar month view
-9. Left sidebar nav (post-pilot)
+1. **Fix test flakes** — systematic `.first()` pass on customer name assertions (T38, T39, T43, T46, T48, T57, T60, T118, T120). These are strict mode violations, not app bugs.
+2. **Demo polish** — add Parts Manager scene, make card column movement visible (scroll to source/destination columns after assign tech and halt)
+3. **Date picker** in `ROGenerationView` + `ProfileOnboardingForm`
+4. **Scheduled date on SM cards**
+5. **Merge `develop` → `main`** when test suite is stable at 115+
+6. Calendar week view build
+7. Calendar month view
+8. Left sidebar nav (post-pilot)
 
-### Backlog items added April 1 2026 (evening)
+### Backlog
 
+- **Clear Supabase test data button** — DONE (dev-only purge on AdminPage)
 - **Nav sticky on all pages + role-specific icons**: Tech: Tech/DNA/Calendar | SM: Dock/NewRO/Parts/DNA/Calendar | PM: Parts/Inventory/DNA | Owner: all except dev tools
 - **Mobile button overlap** — buttons overlapping on small screens, needs audit and fix
 - **Customer directory** — master list view of all customers
@@ -208,6 +227,9 @@ T112 — Offline/PWA test requiring service worker
 - `subscription_status` field on `shops` table (TEXT NOT NULL DEFAULT 'active') — **active gating in App.tsx**: `active`, `pilot`, `trial`, `grace` allowed; anything else shows "Account Not Active" screen; `null` passes through
 - `quantity` field on `Part` interface — threads through RO creation, PM display, Tech display, invoice math (unit price × quantity)
 - Signature canvas on RO creation (initialized via `requestAnimationFrame` to handle modal layout timing)
+- Admin gate on AdminPage — role-based (`UserRole.ADMIN`), non-admin sees "Access Denied"
+- Dev-only Supabase purge button on AdminPage — `import.meta.env.DEV` gated, two-click confirm
+- Headed Playwright demo script — 4:30 timed walkthrough, 11 scenes, pre-seeded data across all 5 columns
 
 ---
 
@@ -232,7 +254,7 @@ T112 — Offline/PWA test requiring service worker
 - Inventory Module V1 (ledger, purchase orders, receiving, POS — spec locked, nothing built)
 - Stripe billing integration
 - Automated tenant onboarding
-- Git branch strategy (currently all on main)
+- Git branch strategy (currently `develop` for work, `main` for production via Vercel)
 - Offline sign-in: `restoreSession()` re-fetches from Supabase every time — fails offline even with valid JWT. Fix: cache `LoggedInUser` in localStorage. Blocked on frozen `supabaseAuthService.ts` — requires explicit direction.
 
 ---
@@ -244,7 +266,7 @@ T112 — Offline/PWA test requiring service worker
 3. ~~Home button — persistent navigation escape hatch~~ **DONE** (dev toolbar SVG house icon)
 4. ~~Terminology cleanup — remove "Oracle" / AI labels, replace with plain shop language~~ **DONE**
 5. ~~Tech queue view — assigned but not active jobs, expandable scope of work~~ **DONE**
-6. Company name field on customer profile
+6. ~~Company name field on customer profile~~ **DONE** (added to ProfileOnboardingForm)
 7. Engine hours, engine type (outboard/inboard), fuel type (gas/diesel) on vessel
 8. ~~Subscription gating via `subscription_status` field~~ **DONE**
 9. Stripe in-app billing (post-pilot)
@@ -267,12 +289,14 @@ T112 — Offline/PWA test requiring service worker
 10. Never have Sean find code manually — use grep/read commands
 11. Read before writing — always read the file before editing it
 12. Stop immediately when Sean starts talking
+13. **Never put Supabase queries inside a for loop** — always bulk-fetch with `.in()` and group client-side
+14. **Always use `.first()` on customer name locators in tests** — names render in multiple places on SM board cards
 
 ---
 
 ## AGENT ROLES
 
-**Current model (confirmed April 1 2026):** Sean works directly with Claude Code. No relay through claude.ai.
+**Current model (confirmed April 2 2026):** Sean works directly with Claude Code. No relay through claude.ai.
 
 | Agent | Responsibility |
 |---|---|
@@ -290,6 +314,9 @@ The previous relay model (Claude outside → Sean → CC) was retired after it c
 - Had Sean finding specific code lines manually for weeks — always use grep/read
 - Failed to stop loops early enough — always stop at 2 failed attempts and change strategy
 - Edited files without reading them first, causing overwrites and merge conflicts
+- **N+1 query in loadFromSupabase** — per-RO child fetches (5 queries × 136 ROs = 680 queries) caused 15s+ init. Fixed April 2 with bulk `.in()` fetch.
+- **Comma-separated Playwright selectors** — `'text=A, text=B'` is CSS syntax, not OR. Use `.or()` chains.
+- **Test RO accumulation in Supabase** — 286 ghost ROs after a few test sessions. Use purge button between heavy sessions.
 
 ---
 
