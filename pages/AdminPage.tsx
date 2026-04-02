@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppConfig, CollectionsStatus } from '../types';
+import { AppConfig, CollectionsStatus, LoggedInUser, UserRole } from '../types';
 import { appConfigService } from '../services/appConfigService';
 import { repairOrderService } from '../services/repairOrderService';
 import { roStore } from '../data/roStore';
@@ -8,6 +8,7 @@ interface AdminPageProps {
   config: AppConfig;
   setConfig: (cfg: AppConfig) => void;
   onExport: () => void;
+  loggedInUser: LoggedInUser | null;
 }
 
 const TEST_RO_INPUT = {
@@ -39,7 +40,18 @@ const TEST_RO_INPUT = {
   shopId: '00000000-0000-0000-0000-000000000001',
 };
 
-const AdminPage: React.FC<AdminPageProps> = ({ config, setConfig, onExport }) => {
+const AdminPage: React.FC<AdminPageProps> = ({ config, setConfig, onExport, loggedInUser }) => {
+  if (!loggedInUser || loggedInUser.role !== UserRole.ADMIN) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="text-center">
+          <h2 className="text-2xl font-black text-red-400 uppercase tracking-tighter">Access Denied</h2>
+          <p className="text-slate-400 mt-2">Admin access is restricted to the account owner.</p>
+        </div>
+      </div>
+    );
+  }
+
   const handleInputFocus = (event: React.FocusEvent<HTMLInputElement>) => {
     setTimeout(() => {
         event.target.scrollIntoView({ behavior: 'smooth', block: 'center' });

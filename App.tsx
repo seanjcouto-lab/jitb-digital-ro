@@ -292,7 +292,7 @@ const App: React.FC = () => {
       case UserRole.BILLING: return <BillingPage repairOrders={repairOrders.filter(ro => ro.status === ROStatus.COMPLETED || ro.status === ROStatus.PENDING_INVOICE)} updateRO={updateRO} />;
       case UserRole.DATABASE: return <DatabasePage allROs={repairOrders} />;
       case UserRole.METRICS: return <MetricsPage repairOrders={repairOrders} inventory={masterInventory} config={config} />;
-      case UserRole.ADMIN: return <AdminPage config={config} setConfig={setConfig} onExport={handleExportData} />;
+      case UserRole.ADMIN: return <AdminPage config={config} setConfig={setConfig} onExport={handleExportData} loggedInUser={loggedInUser} />;
       default: return null;
     }
   };
