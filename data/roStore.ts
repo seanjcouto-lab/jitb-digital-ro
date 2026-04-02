@@ -16,19 +16,63 @@ export async function loadFromSupabase(shopId: string): Promise<void> {
       return;
     }
 
-    if (!rows) {
+    if (!rows || rows.length === 0) {
       console.log(`Fetched 0 rows from Supabase for shop ${shopId}`);
       return;
     }
 
     console.log(`Fetched ${rows.length} rows from Supabase for shop ${shopId}`);
-    
+
+    const allIds = rows.map(r => r.id);
+
+    // Bulk-fetch all child records in parallel (6 queries total instead of N*5)
+    const [partsRes, directivesRes, workSessionsRes, paymentsRes, requestsRes] =
+      await Promise.all([
+        supabase.from('repair_order_parts').select('*').in('repair_order_id', allIds),
+        supabase.from('repair_order_directives').select('*').in('repair_order_id', allIds).order('sort_order', { ascending: true }),
+        supabase.from('work_sessions').select('*').in('repair_order_id', allIds),
+        supabase.from('payments').select('*').in('repair_order_id', allIds),
+        supabase.from('repair_order_requests').select('*').in('repair_order_id', allIds),
+      ]);
+
+    // Group child records by repair_order_id for O(1) lookup
+    const groupBy = (data: any[] | null, key: string) => {
+      const map: Record<string, any[]> = {};
+      if (!data) return map;
+      for (const row of data) {
+        const id = row[key];
+        if (!map[id]) map[id] = [];
+        map[id].push(row);
+      }
+      return map;
+    };
+
+    const partsByRO = groupBy(partsRes.data, 'repair_order_id');
+    const directivesByRO = groupBy(directivesRes.data, 'repair_order_id');
+    const sessionsByRO = groupBy(workSessionsRes.data, 'repair_order_id');
+    const paymentsByRO = groupBy(paymentsRes.data, 'repair_order_id');
+    const requestsByRO = groupBy(requestsRes.data, 'repair_order_id');
+
+    if (partsRes.error) console.warn('Bulk fetch repair_order_parts failed:', partsRes.error.message);
+    if (directivesRes.error) console.warn('Bulk fetch repair_order_directives failed:', directivesRes.error.message);
+    if (workSessionsRes.error) console.warn('Bulk fetch work_sessions failed:', workSessionsRes.error.message);
+    if (paymentsRes.error) console.warn('Bulk fetch payments failed:', paymentsRes.error.message);
+    if (requestsRes.error) console.warn('Bulk fetch repair_order_requests failed:', requestsRes.error.message);
+
+    console.log(`Bulk fetched children: ${partsRes.data?.length ?? 0} parts, ${directivesRes.data?.length ?? 0} directives, ${workSessionsRes.data?.length ?? 0} sessions, ${paymentsRes.data?.length ?? 0} payments, ${requestsRes.data?.length ?? 0} requests`);
+
     const hydratedIds: string[] = [];
 
     for (const row of rows) {
       const existing = await db.repairOrders.get(row.id);
-      
-      const merged: RepairOrder = {
+
+      const roParts = partsByRO[row.id] || [];
+      const roDirectives = directivesByRO[row.id] || [];
+      const roSessions = sessionsByRO[row.id] || [];
+      const roPayments = paymentsByRO[row.id] || [];
+      const roRequests = requestsByRO[row.id] || [];
+
+      const fullyMerged: RepairOrder = {
         ...(existing || {}),
         id: row.id,
         shopId: row.shop_id,
@@ -42,6 +86,7 @@ export async function loadFromSupabase(shopId: string): Promise<void> {
           zip: row.customer_address_zip ?? existing?.customerAddress?.zip ?? '',
         },
         customerNotes: row.customer_notes ?? null,
+        jobComplaint: row.job_complaint ?? existing?.jobComplaint ?? null,
         vesselName: row.vessel_name ?? '',
         vesselHIN: row.vessel_hin ?? '',
         engineSerial: row.engine_serial ?? '',
@@ -61,6 +106,8 @@ export async function loadFromSupabase(shopId: string): Promise<void> {
           ? new Date(row.date_paid).getTime()
           : null,
         collectionsStatus: (row.collections_status as CollectionsStatus) ?? null,
+        taxExempt: row.tax_exempt ?? existing?.taxExempt ?? null,
+        taxExemptId: row.tax_exempt_id ?? existing?.taxExemptId ?? null,
         boatMake: row.boat_make ?? null,
         boatModel: row.boat_model ?? null,
         boatYear: row.boat_year ?? null,
@@ -72,119 +119,73 @@ export async function loadFromSupabase(shopId: string): Promise<void> {
         engineHorsepower: row.engine_horsepower ?? null,
         technicianId: row.technician_id ?? null,
         technicianName: row.technician_name ?? null,
-        
-        parts: existing?.parts ?? [],
-        directives: existing?.directives ?? [],
-        workSessions: existing?.workSessions ?? [],
-        payments: existing?.payments ?? [],
-        requests: existing?.requests ?? [],
-      };
+        scheduledDate: row.scheduled_date ?? existing?.scheduledDate ?? null,
+        arrivalDate: row.arrival_date ?? existing?.arrivalDate ?? null,
 
-      const [partsRes, directivesRes, workSessionsRes, paymentsRes, requestsRes] =
-        await Promise.all([
-          supabase.from('repair_order_parts').select('*').eq('repair_order_id', merged.id),
-          supabase.from('repair_order_directives').select('*').eq('repair_order_id', merged.id).order('sort_order', { ascending: true }),
-          supabase.from('work_sessions').select('*').eq('repair_order_id', merged.id),
-          supabase.from('payments').select('*').eq('repair_order_id', merged.id),
-          supabase.from('repair_order_requests').select('*').eq('repair_order_id', merged.id),
-        ]);
-
-      if (partsRes.error) {
-        console.warn(`Supabase fetch failed on repair_order_parts for ${merged.id}:`, partsRes.error.message);
-      } else {
-        console.log(`repair_order_parts hydrated for ${merged.id}: ${partsRes.data.length} rows`);
-      }
-
-      if (directivesRes.error) {
-        console.warn(`Supabase fetch failed on repair_order_directives for ${merged.id}:`, directivesRes.error.message);
-      } else {
-        console.log(`repair_order_directives hydrated for ${merged.id}: ${directivesRes.data.length} rows`);
-      }
-
-      if (workSessionsRes.error) {
-        console.warn(`Supabase fetch failed on work_sessions for ${merged.id}:`, workSessionsRes.error.message);
-      } else {
-        console.log(`work_sessions hydrated for ${merged.id}: ${workSessionsRes.data.length} rows`);
-      }
-
-      if (paymentsRes.error) {
-        console.warn(`Supabase fetch failed on payments for ${merged.id}:`, paymentsRes.error.message);
-      } else {
-        console.log(`payments hydrated for ${merged.id}: ${paymentsRes.data.length} rows`);
-      }
-
-      if (requestsRes.error) {
-        console.warn(`Supabase fetch failed on repair_order_requests for ${merged.id}:`, requestsRes.error.message);
-      } else {
-        console.log(`repair_order_requests hydrated for ${merged.id}: ${requestsRes.data.length} rows`);
-      }
-
-      const fullyMerged = {
-        ...merged,
         parts: partsRes.error
           ? (existing?.parts ?? [])
-          : partsRes.data.map((row: any) => ({
-              id: row.id,
-              partNumber: row.part_number,
-              description: row.description,
-              category: row.category,
-              binLocation: row.bin_location,
-              msrp: row.msrp,
-              dealerPrice: row.dealer_price,
-              cost: row.cost,
-              quantityOnHand: row.quantity_on_hand_snapshot,
-              reorderPoint: row.reorder_point_snapshot,
-              supersedesPart: row.supersedes_part,
-              status: row.status,
-              isCustom: row.is_custom,
-              missingReason: row.missing_reason ?? null,
-              missingReasonNotes: row.missing_reason_notes ?? null,
-              notUsedReason: row.not_used_reason ?? null,
-              notUsedNotes: row.not_used_notes ?? null,
-              notUsedTimestamp: row.not_used_timestamp
-                ? new Date(row.not_used_timestamp).getTime()
+          : roParts.map((p: any) => ({
+              id: p.id,
+              partNumber: p.part_number,
+              description: p.description,
+              category: p.category,
+              binLocation: p.bin_location,
+              msrp: p.msrp,
+              dealerPrice: p.dealer_price,
+              cost: p.cost,
+              quantityOnHand: p.quantity_on_hand_snapshot,
+              reorderPoint: p.reorder_point_snapshot,
+              supersedesPart: p.supersedes_part,
+              status: p.status,
+              isCustom: p.is_custom,
+              missingReason: p.missing_reason ?? null,
+              missingReasonNotes: p.missing_reason_notes ?? null,
+              notUsedReason: p.not_used_reason ?? null,
+              notUsedNotes: p.not_used_notes ?? null,
+              notUsedTimestamp: p.not_used_timestamp
+                ? new Date(p.not_used_timestamp).getTime()
                 : null,
-              shopId: merged.shopId,
+              shopId: row.shop_id,
             })),
         directives: directivesRes.error
           ? (existing?.directives ?? [])
-          : directivesRes.data.map((row: any) => ({
-              id: row.id,
-              title: row.title,
-              isCompleted: row.is_completed,
-              completionTimestamp: row.completion_timestamp
-                ? new Date(row.completion_timestamp).getTime()
+          : roDirectives.map((d: any) => ({
+              id: d.id,
+              title: d.title,
+              isCompleted: d.is_completed,
+              completionTimestamp: d.completion_timestamp
+                ? new Date(d.completion_timestamp).getTime()
                 : null,
-              isApproved: row.is_approved ?? false,
+              isApproved: d.is_approved ?? false,
             })),
         workSessions: workSessionsRes.error
           ? (existing?.workSessions ?? [])
-          : workSessionsRes.data.map((row: any) => ({
-              startTime: new Date(row.start_time).getTime(),
-              endTime: row.end_time
-                ? new Date(row.end_time).getTime()
+          : roSessions.map((s: any) => ({
+              startTime: new Date(s.start_time).getTime(),
+              endTime: s.end_time
+                ? new Date(s.end_time).getTime()
                 : undefined,
             })),
         payments: paymentsRes.error
           ? (existing?.payments ?? [])
-          : paymentsRes.data.map((row: any) => ({
-              id: row.id,
-              amount: row.amount,
-              method: row.method,
-              reference: row.reference ?? undefined,
-              date: new Date(row.paid_at).getTime(),
+          : roPayments.map((p: any) => ({
+              id: p.id,
+              amount: p.amount,
+              method: p.method,
+              reference: p.reference ?? undefined,
+              date: new Date(p.paid_at).getTime(),
             })),
         requests: requestsRes.error
           ? (existing?.requests ?? [])
-          : requestsRes.data.map((row: any) => ({
-              id: row.id,
-              roId: row.repair_order_id,
-              type: row.type,
-              payload: row.payload_json,
-              status: row.status,
-              requestedBy: row.requested_by,
-              timestamp: new Date(row.requested_at).getTime(),
-              decision: row.decision ?? undefined,
+          : roRequests.map((r: any) => ({
+              id: r.id,
+              roId: r.repair_order_id,
+              type: r.type,
+              payload: r.payload_json,
+              status: r.status,
+              requestedBy: r.requested_by,
+              timestamp: new Date(r.requested_at).getTime(),
+              decision: r.decision ?? undefined,
             })),
       };
 
