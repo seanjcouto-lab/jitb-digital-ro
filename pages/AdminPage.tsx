@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AppConfig, CollectionsStatus, LoggedInUser, UserRole } from '../types';
 import { appConfigService } from '../services/appConfigService';
 import { repairOrderService } from '../services/repairOrderService';
 import { roStore } from '../data/roStore';
+import { supabase } from '../supabaseClient';
+import { db } from '../localDb';
 
 interface AdminPageProps {
   config: AppConfig;
@@ -76,6 +78,47 @@ const AdminPage: React.FC<AdminPageProps> = ({ config, setConfig, onExport, logg
     } catch (err: any) {
       console.error('[PERSISTENCE TEST] FAILED:', err);
       alert(`❌ RO Persistence Test FAILED\n${err?.message || 'Unknown error'}\nCheck console for details.`);
+    }
+  };
+
+  const [purgeStatus, setPurgeStatus] = useState<string | null>(null);
+  const [purgeConfirm, setPurgeConfirm] = useState(false);
+
+  const handlePurgeSupabase = async () => {
+    if (!purgeConfirm) {
+      setPurgeConfirm(true);
+      return;
+    }
+    setPurgeConfirm(false);
+    setPurgeStatus('Purging...');
+    try {
+      const shopId = '00000000-0000-0000-0000-000000000001';
+
+      // Delete child records first (foreign keys)
+      const { data: ros } = await supabase.from('repair_orders').select('id').eq('shop_id', shopId);
+      const ids = ros?.map(r => r.id) || [];
+
+      if (ids.length > 0) {
+        await supabase.from('repair_order_parts').delete().in('repair_order_id', ids);
+        await supabase.from('repair_order_directives').delete().in('repair_order_id', ids);
+        await supabase.from('work_sessions').delete().in('repair_order_id', ids);
+        await supabase.from('payments').delete().in('repair_order_id', ids);
+        await supabase.from('repair_order_requests').delete().in('repair_order_id', ids);
+      }
+
+      // Delete all ROs for this shop
+      const { error } = await supabase.from('repair_orders').delete().eq('shop_id', shopId);
+      if (error) throw error;
+
+      // Clear local IndexedDB
+      await db.repairOrders.clear();
+      await db.vesselDnaHistory.clear();
+
+      setPurgeStatus(`Purged ${ids.length} ROs from Supabase + cleared local DB.`);
+      console.log(`[PURGE] Deleted ${ids.length} ROs and all child records for shop ${shopId}`);
+    } catch (err: any) {
+      setPurgeStatus(`Purge failed: ${err?.message || 'Unknown error'}`);
+      console.error('[PURGE] Failed:', err);
     }
   };
 
@@ -183,6 +226,28 @@ const AdminPage: React.FC<AdminPageProps> = ({ config, setConfig, onExport, logg
                   Run RO Persistence Test
                 </button>
                 <p className="text-center text-[10px] text-slate-500 mt-2">Creates a test RO and verifies the full persistence chain. Check browser console for step-by-step results.</p>
+
+                {import.meta.env.DEV && (
+                  <div className="border-t border-red-500/30 pt-4 mt-4">
+                    <h3 className="text-sm font-bold text-red-400 mb-2 text-center">DEV ONLY — Data Purge</h3>
+                    <button
+                      onClick={handlePurgeSupabase}
+                      className={`w-full text-center px-6 py-3 border transition-all rounded-lg font-bold text-xs uppercase tracking-widest ${
+                        purgeConfirm
+                          ? 'bg-red-600 border-red-400 text-white animate-pulse'
+                          : 'bg-red-900/40 border-red-500/40 text-red-300 hover:border-red-400 hover:text-red-100'
+                      }`}
+                    >
+                      {purgeConfirm ? 'CLICK AGAIN TO CONFIRM — THIS DELETES EVERYTHING' : 'Purge All Supabase + Local Data'}
+                    </button>
+                    {purgeStatus && (
+                      <p className={`text-center text-[10px] mt-2 font-bold ${purgeStatus.includes('failed') ? 'text-red-400' : 'text-green-400'}`}>
+                        {purgeStatus}
+                      </p>
+                    )}
+                    <p className="text-center text-[10px] text-red-400/60 mt-1">Deletes ALL repair orders, parts, directives, sessions, and vessel DNA for this shop. Dev only — stripped from production builds.</p>
+                  </div>
+                )}
               </div>
             </div>
         </div>
