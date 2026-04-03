@@ -105,6 +105,9 @@ Last updated: April 2, 2026
 | `demo-helpers.ts` | `tests/` |
 | `demo.spec.ts` | `tests/` |
 | `jaxtr.spec.ts` | `tests/` |
+| `DockCalendarPage.tsx` | `pages/` |
+| `CalendarEventCard.tsx` | `components/` |
+| `calendarUtils.ts` | `utils/` |
 
 ---
 
@@ -121,14 +124,35 @@ All Playwright tests reference these button labels: `'Test SM'`, `'Test Tech'`, 
 
 ---
 
-## CURRENT BUILD STATE (APRIL 2 2026)
+## CURRENT BUILD STATE (APRIL 3 2026)
 
 - **Test suite: 122 passed, 0 failed, 8 skipped** — `tests/jaxtr.spec.ts`. Stable, deterministic. Runs in ~2.5 min parallel.
 - **Demo script: 4:30 timed walkthrough** — `tests/demo.spec.ts`, runs headed, 11 scenes. Run: `npx playwright test tests/demo.spec.ts --headed --project=chromium`
-- **`main` branch** — live on Vercel, manually tested, stable
-- **`develop` branch** — all new work, manually tested locally, stable. 5 commits ahead of main.
+- **`main` branch** — live on Vercel, manually tested, stable. Merged April 2 evening.
+- **`develop` branch** — all new work including Dock Scheduling Calendar. 2 commits ahead of main.
 - Playwright MUST run before and after every change — no exceptions
 - All work on `develop` branch — PRs to `main` when stable
+
+### Completed this session (April 3 2026)
+
+- **Dock Scheduling Calendar — Phase 1 + Phase 2 built:**
+  - `estimatedPickupDate` and `jobCategory` fields on RepairOrder, Dexie v10
+  - `JobCategory` interface + `dockCapacity`/`boardLeadTimeDays` on AppConfig
+  - `CALENDAR` added to UserRole enum — toolbar button with calendar icon
+  - Full data pipeline: types → RepairOrderCreateInput → createRepairOrder() → supabaseMapper → roStore
+  - "Dock Scheduling" section on ROGenerationView: job category dropdown (10 defaults), required drop-off date
+  - Drop-off/pick-up dates + job category displayed on SM board cards (blue DROP, green PICK)
+  - **Board date gate**: ROs with arrivalDate >14 days out are calendar-only, invisible on the board
+  - **DockCalendarPage**: week, day, month views — TSheets-style grid
+  - Week view: 7-column grid, hourly slots, color-coded CalendarEventCards by job category
+  - Day view: Arriving/Departing swim lanes with dock count
+  - Month view: per-day count badges, click-through to day view
+  - HTML5 drag-and-drop rescheduling (SM/Admin only, read-only for others)
+  - "Boats on dock" counter in calendar header
+  - **Post-RO redirect**: when SM creates RO with dates, lands on calendar as confirmation
+  - **Pick-up date at billing**: PENDING_INVOICE cards in BILLING column show date picker for estimated pick-up
+  - `calendarUtils.ts`: getWeekDays, getMonthDays, getBoatsOnDock, getDayCounts, groupROsByDate, etc.
+- **Test suite stable at 122/0/8** through all changes — zero regressions
 
 ### Completed this session (April 2 2026)
 
@@ -197,13 +221,13 @@ T112 — Offline/PWA test requiring service worker
 
 ### Next session queue (priority order)
 
-1. **Merge `develop` → `main`** — test suite stable at 122/0/8, ready for production push
-2. **Demo polish** — add Parts Manager scene, make card column movement visible (scroll to source/destination columns after assign tech and halt)
-3. **Date picker** in `ROGenerationView` + `ProfileOnboardingForm`
-4. **Scheduled date on SM cards**
-5. **Unskip parts workflow tests (T74-T78)** — parts plumbing is confirmed working, tests just need seeded inventory data
-6. Calendar week view build
-7. Calendar month view
+1. **Calendar color tuning** — Sean wants to adjust colors. Job category palette, card accents, teal highlights.
+2. **Merge `develop` → `main`** — calendar + test fixes ready for production push
+3. **Dock capacity config** — Admin page: target capacity input, visual warnings on calendar
+4. **Job category admin UI** — Admin page: add/edit/delete categories with color picker (currently hardcoded defaults)
+5. **Demo polish** — add Parts Manager scene, add calendar walkthrough scene
+6. **Unskip parts workflow tests (T74-T78)** — parts plumbing confirmed working, tests need seeded inventory
+7. **In-app notifications** — bell icon, pick-up reminders, dock capacity alerts
 8. Left sidebar nav (post-pilot)
 
 ### Backlog
@@ -235,6 +259,7 @@ T112 — Offline/PWA test requiring service worker
 - Admin gate on AdminPage — role-based (`UserRole.ADMIN`), non-admin sees "Access Denied"
 - Dev-only Supabase purge button on AdminPage — `import.meta.env.DEV` gated, two-click confirm
 - Headed Playwright demo script — 4:30 timed walkthrough, 11 scenes, pre-seeded data across all 5 columns
+- **Dock Scheduling Calendar** — week/day/month views, color-coded by job category, drag-and-drop rescheduling (SM/Admin), "boats on dock" counter, post-RO-creation redirect, pick-up date entry at billing. Board date gate: ROs >14 days out are calendar-only. 10 default job categories (Repower, 100hr Service, etc.) with per-shop config planned.
 
 ---
 

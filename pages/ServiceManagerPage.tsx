@@ -23,6 +23,7 @@ interface ServiceManagerPageProps {
   taxRate: number;
   overridePin: string;
   masterInventory: Part[];
+  onNavigateToCalendar?: () => void;
 }
 
 type ViewMode = 'SEARCH' | 'PROFILE_CREATE' | 'RO_CREATE';
@@ -599,7 +600,7 @@ const DeferralModal: React.FC<DeferralModalProps> = ({ ro, onClose, onConfirm })
 };
 
 const ServiceManagerPage: React.FC<ServiceManagerPageProps> = ({
-  addRO, repairOrders, updateRO, deleteRO, hourlyRate, taxRate, overridePin, masterInventory
+  addRO, repairOrders, updateRO, deleteRO, hourlyRate, taxRate, overridePin, masterInventory, onNavigateToCalendar
 }) => {
   const [viewMode, setViewMode] = useState<ViewMode>('SEARCH');
   const [activeProfile, setActiveProfile] = useState(initialProfileState);
@@ -750,7 +751,13 @@ const handleROGenerated = (newRO: RepairOrder) => {
   setSearchQuery('');
   setFilterStatusGroup(null);
   setFilterTechId('ALL');
-  setViewMode('SEARCH');
+
+  // If RO has a drop-off date, navigate to calendar as visual confirmation
+  if (newRO.arrivalDate && onNavigateToCalendar) {
+    onNavigateToCalendar();
+  } else {
+    setViewMode('SEARCH');
+  }
 };
 
   const handleAuthorize = (ro: RepairOrder) => { setAuthorizingRO(ro); };
@@ -1068,7 +1075,28 @@ const handleROGenerated = (newRO: RepairOrder) => {
                     isExpanded={expandedROId === ro.id}
                     actions={
                       ro.status === ROStatus.PENDING_INVOICE
-                        ? <button onClick={(e) => { e.stopPropagation(); setInvoicingRO(ro); }} className="w-full px-4 py-2 rounded-lg bg-slate-800 text-[10px] font-black border border-white/10 hover:bg-neon-seafoam hover:text-slate-900 transition-all uppercase tracking-widest">FINALIZE</button>
+                        ? <div className="space-y-2">
+                            {!ro.estimatedPickupDate && (
+                              <div>
+                                <label className="block text-[8px] text-slate-500 font-bold uppercase tracking-widest mb-1">Set Pick-up Date</label>
+                                <input
+                                  type="datetime-local"
+                                  onClick={(e) => e.stopPropagation()}
+                                  onChange={(e) => {
+                                    if (e.target.value) {
+                                      const updated = { ...ro, estimatedPickupDate: new Date(e.target.value).toISOString() };
+                                      updateRO(updated);
+                                    }
+                                  }}
+                                  className="w-full bg-slate-900/50 border border-white/10 rounded-lg px-3 py-1.5 text-slate-300 text-[10px] focus:border-emerald-400 outline-none"
+                                />
+                              </div>
+                            )}
+                            {ro.estimatedPickupDate && (
+                              <p className="text-[9px] text-emerald-400 font-bold">PICK-UP: {new Date(ro.estimatedPickupDate).toLocaleDateString('en-US', { weekday: 'short', month: 'numeric', day: 'numeric' })} {new Date(ro.estimatedPickupDate).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</p>
+                            )}
+                            <button onClick={(e) => { e.stopPropagation(); setInvoicingRO(ro); }} className="w-full px-4 py-2 rounded-lg bg-slate-800 text-[10px] font-black border border-white/10 hover:bg-neon-seafoam hover:text-slate-900 transition-all uppercase tracking-widest">FINALIZE</button>
+                          </div>
                         : undefined
                     }
                   >
