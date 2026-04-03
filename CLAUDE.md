@@ -153,6 +153,44 @@ All Playwright tests reference these button labels: `'Test SM'`, `'Test Tech'`, 
   - **Pick-up date at billing**: PENDING_INVOICE cards in BILLING column show date picker for estimated pick-up
   - `calendarUtils.ts`: getWeekDays, getMonthDays, getBoatsOnDock, getDayCounts, groupROsByDate, etc.
 - **Test suite stable at 122/0/8** through all changes — zero regressions
+- **Evidence Media Persistence (PILOT-CRITICAL) — Phases 1-3A built:**
+  - `MediaRecord` interface + Dexie `mediaStore` table (v10→v11) — stores blobs natively in IndexedDB
+  - `services/mediaService.ts` — saveMedia(), getMediaUrl(), getPendingMedia(), cleanupSyncedMedia()
+  - `media://{uuid}` URL protocol — permanent reference that resolves from Dexie or Supabase URL
+  - TechnicianPage: EvidenceModal passes raw Blob + mimeType, saved to mediaStore immediately
+  - ROGenerationView: pendingAttachments pattern — blobs held in state, persisted when RO is created
+  - Audio recording preserved on both intake and tech pages
+  - `hooks/useMediaUrl.ts` — React hook resolving media:// URLs for rendering, auto-cleans blob URLs
+  - `capture="environment"` on photo/video file inputs — opens device camera directly (mobile)
+  - **Media now survives page reloads** — the core fix. Previously blob URLs died on refresh.
+- **Calendar detail modal enhanced:** full vessel + engine identity, directive list, parts list, inline add directives/parts
+- **Month view:** clickable customer name mini-cards, drag-and-drop between days
+- **Supabase columns added:** `estimated_pickup_date` + `job_category` on `repair_orders` table
+- **`develop` merged to `main`** — calendar shipped to Vercel production
+
+### Sean's manual testing feedback (April 3 — to fix next session)
+
+| # | Issue | Priority |
+|---|-------|----------|
+| P1 | SM Board columns need internal scroll (3-4 cards visible, rest scroll) | High |
+| P2 | Part quantity input — "1" default hard to overwrite | High |
+| P3 | Calendar modal mobile overflow | High |
+| P4 | Calendar manual date/time edit (not just drag) | High |
+| P5 | Month view grids disappear during drag | Medium |
+| P6 | Invoice — add customer name + vessel + engine info | Medium |
+| P7 | Tech minimize active job to see held/queued | Medium |
+| P8 | Rename "Log Requisition" to clearer label | Small |
+| P9 | Remove redundant serial from tech header | Small |
+| P10 | Audio record icon wrong | Small |
+| P11 | Calendar mobile/vertical overflow | Medium |
+| P12 | Month view landscape optimization | Medium |
+| P13 | Laptop file input opens gallery not camera (capture attr may not work on desktop) | Small |
+
+### Evidence media — remaining phases (not yet built)
+
+- **Phase 3B**: Evidence visible on SM expanded cards + Vessel DNA history
+- **Phase 4**: Supabase Storage sync (needs `evidence` bucket created in dashboard)
+- **Phase 5**: Evidence in supabaseMapper + roStore hydration (needs `directive_evidence` table)
 
 ### Completed this session (April 2 2026)
 
