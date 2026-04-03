@@ -419,8 +419,8 @@ const ROGenerationView: React.FC<ROGenerationViewProps> = ({ profileData, onROGe
 
   return (
     <>
-      <input type="file" accept="image/*" ref={photoInputRef} className="hidden" onChange={(e) => handleFileChange(e, 'photo')} />
-      <input type="file" accept="video/*" ref={videoInputRef} className="hidden" onChange={(e) => handleFileChange(e, 'video')} />
+      <input type="file" accept="image/*" capture="environment" ref={photoInputRef} className="hidden" onChange={(e) => handleFileChange(e, 'photo')} />
+      <input type="file" accept="video/*" capture="environment" ref={videoInputRef} className="hidden" onChange={(e) => handleFileChange(e, 'video')} />
 
       <div className="glass rounded-2xl p-8 border-white/5 animate-in slide-in-from-right-4 duration-500">
         <div className="border-b border-white/5 pb-6 mb-8">
