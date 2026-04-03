@@ -40,6 +40,8 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
   const [viewMode, setViewMode] = useState<ViewMode>('week');
   const [selectedRO, setSelectedRO] = useState<RepairOrder | null>(null);
   const [dragData, setDragData] = useState<{ roId: string; type: 'arrival' | 'pickup' } | null>(null);
+  const [newDirective, setNewDirective] = useState('');
+  const [newPartDesc, setNewPartDesc] = useState('');
 
   const canEdit = loggedInUser?.role === UserRole.SERVICE_MANAGER || loggedInUser?.role === UserRole.ADMIN;
 
@@ -113,6 +115,27 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
   };
+
+  /** Month view drop — keeps original time, changes date only */
+  const handleMonthDrop = useCallback((e: React.DragEvent, targetDate: Date) => {
+    e.preventDefault();
+    if (!dragData || !onUpdateRO) return;
+
+    const ro = repairOrders.find(r => r.id === dragData.roId);
+    if (!ro) return;
+
+    const field = dragData.type === 'arrival' ? 'arrivalDate' : 'estimatedPickupDate';
+    const originalDate = ro[field] ? new Date(ro[field]!) : new Date();
+    const newDate = new Date(targetDate);
+    newDate.setHours(originalDate.getHours(), originalDate.getMinutes(), 0, 0);
+    const newISO = newDate.toISOString();
+
+    const updatedRO = { ...ro, [field]: newISO };
+    if (dragData.type === 'arrival') updatedRO.scheduledDate = newISO;
+
+    onUpdateRO(updatedRO);
+    setDragData(null);
+  }, [dragData, repairOrders, onUpdateRO]);
 
   // --- Get events for a day + hour slot ---
   const getSlotEvents = (day: Date, hour: number) => {
@@ -322,7 +345,9 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
                 key={`${wi}-${di}`}
                 className={`bg-slate-900/80 min-h-[80px] p-1.5 transition-colors ${
                   !isCurrentMonth ? 'opacity-30' : ''
-                } ${today ? 'ring-1 ring-teal-400 ring-inset' : ''}`}
+                } ${today ? 'ring-1 ring-teal-400 ring-inset' : ''} ${dragData ? 'hover:bg-slate-700/30' : ''}`}
+                onDragOver={canEdit ? handleDragOver : undefined}
+                onDrop={canEdit ? (e) => handleMonthDrop(e, day) : undefined}
               >
                 <div
                   className={`text-[11px] font-bold mb-1 cursor-pointer hover:text-teal-300 ${today ? 'text-teal-400' : 'text-slate-400'}`}
@@ -335,7 +360,9 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
                   {dayArrivals.slice(0, 3).map(ro => (
                     <div
                       key={`a-${ro.id}`}
-                      className="text-[8px] px-1 py-0.5 rounded bg-blue-500/15 text-blue-300 font-bold truncate cursor-pointer hover:bg-blue-500/25"
+                      draggable={canEdit}
+                      onDragStart={canEdit ? (e) => { setDragData({ roId: ro.id, type: 'arrival' }); e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', ro.id); } : undefined}
+                      className={`text-[8px] px-1 py-0.5 rounded bg-blue-500/15 text-blue-300 font-bold truncate cursor-pointer hover:bg-blue-500/25 ${canEdit ? 'cursor-grab active:cursor-grabbing' : ''}`}
                       onClick={() => setSelectedRO(ro)}
                     >
                       ↓ {ro.customerName}
@@ -344,7 +371,9 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
                   {dayPickups.slice(0, 3).map(ro => (
                     <div
                       key={`p-${ro.id}`}
-                      className="text-[8px] px-1 py-0.5 rounded bg-emerald-500/15 text-emerald-300 font-bold truncate cursor-pointer hover:bg-emerald-500/25"
+                      draggable={canEdit}
+                      onDragStart={canEdit ? (e) => { setDragData({ roId: ro.id, type: 'pickup' }); e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', ro.id); } : undefined}
+                      className={`text-[8px] px-1 py-0.5 rounded bg-emerald-500/15 text-emerald-300 font-bold truncate cursor-pointer hover:bg-emerald-500/25 ${canEdit ? 'cursor-grab active:cursor-grabbing' : ''}`}
                       onClick={() => setSelectedRO(ro)}
                     >
                       ↑ {ro.customerName}
@@ -371,8 +400,8 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
   const renderDetailPanel = () => {
     if (!selectedRO) return null;
     return (
-      <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center" onClick={() => setSelectedRO(null)}>
-        <div className="bg-slate-900 border border-white/10 rounded-2xl p-6 w-full max-w-lg shadow-2xl" onClick={e => e.stopPropagation()}>
+      <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={() => setSelectedRO(null)}>
+        <div className="bg-slate-900 border border-white/10 rounded-2xl p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
           {/* Customer + RO ID */}
           <h3 className="text-lg font-black text-slate-200 mb-0.5">{selectedRO.customerName}</h3>
           <p className="text-[10px] text-slate-500 font-mono mb-4">{selectedRO.id}</p>
@@ -491,9 +520,126 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
             )}
           </div>
 
+          {/* SM/Admin: Add Directive + Part inline */}
+          {canEdit && onUpdateRO && (
+            <div className="mt-4 pt-4 border-t border-white/10 space-y-3">
+              {/* Add Directive */}
+              <div>
+                <label className="block text-[9px] text-slate-500 font-bold uppercase tracking-widest mb-1">Add Directive</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={newDirective}
+                    onChange={e => setNewDirective(e.target.value)}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter' && newDirective.trim()) {
+                        const freshRO = repairOrders.find(r => r.id === selectedRO.id) || selectedRO;
+                        const updated = {
+                          ...freshRO,
+                          directives: [...freshRO.directives, { id: crypto.randomUUID(), title: newDirective.trim(), isCompleted: false }],
+                        };
+                        onUpdateRO(updated);
+                        setSelectedRO(updated);
+                        setNewDirective('');
+                      }
+                    }}
+                    placeholder="e.g. Check lower unit oil"
+                    className="flex-1 bg-slate-800/50 border border-white/10 rounded-lg px-3 py-1.5 text-slate-300 text-xs focus:border-teal-400 outline-none"
+                  />
+                  <button
+                    disabled={!newDirective.trim()}
+                    onClick={() => {
+                      if (!newDirective.trim()) return;
+                      const freshRO = repairOrders.find(r => r.id === selectedRO.id) || selectedRO;
+                      const updated = {
+                        ...freshRO,
+                        directives: [...freshRO.directives, { id: crypto.randomUUID(), title: newDirective.trim(), isCompleted: false }],
+                      };
+                      onUpdateRO(updated);
+                      setSelectedRO(updated);
+                      setNewDirective('');
+                    }}
+                    className="px-3 py-1.5 rounded-lg bg-teal-500/20 text-teal-400 text-xs font-bold hover:bg-teal-500/30 disabled:opacity-30 disabled:hover:bg-teal-500/20 transition-colors"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+
+              {/* Add Part */}
+              <div>
+                <label className="block text-[9px] text-slate-500 font-bold uppercase tracking-widest mb-1">Add Part</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={newPartDesc}
+                    onChange={e => setNewPartDesc(e.target.value)}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter' && newPartDesc.trim()) {
+                        const freshRO = repairOrders.find(r => r.id === selectedRO.id) || selectedRO;
+                        const newPart = {
+                          partNumber: `CUSTOM-${Date.now().toString().slice(-6)}`,
+                          description: newPartDesc.trim(),
+                          category: 'Custom',
+                          binLocation: '',
+                          msrp: 0,
+                          dealerPrice: 0,
+                          cost: 0,
+                          quantityOnHand: 0,
+                          reorderPoint: 0,
+                          quantity: 1,
+                          supersedesPart: null,
+                          status: 'REQUIRED' as any,
+                          isCustom: true,
+                          shopId: freshRO.shopId,
+                        };
+                        const updated = { ...freshRO, parts: [...freshRO.parts, newPart] };
+                        onUpdateRO(updated);
+                        setSelectedRO(updated);
+                        setNewPartDesc('');
+                      }
+                    }}
+                    placeholder="e.g. Zinc anode, Impeller kit"
+                    className="flex-1 bg-slate-800/50 border border-white/10 rounded-lg px-3 py-1.5 text-slate-300 text-xs focus:border-amber-400 outline-none"
+                  />
+                  <button
+                    disabled={!newPartDesc.trim()}
+                    onClick={() => {
+                      if (!newPartDesc.trim()) return;
+                      const freshRO = repairOrders.find(r => r.id === selectedRO.id) || selectedRO;
+                      const newPart = {
+                        partNumber: `CUSTOM-${Date.now().toString().slice(-6)}`,
+                        description: newPartDesc.trim(),
+                        category: 'Custom',
+                        binLocation: '',
+                        msrp: 0,
+                        dealerPrice: 0,
+                        cost: 0,
+                        quantityOnHand: 0,
+                        reorderPoint: 0,
+                        quantity: 1,
+                        supersedesPart: null,
+                        status: 'REQUIRED' as any,
+                        isCustom: true,
+                        shopId: freshRO.shopId,
+                      };
+                      const updated = { ...freshRO, parts: [...freshRO.parts, newPart] };
+                      onUpdateRO(updated);
+                      setSelectedRO(updated);
+                      setNewPartDesc('');
+                    }}
+                    className="px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-400 text-xs font-bold hover:bg-amber-500/30 disabled:opacity-30 disabled:hover:bg-amber-500/20 transition-colors"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           <button
-            onClick={() => setSelectedRO(null)}
-            className="mt-6 w-full py-2 bg-slate-800 border border-white/10 rounded-lg text-sm text-slate-400 hover:bg-slate-700 transition-colors"
+            onClick={() => { setSelectedRO(null); setNewDirective(''); setNewPartDesc(''); }}
+            className="mt-4 w-full py-2 bg-slate-800 border border-white/10 rounded-lg text-sm text-slate-400 hover:bg-slate-700 transition-colors"
           >
             Close
           </button>
