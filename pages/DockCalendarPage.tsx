@@ -348,10 +348,58 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
     if (!selectedRO) return null;
     return (
       <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center" onClick={() => setSelectedRO(null)}>
-        <div className="bg-slate-900 border border-white/10 rounded-2xl p-6 w-full max-w-md shadow-2xl" onClick={e => e.stopPropagation()}>
-          <h3 className="text-lg font-black text-slate-200 mb-1">{selectedRO.customerName}</h3>
-          <p className="text-sm text-slate-400 mb-4">{selectedRO.vesselName} — {selectedRO.id}</p>
+        <div className="bg-slate-900 border border-white/10 rounded-2xl p-6 w-full max-w-lg shadow-2xl" onClick={e => e.stopPropagation()}>
+          {/* Customer + RO ID */}
+          <h3 className="text-lg font-black text-slate-200 mb-0.5">{selectedRO.customerName}</h3>
+          <p className="text-[10px] text-slate-500 font-mono mb-4">{selectedRO.id}</p>
 
+          {/* Vessel Identity */}
+          <div className="bg-slate-800/50 rounded-lg p-3 mb-4 border border-white/5">
+            <h4 className="text-[9px] text-slate-500 font-bold uppercase tracking-widest mb-2">Vessel</h4>
+            <div className="grid grid-cols-2 gap-y-1.5 gap-x-4 text-sm">
+              <div>
+                <span className="text-slate-500 text-[10px]">Boat</span>
+                <p className="text-slate-200 font-bold">{selectedRO.boatMake || '—'} {selectedRO.boatModel || ''}</p>
+              </div>
+              <div>
+                <span className="text-slate-500 text-[10px]">Year / Length</span>
+                <p className="text-slate-300">{selectedRO.boatYear || '—'}{selectedRO.boatLength ? ` • ${selectedRO.boatLength}ft` : ''}</p>
+              </div>
+              <div>
+                <span className="text-slate-500 text-[10px]">HIN</span>
+                <p className="text-slate-300 font-mono text-xs">{selectedRO.vesselHIN || '—'}</p>
+              </div>
+              <div>
+                <span className="text-slate-500 text-[10px]">Vessel Name</span>
+                <p className="text-slate-300">{selectedRO.vesselName || '—'}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Engine Identity */}
+          <div className="bg-slate-800/50 rounded-lg p-3 mb-4 border border-white/5">
+            <h4 className="text-[9px] text-slate-500 font-bold uppercase tracking-widest mb-2">Engine</h4>
+            <div className="grid grid-cols-2 gap-y-1.5 gap-x-4 text-sm">
+              <div>
+                <span className="text-slate-500 text-[10px]">Make / Model</span>
+                <p className="text-slate-200 font-bold">{selectedRO.engineMake || '—'} {selectedRO.engineModel || ''}</p>
+              </div>
+              <div>
+                <span className="text-slate-500 text-[10px]">Year</span>
+                <p className="text-slate-300">{selectedRO.engineYear || '—'}</p>
+              </div>
+              <div>
+                <span className="text-slate-500 text-[10px]">Serial Number</span>
+                <p className="text-slate-300 font-mono text-xs">{selectedRO.engineSerial || '—'}</p>
+              </div>
+              <div>
+                <span className="text-slate-500 text-[10px]">Hours / HP</span>
+                <p className="text-slate-300">{selectedRO.engineHours ? `${selectedRO.engineHours} hrs` : '—'}{selectedRO.engineHorsepower ? ` • ${selectedRO.engineHorsepower} HP` : ''}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Scheduling + Job Details */}
           <div className="space-y-2 text-sm">
             {selectedRO.jobCategory && (
               <div className="flex justify-between">
@@ -375,14 +423,47 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
               <span className="text-slate-500">Status</span>
               <span className="text-slate-300 font-bold uppercase text-xs">{selectedRO.status.replace('_', ' ')}</span>
             </div>
+            {selectedRO.technicianName && (
+              <div className="flex justify-between">
+                <span className="text-slate-500">Technician</span>
+                <span className="text-teal-400 font-bold">{selectedRO.technicianName}</span>
+              </div>
+            )}
             <div className="flex justify-between">
               <span className="text-slate-500">Directives</span>
               <span className="text-slate-300">{selectedRO.directives.length}</span>
             </div>
+            {selectedRO.directives.length > 0 && (
+              <div className="pl-3 border-l border-white/10 space-y-1">
+                {selectedRO.directives.map((d: any, i: number) => (
+                  <p key={i} className="text-[10px] text-slate-400">
+                    <span className="text-slate-500 font-mono mr-1">{String(i + 1).padStart(2, '0')}</span>
+                    {d.description || d}
+                  </p>
+                ))}
+              </div>
+            )}
             <div className="flex justify-between">
               <span className="text-slate-500">Parts</span>
               <span className="text-slate-300">{selectedRO.parts.length}</span>
             </div>
+            {selectedRO.parts.length > 0 && (
+              <div className="pl-3 border-l border-white/10 space-y-1">
+                {selectedRO.parts.map((p: any, i: number) => (
+                  <p key={i} className="text-[10px] text-slate-400">
+                    <span className="text-slate-500 font-mono mr-1">{p.partNumber}</span>
+                    {p.description}{p.quantity && p.quantity > 1 ? ` ×${p.quantity}` : ''}
+                    <span className="ml-2 text-[8px] uppercase font-bold text-slate-600">{p.status}</span>
+                  </p>
+                ))}
+              </div>
+            )}
+            {selectedRO.jobComplaint && (
+              <div>
+                <span className="text-slate-500 text-[10px] block mb-0.5">Complaint</span>
+                <p className="text-slate-300 text-xs italic">{selectedRO.jobComplaint}</p>
+              </div>
+            )}
           </div>
 
           <button
