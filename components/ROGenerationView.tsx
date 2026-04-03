@@ -155,6 +155,23 @@ const ROGenerationView: React.FC<ROGenerationViewProps> = ({ profileData, onROGe
   const photoInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
 
+  // --- Scheduling state ---
+  const [arrivalDate, setArrivalDate] = useState('');
+  const [jobCategory, setJobCategory] = useState('');
+
+  const DEFAULT_JOB_CATEGORIES = [
+    { name: 'Repower', color: '#F97316' },
+    { name: '100hr Service', color: '#3B82F6' },
+    { name: '300hr Service', color: '#06B6D4' },
+    { name: '1000hr Service', color: '#8B5CF6' },
+    { name: 'Small Motor Repair', color: '#EAB308' },
+    { name: 'Inboard Service', color: '#14B8A6' },
+    { name: 'Outboard Service', color: '#22C55E' },
+    { name: 'Winterization', color: '#64748B' },
+    { name: 'Bottom Paint / Hull', color: '#F59E0B' },
+    { name: 'Electrical / Electronics', color: '#F43F5E' },
+  ];
+
   const manualPartResults = useMemo(() => {
     if (manualPartQuery.length < 2) return [];
     const q = manualPartQuery.toLowerCase();
@@ -210,6 +227,9 @@ const ROGenerationView: React.FC<ROGenerationViewProps> = ({ profileData, onROGe
         ? { type: authorizationType, data: authorizationData ?? '', timestamp: authorizationTimestamp ?? Date.now() }
         : undefined,
       shopId: shopContextService.getActiveShopId(),
+      arrivalDate: arrivalDate ? new Date(arrivalDate).toISOString() : null,
+      scheduledDate: arrivalDate ? new Date(arrivalDate).toISOString() : null,
+      jobCategory: jobCategory || null,
     };
 
     // Phase 4 — pass nested entity payloads if profileData carries them
@@ -442,6 +462,43 @@ const ROGenerationView: React.FC<ROGenerationViewProps> = ({ profileData, onROGe
             onRecordAudio={handleOpenAudioRecorder}
             placeholder="Describe the customer's reported issue for this visit..."
           />
+          {/* --- Scheduling Section --- */}
+          <div className="space-y-4">
+            <SectionHeader title="Dock Scheduling" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">Job Category</label>
+                <select
+                  value={jobCategory}
+                  onChange={e => setJobCategory(e.target.value)}
+                  className="w-full bg-slate-900/50 border border-white/10 rounded-lg px-4 py-3 text-slate-300 text-sm focus:border-neon-seafoam outline-none transition-colors"
+                >
+                  <option value="">Select job type...</option>
+                  {DEFAULT_JOB_CATEGORIES.map(cat => (
+                    <option key={cat.name} value={cat.name}>{cat.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">
+                  Drop-off Date & Time <span className="text-red-400">*</span>
+                </label>
+                <input
+                  type="datetime-local"
+                  value={arrivalDate}
+                  onChange={e => setArrivalDate(e.target.value)}
+                  className="w-full bg-slate-900/50 border border-white/10 rounded-lg px-4 py-3 text-slate-300 text-sm focus:border-neon-seafoam outline-none transition-colors"
+                />
+              </div>
+            </div>
+            {jobCategory && (
+              <div className="flex items-center gap-2 px-2">
+                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: DEFAULT_JOB_CATEGORIES.find(c => c.name === jobCategory)?.color || '#64748B' }} />
+                <span className="text-xs text-slate-400">{jobCategory} — will appear on dock calendar</span>
+              </div>
+            )}
+          </div>
+
           <div className="space-y-4">
             <SectionHeader title="Authorization Gate" />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

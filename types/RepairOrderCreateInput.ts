@@ -61,6 +61,12 @@ export interface RepairOrderCreateInput {
 
   shopId: string;
 
+  // --- Scheduling ---
+  arrivalDate?: string | null;           // ISO datetime — when boat drops off (required in UI)
+  estimatedPickupDate?: string | null;   // ISO datetime — set later at billing
+  scheduledDate?: string | null;         // ISO datetime — when service starts (auto = arrivalDate)
+  jobCategory?: string | null;           // Job type from shop's configured categories
+
   // Phase 3 nested entity IDs — optional, written by createRepairOrder()
   companyId?: string;
   contactId?: string;

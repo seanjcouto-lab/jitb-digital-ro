@@ -6,6 +6,7 @@ export enum UserRole {
   BILLING = 'BILLING',
   DATABASE = 'DATABASE',
   METRICS = 'METRICS',
+  CALENDAR = 'CALENDAR',
   ADMIN = 'ADMIN',
 }
 
@@ -239,6 +240,8 @@ export interface RepairOrder {
   engineId?: string;
   scheduledDate?: string | null;   // ISO date string — when the job is scheduled for service
   arrivalDate?: string | null;     // ISO date string — when the boat physically arrives on yard
+  estimatedPickupDate?: string | null; // ISO date string — when customer picks up the boat (set at billing)
+  jobCategory?: string | null;     // Job type category name (from shop's configured list)
 }
 
 export interface VesselHistory {
@@ -277,6 +280,11 @@ export interface VesselHistory {
   }[];
 }
 
+export interface JobCategory {
+  name: string;
+  color: string; // Tailwind color class or hex (e.g. 'orange', '#F97316')
+}
+
 export interface AppConfig {
   logoUrl: string;
   companyName: string;
@@ -287,7 +295,10 @@ export interface AppConfig {
     primary: string;
     secondary: string;
     accent: string;
-  }
+  };
+  dockCapacity?: number;          // Target dock capacity — soft warning, no hard block
+  boardLeadTimeDays?: number;     // Days before drop-off when RO appears on board (default 14)
+  jobCategories?: JobCategory[];  // Shop-configurable job type categories with colors
 }
 
 export type InventoryAlert = {

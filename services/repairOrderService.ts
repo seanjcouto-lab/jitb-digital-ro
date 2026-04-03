@@ -283,6 +283,10 @@ export const repairOrderService = {
       contactId: resolvedContactId,
       vesselId: resolvedVesselId,
       engineId: resolvedEngineId,
+      scheduledDate: input.scheduledDate ?? null,
+      arrivalDate: input.arrivalDate ?? null,
+      estimatedPickupDate: input.estimatedPickupDate ?? null,
+      jobCategory: input.jobCategory ?? null,
     };
     
     domainEventService.publish('repair-order:created', newRO);

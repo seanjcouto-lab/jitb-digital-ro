@@ -20,6 +20,7 @@ import DatabasePage from './pages/DatabasePage';
 import BillingPage from './pages/BillingPage';
 import InventoryPage from './pages/InventoryPage';
 import MetricsPage from './pages/MetricsPage';
+import DockCalendarPage from './pages/DockCalendarPage';
 import LoginScreen from './pages/LoginScreen';
 import UpdatePasswordScreen from './pages/UpdatePasswordScreen';
 import CommsLink from './components/CommsLink';
@@ -276,6 +277,7 @@ const App: React.FC = () => {
     [UserRole.BILLING]: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>,
     [UserRole.DATABASE]: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="5" r="3"/><line x1="12" y1="8" x2="12" y2="22"/><path d="M5 15a7 7 0 0014 0"/><line x1="12" y1="22" x2="8" y2="18"/><line x1="12" y1="22" x2="16" y2="18"/></svg>,
     [UserRole.METRICS]: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" /></svg>,
+    [UserRole.CALENDAR]: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>,
     [UserRole.ADMIN]: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
   };
 
@@ -292,6 +294,7 @@ const App: React.FC = () => {
       case UserRole.BILLING: return <BillingPage repairOrders={repairOrders.filter(ro => ro.status === ROStatus.COMPLETED || ro.status === ROStatus.PENDING_INVOICE)} updateRO={updateRO} />;
       case UserRole.DATABASE: return <DatabasePage allROs={repairOrders} />;
       case UserRole.METRICS: return <MetricsPage repairOrders={repairOrders} inventory={masterInventory} config={config} />;
+      case UserRole.CALENDAR: return <DockCalendarPage repairOrders={repairOrders} loggedInUser={loggedInUser} onUpdateRO={updateRO} />;
       case UserRole.ADMIN: return <AdminPage config={config} setConfig={setConfig} onExport={handleExportData} loggedInUser={loggedInUser} />;
       default: return null;
     }

@@ -121,6 +121,8 @@ export async function loadFromSupabase(shopId: string): Promise<void> {
         technicianName: row.technician_name ?? null,
         scheduledDate: row.scheduled_date ?? existing?.scheduledDate ?? null,
         arrivalDate: row.arrival_date ?? existing?.arrivalDate ?? null,
+        estimatedPickupDate: row.estimated_pickup_date ?? existing?.estimatedPickupDate ?? null,
+        jobCategory: row.job_category ?? existing?.jobCategory ?? null,
 
         parts: partsRes.error
           ? (existing?.parts ?? [])

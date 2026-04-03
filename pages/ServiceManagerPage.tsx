@@ -131,6 +131,21 @@ const ROCard: React.FC<ROCardProps> = ({
         <span>⏱</span><span>{getRelativeTime(createdAt)}</span>
       </div>
 
+      {/* Row 3b: Scheduling dates + job category */}
+      {(ro.arrivalDate || ro.estimatedPickupDate || ro.jobCategory) && (
+        <div className="flex flex-wrap gap-2 text-[9px] font-bold">
+          {ro.jobCategory && (
+            <span className="px-2 py-0.5 rounded bg-slate-700/50 text-slate-300 uppercase tracking-wider">{ro.jobCategory}</span>
+          )}
+          {ro.arrivalDate && (
+            <span className="text-blue-400">DROP: {new Date(ro.arrivalDate).toLocaleDateString('en-US', { weekday: 'short', month: 'numeric', day: 'numeric' })} {new Date(ro.arrivalDate).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</span>
+          )}
+          {ro.estimatedPickupDate && (
+            <span className="text-emerald-400">PICK: {new Date(ro.estimatedPickupDate).toLocaleDateString('en-US', { weekday: 'short', month: 'numeric', day: 'numeric' })} {new Date(ro.estimatedPickupDate).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</span>
+          )}
+        </div>
+      )}
+
       {/* Row 4: Work summary */}
       <div className="flex gap-4 text-[9px] text-slate-400 font-bold uppercase tracking-wider">
         <span>{ro.directives.length} Directives</span>
@@ -619,8 +634,15 @@ const ServiceManagerPage: React.FC<ServiceManagerPageProps> = ({
   const roGenerationRef = useRef<HTMLDivElement>(null);
 
   // Filter Logic
+  // Date gate: only show ROs within lead time window or with no arrival date (walk-ins/legacy)
+  const BOARD_LEAD_TIME_DAYS = 14;
+  const boardCutoffDate = new Date(Date.now() + BOARD_LEAD_TIME_DAYS * 24 * 60 * 60 * 1000).toISOString();
+
   const getQueueROs = (group: keyof typeof STATUS_GROUPS) => {
     let filtered = repairOrders.filter(ro => {
+      // Date gate: exclude ROs with arrivalDate beyond the lead time window
+      if (ro.arrivalDate && ro.arrivalDate > boardCutoffDate) return false;
+
       const isInStatusGroup = STATUS_GROUPS[group].includes(ro.status);
       
       if (group === 'STAGED') {
