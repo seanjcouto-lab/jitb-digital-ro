@@ -434,7 +434,7 @@ test('Jaxtr Demo — 4:30 Timed Walkthrough', async ({ page }) => {
   // "The system surfaces the problem immediately."
   // ═══════════════════════════════════════════════════════════════════════════
 
-  await humanHover(page, 'text=Log Requisitions', 4500);
+  await humanHover(page, 'text=Add Work & Parts', 4500);
   await humanHover(page, 'text=Add Directive Request', 4000);
   await scenePause(2500);
 

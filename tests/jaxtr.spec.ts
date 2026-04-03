@@ -858,8 +858,8 @@ test('T51: Tech can add discovery directive request', async ({ page }) => {
     await page.locator('button:has-text("Add")').first().click();
     await page.waitForTimeout(500);
   }
-  // Log Requisitions section should be visible
-  await expect(page.locator('text=Log Requisitions')).toBeVisible({ timeout: 8000 });
+  // Add Work & Parts section should be visible
+  await expect(page.locator('text=Add Work & Parts')).toBeVisible({ timeout: 8000 });
 });
 
 test('T52: Tech halt job button visible when job is ACTIVE', async ({ page }) => {

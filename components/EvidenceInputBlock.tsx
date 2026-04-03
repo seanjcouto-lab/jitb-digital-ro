@@ -81,7 +81,7 @@ const EvidenceInputBlock: React.FC<EvidenceInputBlockProps> = ({
         <div className="absolute bottom-3 right-3 flex gap-2">
           <button onClick={toggleDictation} title="Dictate Notes" className={`p-2.5 rounded-full transition-colors ${isDictating ? 'bg-red-500/50' : 'bg-slate-700/50 hover:bg-slate-600/50'}`}>
             <svg className={`w-5 h-5 text-white ${isDictating ? 'animate-pulse' : ''}`} fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M5 3a3 3 0 016 0v5a3 3 0 01-6 0V3zm2 5a1 1 0 011-1h.01a1 1 0 110 2H8a1 1 0 01-1-1zm-1 3a1 1 0 00-1 1v1a3 3 0 003 3h1a3 3 0 003-3v-1a1 1 0 10-2 0v1a1 1 0 01-1 1h-1a1 1 0 01-1-1v-1a1 1 0 00-1-1z" clipRule="evenodd" />
+              <path fillRule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clipRule="evenodd" />
             </svg>
           </button>
         </div>
@@ -91,7 +91,7 @@ const EvidenceInputBlock: React.FC<EvidenceInputBlockProps> = ({
         <button onClick={onTakeVideo} className="flex-1 flex items-center justify-center gap-2 text-sm font-bold text-slate-300 hover:text-white bg-slate-800/70 hover:bg-slate-700/70 py-3 rounded-xl transition-all"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 5.553A1 1 0 0116 6.447V13.553a1 1 0 01-1.447.894l-3-2.25A1 1 0 0111 11.5v-3a1 1 0 01.553-.894l3-2.25z" /></svg>Video</button>
         <button onClick={onRecordAudio} className="flex-1 flex items-center justify-center gap-2 text-sm font-bold text-slate-300 hover:text-white bg-slate-800/70 hover:bg-slate-700/70 py-3 rounded-xl transition-all">
           <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M5 3a3 3 0 016 0v5a3 3 0 01-6 0V3zm2 5a1 1 0 011-1h.01a1 1 0 110 2H8a1 1 0 01-1-1zm-1 3a1 1 0 00-1 1v1a3 3 0 003 3h1a3 3 0 003-3v-1a1 1 0 10-2 0v1a1 1 0 01-1 1h-1a1 1 0 01-1-1v-1a1 1 0 00-1-1z" clipRule="evenodd" />
+            <path fillRule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clipRule="evenodd" />
           </svg>
           Audio
         </button>
