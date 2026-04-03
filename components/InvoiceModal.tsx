@@ -106,7 +106,11 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, ov
             </tr>
             <tr>
               <td>${ro.customerEmails?.[0] || ''}</td>
-              <td>HIN: ${ro.vesselHIN || 'N/A'} | Engine S/N: ${ro.engineSerial || 'N/A'}</td>
+              <td>HIN: ${ro.vesselHIN || 'N/A'}</td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>Engine: ${[ro.engineYear, ro.engineMake, ro.engineModel].filter(Boolean).join(' ') || 'N/A'}${ro.engineHorsepower ? ` • ${ro.engineHorsepower}HP` : ''}${ro.engineHours ? ` • ${ro.engineHours} hrs` : ''} | S/N: ${ro.engineSerial || 'N/A'}</td>
             </tr>
           </table>
         </div>
@@ -211,6 +215,34 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, ov
         </div>
 
         <div className="space-y-6">
+          {/* Customer & Vessel Identity */}
+          <section>
+            <h4 className="font-bold text-slate-300 uppercase tracking-wider mb-2">Customer & Vessel</h4>
+            <div className="bg-slate-900/50 p-4 rounded-lg border border-white/5">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <span className="text-xs text-slate-400 block">Customer</span>
+                  <span className="font-bold text-white">{ro.customerName}</span>
+                  {ro.companyName && <span className="text-xs text-slate-500 block">{ro.companyName}</span>}
+                </div>
+                <div>
+                  <span className="text-xs text-slate-400 block">Vessel</span>
+                  <span className="font-bold text-white">{ro.vesselName || '—'}</span>
+                  <span className="text-xs text-slate-400 block">{[ro.boatYear, ro.boatMake, ro.boatModel].filter(Boolean).join(' ')}{ro.boatLength ? ` • ${ro.boatLength}ft` : ''}</span>
+                </div>
+                <div>
+                  <span className="text-xs text-slate-400 block">Engine</span>
+                  <span className="font-bold text-white">{[ro.engineYear, ro.engineMake, ro.engineModel].filter(Boolean).join(' ') || '—'}</span>
+                  <span className="text-xs text-slate-400 block">{ro.engineHorsepower ? `${ro.engineHorsepower}HP` : ''}{ro.engineHours ? ` • ${ro.engineHours} hrs` : ''}{ro.engineSerial ? ` • S/N: ${ro.engineSerial}` : ''}</span>
+                </div>
+                <div>
+                  <span className="text-xs text-slate-400 block">HIN</span>
+                  <span className="font-mono text-sm text-slate-300">{ro.vesselHIN || '—'}</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
           {/* Labor Section */}
           <section>
             <h4 className="font-bold text-slate-300 uppercase tracking-wider mb-2">Labor Summary</h4>

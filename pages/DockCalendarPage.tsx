@@ -343,7 +343,7 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
             return (
               <div
                 key={`${wi}-${di}`}
-                className={`bg-slate-900/80 min-h-[80px] p-1.5 transition-colors ${
+                className={`bg-slate-900/80 min-h-[80px] p-1.5 ${
                   !isCurrentMonth ? 'opacity-30' : ''
                 } ${today ? 'ring-1 ring-teal-400 ring-inset' : ''} ${dragData ? 'hover:bg-slate-700/30' : ''}`}
                 onDragOver={canEdit ? handleDragOver : undefined}

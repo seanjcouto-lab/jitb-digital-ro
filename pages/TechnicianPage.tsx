@@ -225,6 +225,7 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs 
   const [newDirectiveRequest, setNewDirectiveRequest] = useState('');
   const [newPartRequestQuery, setNewPartRequestQuery] = useState('');
   const [expandedQueueId, setExpandedQueueId] = useState<string | null>(null);
+  const [isActiveBayMinimized, setIsActiveBayMinimized] = useState(false);
 
   // Evidence modal trigger — directiveId, mode, initialMediaUrl for preview, and blob/mimeType for persistence
   const [evidenceModal, setEvidenceModal] = useState<{ directiveId: string | null; mode: EvidenceModalMode; initialMediaUrl: string | null; initialBlob: Blob | null; initialMimeType: string | null } | null>(null);
@@ -369,12 +370,27 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs 
     }, 300);
   };
 
-  if (!repairOrder) {
+  if (!repairOrder || isActiveBayMinimized) {
     return (
       <div className="space-y-6 animate-in zoom-in duration-500">
-        <div className="glass p-20 text-center rounded-2xl">
-          <p className="text-slate-500 uppercase tracking-widest text-sm font-bold">No Active Job. See Service Manager.</p>
-        </div>
+        {repairOrder && isActiveBayMinimized && (
+          <button
+            onClick={() => setIsActiveBayMinimized(false)}
+            className="w-full glass p-4 rounded-2xl border border-teal-500/30 flex items-center justify-between hover:border-teal-400/50 transition-all group"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
+              <span className="text-sm font-black uppercase tracking-widest text-teal-400">Active: {repairOrder.customerName}</span>
+              <span className="text-xs text-slate-500">{repairOrder.vesselName}</span>
+            </div>
+            <span className="text-xs font-bold text-slate-500 group-hover:text-teal-400 uppercase tracking-widest transition-colors">Return to Job →</span>
+          </button>
+        )}
+        {!repairOrder && (
+          <div className="glass p-20 text-center rounded-2xl">
+            <p className="text-slate-500 uppercase tracking-widest text-sm font-bold">No Active Job. See Service Manager.</p>
+          </div>
+        )}
         {haltedROs.length > 0 && (
           <div className="glass p-6 rounded-2xl border-orange-500/30">
             <h3 className="text-lg font-black uppercase tracking-widest text-orange-400 mb-4">My Halted Jobs</h3>
@@ -535,6 +551,13 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs 
                 <span className="text-3xl font-mono neon-seafoam font-bold">{formatTime(elapsedTime)}</span>
               </div>
             )}
+            <button
+              onClick={() => setIsActiveBayMinimized(true)}
+              title="Minimize — view queue"
+              className="p-2 rounded-lg bg-slate-800 border border-white/10 text-slate-500 hover:text-white hover:border-slate-500 transition-all"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5 10a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z" clipRule="evenodd" /></svg>
+            </button>
           </div>
         </div>
 
