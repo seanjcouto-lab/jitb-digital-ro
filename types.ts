@@ -110,6 +110,20 @@ export interface Directive {
   isApproved?: boolean; // Directives from tech need approval
 }
 
+export interface MediaRecord {
+  id: string;                    // UUID
+  roId: string;                  // repair order ID
+  directiveId: string | null;    // null = general labor note / job complaint media
+  shopId: string;
+  type: 'photo' | 'video' | 'audio';
+  mimeType: string;              // e.g. 'image/jpeg', 'video/webm', 'audio/webm'
+  blob: Blob;                    // actual media data — stored natively in IndexedDB
+  fileName: string;              // e.g. 'abc123.jpg'
+  createdAt: number;             // timestamp
+  syncStatus: 'pending' | 'synced' | 'failed';
+  supabaseUrl: string | null;    // permanent URL after Supabase Storage sync
+}
+
 export interface WorkSession {
   startTime: number;
   endTime?: number;

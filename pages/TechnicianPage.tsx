@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { RepairOrder, ROStatus, PartStatus, Directive, Part, RORequest, InventoryAlert } from '../types';
 import { TechnicianService } from '../services/technicianService';
+import { mediaService } from '../services/mediaService';
 import SectionHeader from '../components/SectionHeader';
 import EvidenceInputBlock from '../components/EvidenceInputBlock';
 import { EngineIdentityLine } from '../components/EngineIdentityLine';
@@ -126,12 +127,16 @@ interface EvidenceModalProps {
   directiveId: string | null;
   mode: EvidenceModalMode;
   initialMediaUrl: string | null;
+  initialBlob: Blob | null;
+  initialMimeType: string | null;
   onClose: () => void;
-  onSave: (capturedMediaUrl: string) => void;
+  onSave: (blob: Blob, mimeType: string) => void;
 }
 
-const EvidenceModal: React.FC<EvidenceModalProps> = ({ mode, initialMediaUrl, onClose, onSave }) => {
+const EvidenceModal: React.FC<EvidenceModalProps> = ({ mode, initialMediaUrl, initialBlob, initialMimeType, onClose, onSave }) => {
   const [capturedMediaUrl, setCapturedMediaUrl] = useState<string | null>(initialMediaUrl);
+  const [capturedBlob, setCapturedBlob] = useState<Blob | null>(initialBlob);
+  const [capturedMimeType, setCapturedMimeType] = useState<string | null>(initialMimeType);
   const [isRecording, setIsRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const recordedChunks = useRef<Blob[]>([]);
@@ -164,6 +169,8 @@ const EvidenceModal: React.FC<EvidenceModalProps> = ({ mode, initialMediaUrl, on
         const blob = new Blob(recordedChunks.current, { type: 'audio/webm' });
         const url = URL.createObjectURL(blob);
         updateCapturedUrl(url);
+        setCapturedBlob(blob);
+        setCapturedMimeType('audio/webm');
         stream.getTracks().forEach(track => track.stop());
         setIsRecording(false);
       };
@@ -193,9 +200,9 @@ const EvidenceModal: React.FC<EvidenceModalProps> = ({ mode, initialMediaUrl, on
   };
 
   const handleSave = () => {
-    if (!capturedMediaUrl) return;
+    if (!capturedBlob || !capturedMimeType) return;
     urlSavedRef.current = true;
-    onSave(capturedMediaUrl);
+    onSave(capturedBlob, capturedMimeType);
     onClose();
   };
 
@@ -272,10 +279,15 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs 
     else if (mode === 'video') videoInputRef.current?.click();
   };
 
+  const [pendingFileBlob, setPendingFileBlob] = useState<Blob | null>(null);
+  const [pendingFileMimeType, setPendingFileMimeType] = useState<string | null>(null);
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, mode: EvidenceModalMode) => {
     const file = event.target.files?.[0];
     if (file) {
       const url = URL.createObjectURL(file);
+      setPendingFileBlob(file);
+      setPendingFileMimeType(file.type);
       setEvidenceModal({ directiveId: currentDirectiveIdForUpload, mode, initialMediaUrl: url });
     }
     if (event.target) event.target.value = '';
@@ -291,15 +303,32 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs 
     setCurrentDirectiveIdForUpload(null);
   };
 
-  const handleSaveEvidence = (capturedMediaUrl: string) => {
+  const handleSaveEvidence = async (blob: Blob, mimeType: string) => {
     if (!repairOrder || !evidenceModal) return;
-    const result = TechnicianService.saveEvidence(repairOrder, evidenceModal, capturedMediaUrl);
+
+    // Save blob to Dexie mediaStore — persists across page reloads
+    const mediaId = await mediaService.saveMedia(
+      repairOrder.id,
+      evidenceModal.directiveId,
+      evidenceModal.mode,
+      blob,
+      mimeType,
+      repairOrder.shopId
+    );
+    const mediaRef = `media://${mediaId}`;
+
+    // Pass the media:// reference to the existing service (URL-format-agnostic)
+    const result = TechnicianService.saveEvidence(repairOrder, evidenceModal, mediaRef);
     if (result.laborNoteUpdate) {
       setLaborNote(prev => prev + result.laborNoteUpdate);
     }
     if (result.updatedRO) {
       updateRO(result.updatedRO);
     }
+
+    // Clean up pending file state
+    setPendingFileBlob(null);
+    setPendingFileMimeType(null);
   };
 
   const handleDirectiveComplete = async (directive: Directive) => {
@@ -669,6 +698,8 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs 
           directiveId={evidenceModal.directiveId}
           mode={evidenceModal.mode}
           initialMediaUrl={evidenceModal.initialMediaUrl}
+          initialBlob={pendingFileBlob}
+          initialMimeType={pendingFileMimeType}
           onClose={handleCloseEvidenceModal}
           onSave={handleSaveEvidence}
         />

@@ -5,6 +5,7 @@ import { RepairOrderCreateInput } from '../types/RepairOrderCreateInput';
 import { SERVICE_PACKAGES } from '../constants';
 import { repairOrderService } from '../services/repairOrderService';
 import { shopContextService } from '../services/shopContextService';
+import { mediaService } from '../services/mediaService';
 import SectionHeader from './SectionHeader';
 import EvidenceInputBlock from './EvidenceInputBlock';
 
@@ -148,9 +149,12 @@ const ROGenerationView: React.FC<ROGenerationViewProps> = ({ profileData, onROGe
   
   const [evidenceModalMode, setEvidenceModalMode] = useState<EvidenceModalMode | null>(null);
   const [capturedMediaUrl, setCapturedMediaUrl] = useState<string | null>(null);
+  const [capturedBlob, setCapturedBlob] = useState<Blob | null>(null);
+  const [capturedMimeType, setCapturedMimeType] = useState<string | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const recordedChunks = useRef<Blob[]>([]);
+  const [pendingAttachments, setPendingAttachments] = useState<Array<{ blob: Blob; mimeType: string; type: 'photo' | 'video' | 'audio'; previewUrl: string }>>([]);
   
   const photoInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
@@ -289,6 +293,27 @@ const ROGenerationView: React.FC<ROGenerationViewProps> = ({ profileData, onROGe
     }
 
     const newRO = repairOrderService.createRepairOrder(input, masterInventory);
+
+    // Persist any pending media attachments to Dexie mediaStore
+    if (pendingAttachments.length > 0) {
+      (async () => {
+        const mediaRefs: string[] = [];
+        for (const att of pendingAttachments) {
+          const mediaId = await mediaService.saveMedia(
+            newRO.id, null, att.type, att.blob, att.mimeType, newRO.shopId
+          );
+          mediaRefs.push(`[Attached ${att.type}: media://${mediaId}]`);
+          // Revoke preview URL
+          if (att.previewUrl) URL.revokeObjectURL(att.previewUrl);
+        }
+        // Append media references to the RO's jobComplaint if any
+        if (mediaRefs.length > 0 && newRO.jobComplaint !== undefined) {
+          newRO.jobComplaint = (newRO.jobComplaint || '') + '\n' + mediaRefs.join('\n');
+        }
+        setPendingAttachments([]);
+      })();
+    }
+
     onROGenerated(newRO);
   };
   
@@ -325,6 +350,8 @@ const ROGenerationView: React.FC<ROGenerationViewProps> = ({ profileData, onROGe
             const blob = new Blob(recordedChunks.current, { type: 'audio/webm' });
             const url = URL.createObjectURL(blob);
             setCapturedMediaUrl(url);
+            setCapturedBlob(blob);
+            setCapturedMimeType('audio/webm');
             stream.getTracks().forEach(track => track.stop());
             setIsRecording(false);
         };
@@ -346,6 +373,8 @@ const ROGenerationView: React.FC<ROGenerationViewProps> = ({ profileData, onROGe
     if (file) {
       const url = URL.createObjectURL(file);
       setCapturedMediaUrl(url);
+      setCapturedBlob(file);
+      setCapturedMimeType(file.type);
       setEvidenceModalMode(mode);
     }
     if (event.target) event.target.value = '';
@@ -363,10 +392,17 @@ const ROGenerationView: React.FC<ROGenerationViewProps> = ({ profileData, onROGe
   };
 
   const handleSaveAttachment = () => {
-      if (!capturedMediaUrl || !evidenceModalMode) return;
-      const noteText = `\n[Attached ${evidenceModalMode}: ${capturedMediaUrl}]`;
-      setJobComplaint(prev => prev + noteText);
-      setCapturedMediaUrl(null); // Prevent URL from being revoked twice
+      if (!capturedBlob || !capturedMimeType || !evidenceModalMode) return;
+      // Store blob + preview URL for later persistence when RO is created
+      setPendingAttachments(prev => [...prev, {
+        blob: capturedBlob,
+        mimeType: capturedMimeType,
+        type: evidenceModalMode,
+        previewUrl: capturedMediaUrl || '',
+      }]);
+      setCapturedMediaUrl(null);
+      setCapturedBlob(null);
+      setCapturedMimeType(null);
       handleCloseEvidenceModal();
   };
   
