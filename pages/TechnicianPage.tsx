@@ -226,8 +226,8 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs 
   const [newPartRequestQuery, setNewPartRequestQuery] = useState('');
   const [expandedQueueId, setExpandedQueueId] = useState<string | null>(null);
 
-  // Evidence modal trigger — directiveId, mode, and initialMediaUrl for photo/video uploads
-  const [evidenceModal, setEvidenceModal] = useState<{ directiveId: string | null; mode: EvidenceModalMode; initialMediaUrl: string | null } | null>(null);
+  // Evidence modal trigger — directiveId, mode, initialMediaUrl for preview, and blob/mimeType for persistence
+  const [evidenceModal, setEvidenceModal] = useState<{ directiveId: string | null; mode: EvidenceModalMode; initialMediaUrl: string | null; initialBlob: Blob | null; initialMimeType: string | null } | null>(null);
   const [currentDirectiveIdForUpload, setCurrentDirectiveIdForUpload] = useState<string | null>(null);
 
   // Modal open triggers — form state lives inside each modal component
@@ -279,23 +279,18 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs 
     else if (mode === 'video') videoInputRef.current?.click();
   };
 
-  const [pendingFileBlob, setPendingFileBlob] = useState<Blob | null>(null);
-  const [pendingFileMimeType, setPendingFileMimeType] = useState<string | null>(null);
-
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, mode: EvidenceModalMode) => {
     const file = event.target.files?.[0];
     if (file) {
       const url = URL.createObjectURL(file);
-      setPendingFileBlob(file);
-      setPendingFileMimeType(file.type);
-      setEvidenceModal({ directiveId: currentDirectiveIdForUpload, mode, initialMediaUrl: url });
+      setEvidenceModal({ directiveId: currentDirectiveIdForUpload, mode, initialMediaUrl: url, initialBlob: file, initialMimeType: file.type });
     }
     if (event.target) event.target.value = '';
   };
 
   const handleOpenAudioRecorder = (directiveId: string | null) => {
     setCurrentDirectiveIdForUpload(directiveId);
-    setEvidenceModal({ directiveId, mode: 'audio', initialMediaUrl: null });
+    setEvidenceModal({ directiveId, mode: 'audio', initialMediaUrl: null, initialBlob: null, initialMimeType: null });
   };
 
   const handleCloseEvidenceModal = () => {
@@ -326,9 +321,6 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs 
       updateRO(result.updatedRO);
     }
 
-    // Clean up pending file state
-    setPendingFileBlob(null);
-    setPendingFileMimeType(null);
   };
 
   const handleDirectiveComplete = async (directive: Directive) => {
@@ -698,8 +690,8 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs 
           directiveId={evidenceModal.directiveId}
           mode={evidenceModal.mode}
           initialMediaUrl={evidenceModal.initialMediaUrl}
-          initialBlob={pendingFileBlob}
-          initialMimeType={pendingFileMimeType}
+          initialBlob={evidenceModal.initialBlob}
+          initialMimeType={evidenceModal.initialMimeType}
           onClose={handleCloseEvidenceModal}
           onSave={handleSaveEvidence}
         />
