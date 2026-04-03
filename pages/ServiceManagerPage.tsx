@@ -387,6 +387,7 @@ const RODetail = ({
               <input
                 type="number"
                 min={1}
+                onFocus={e => e.target.select()}
                 value={partAddQty}
                 onChange={e => setPartAddQty(Math.max(1, parseInt(e.target.value) || 1))}
                 className="w-16 bg-slate-900 border border-white/10 rounded px-2 py-1 text-[10px] font-mono text-amber-400 text-center outline-none focus:border-neon-seafoam"
@@ -924,7 +925,7 @@ const handleROGenerated = (newRO: RepairOrder) => {
               <div className="mb-4">
                 <h2 className={`text-lg font-bold neon-steel uppercase tracking-tighter transition-all cursor-pointer ${filterStatusGroup === 'STAGED' ? 'text-blue-400' : ''}`} onClick={() => toggleStatusFilter('STAGED')}>STAGED <span className="block text-[10px] font-bold text-blue-400/40 uppercase tracking-widest mt-0.5">Awaiting Assignment</span></h2>
               </div>
-              <div className="space-y-4">
+              <div className="space-y-4 max-h-[75vh] overflow-y-auto">
                 {queues.STAGED.map(ro => (
                   <ROCard 
                     key={ro.id} 
@@ -965,7 +966,7 @@ const handleROGenerated = (newRO: RepairOrder) => {
             <div className="relative overflow-visible glass rounded-2xl p-6 pt-10 mt-6 border-t-2 border-t-amber-400/40 border-white/5 border-yellow-500/10 transition-all hover:border-yellow-400/30">
               <FolderTab count={queues.PARTS.length} borderColor="border-amber-400" textColor="text-amber-400" />
               <h2 className={`text-lg font-bold mb-4 uppercase tracking-tighter transition-all cursor-pointer ${filterStatusGroup === 'PARTS' ? 'text-amber-300' : 'text-yellow-400'}`} onClick={() => toggleStatusFilter('PARTS')}>PARTS DEPT <span className="block text-[10px] font-bold text-yellow-400/40 uppercase tracking-widest mt-0.5">Waiting on Parts</span></h2>
-              <div className="space-y-4">
+              <div className="space-y-4 max-h-[75vh] overflow-y-auto">
                 {queues.PARTS.map(ro => {
                   const hasMissingOrSO = ro.parts.some(p => p.status === PartStatus.MISSING || p.status === PartStatus.SPECIAL_ORDER);
 
@@ -999,8 +1000,8 @@ const handleROGenerated = (newRO: RepairOrder) => {
             <div className="relative overflow-visible glass rounded-2xl p-6 pt-10 mt-6 border-t-2 border-t-teal-400/40 border-white/5 border-teal-500/20 brightness-110 transition-all hover:border-teal-400/30">
               <FolderTab count={queues.ACTIVE.length} borderColor="border-teal-400" textColor="text-teal-400" />
               <h2 className={`text-lg font-bold mb-4 uppercase tracking-tighter transition-all cursor-pointer ${filterStatusGroup === 'ACTIVE' ? 'text-teal-300' : 'neon-seafoam'}`} onClick={() => toggleStatusFilter('ACTIVE')}>DEPLOYMENT DECK <span className="block text-[10px] font-bold text-teal-400/40 uppercase tracking-widest mt-0.5">In Progress</span></h2>
-              <div className="space-y-4">
-                {queues.ACTIVE.map(ro => { 
+              <div className="space-y-4 max-h-[75vh] overflow-y-auto">
+                {queues.ACTIVE.map(ro => {
                   const hasPendingRequests = ro.requests?.some(r => r.status === 'PENDING'); 
                   
                   return (
@@ -1038,7 +1039,7 @@ const handleROGenerated = (newRO: RepairOrder) => {
             <div className="relative overflow-visible glass rounded-2xl p-6 pt-10 mt-6 border-t-2 border-t-red-400/40 border-red-500/20 bg-red-500/5 shadow-[0_0_20px_rgba(239,68,68,0.1)] transition-all hover:border-red-400/40">
               <FolderTab count={queues.HOLD.length} borderColor="border-red-400" textColor="text-red-400" />
               <h2 className={`text-lg font-bold mb-4 uppercase tracking-tighter transition-all cursor-pointer ${filterStatusGroup === 'HOLD' ? 'text-red-300' : 'neon-crimson'}`} onClick={() => toggleStatusFilter('HOLD')}>ON HOLD <span className="block text-[10px] font-bold text-red-400/40 uppercase tracking-widest mt-0.5">Blocked Jobs</span></h2>
-              <div className="space-y-4">
+              <div className="space-y-4 max-h-[75vh] overflow-y-auto">
                 {queues.HOLD.map(ro => (
                   <ROCard 
                     key={ro.id} 
@@ -1066,7 +1067,7 @@ const handleROGenerated = (newRO: RepairOrder) => {
             <div className="relative overflow-visible glass rounded-2xl p-6 pt-10 mt-6 border-t-2 border-t-purple-400/40 border-white/5 transition-all hover:border-purple-400/30">
               <FolderTab count={queues.BILLING.length} borderColor="border-purple-400" textColor="text-purple-400" />
               <h2 className={`text-lg font-bold mb-4 uppercase tracking-tighter transition-all cursor-pointer ${filterStatusGroup === 'BILLING' ? 'text-purple-300' : 'neon-steel'}`} onClick={() => toggleStatusFilter('BILLING')}>BILLING <span className="block text-[10px] font-bold text-blue-400/40 uppercase tracking-widest mt-0.5">Ready to Close</span></h2>
-              <div className="space-y-4">
+              <div className="space-y-4 max-h-[75vh] overflow-y-auto">
                 {queues.BILLING.map(ro => (
                   <ROCard 
                     key={ro.id} 

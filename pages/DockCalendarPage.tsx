@@ -143,13 +143,13 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
     const events: { ro: RepairOrder; type: 'arrival' | 'pickup' }[] = [];
 
     for (const ro of repairOrders) {
-      if (ro.arrivalDate && ro.arrivalDate.slice(0, 10) === dateKey) {
+      if (ro.arrivalDate && toDateKey(new Date(ro.arrivalDate)) === dateKey) {
         const h = getHour(ro.arrivalDate);
         if (h === hour || (hour === HOUR_START && h < HOUR_START) || (hour === HOUR_END && h > HOUR_END)) {
           events.push({ ro, type: 'arrival' });
         }
       }
-      if (ro.estimatedPickupDate && ro.estimatedPickupDate.slice(0, 10) === dateKey) {
+      if (ro.estimatedPickupDate && toDateKey(new Date(ro.estimatedPickupDate)) === dateKey) {
         const h = getHour(ro.estimatedPickupDate);
         if (h === hour || (hour === HOUR_START && h < HOUR_START) || (hour === HOUR_END && h > HOUR_END)) {
           events.push({ ro, type: 'pickup' });
@@ -176,14 +176,14 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
     <div className="flex-1 overflow-auto">
       <div className="grid grid-cols-[60px_repeat(7,1fr)] min-w-[900px]">
         {/* Column headers */}
-        <div className="sticky top-0 z-10 bg-slate-900/95 border-b border-white/10 p-2" />
+        <div className="sticky top-0 z-10 bg-slate-900/95 border-b border-slate-600 p-2" />
         {weekDays.map((day, i) => {
           const today = isToday(day);
           const counts = getDayCounts(repairOrders, day);
           return (
             <div
               key={i}
-              className={`sticky top-0 z-10 bg-slate-900/95 border-b border-l border-white/10 p-2 text-center cursor-pointer hover:bg-slate-800/50 ${
+              className={`sticky top-0 z-10 bg-slate-900/95 border-b border-l border-slate-600 p-2 text-center cursor-pointer hover:bg-slate-800/50 ${
                 today ? 'border-b-2 border-b-teal-400' : ''
               }`}
               onClick={() => { setCurrentDate(day); setViewMode('day'); }}
@@ -211,7 +211,7 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
         {HOURS.map(hour => (
           <React.Fragment key={hour}>
             {/* Hour label */}
-            <div className="border-b border-white/5 px-2 py-1 text-[10px] text-slate-500 font-mono text-right">
+            <div className="border-b border-slate-600 px-2 py-1 text-[10px] text-slate-500 font-mono text-right">
               {hour === 0 ? '12 AM' : hour < 12 ? `${hour} AM` : hour === 12 ? '12 PM' : `${hour - 12} PM`}
             </div>
             {/* Day cells */}
@@ -221,7 +221,7 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
               return (
                 <div
                   key={`${hour}-${dayIdx}`}
-                  className={`border-b border-l border-white/5 min-h-[48px] p-0.5 transition-colors ${
+                  className={`border-b border-l border-slate-600 min-h-[48px] p-0.5 transition-colors ${
                     today ? 'bg-teal-500/[0.03]' : ''
                   } ${dragData ? 'hover:bg-slate-700/30' : ''}`}
                   onDragOver={canEdit ? handleDragOver : undefined}
@@ -256,7 +256,7 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
     return (
       <div className="flex-1 overflow-auto">
         {/* Day summary */}
-        <div className="flex items-center gap-6 px-6 py-3 border-b border-white/10 bg-slate-900/50">
+        <div className="flex items-center gap-6 px-6 py-3 border-b border-slate-600 bg-slate-900/50">
           <div className="flex items-center gap-2">
             <span className="text-blue-400 text-lg">↓</span>
             <span className="text-sm text-slate-300"><strong className="text-blue-400">{counts.arrivals}</strong> arriving</span>
@@ -273,11 +273,11 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
 
         {/* Two-column: Arriving | Departing */}
         <div className="grid grid-cols-[60px_1fr_1fr] min-w-[600px]">
-          <div className="border-b border-white/10 p-2" />
-          <div className="border-b border-l border-white/10 p-2 text-center">
+          <div className="border-b border-slate-600 p-2" />
+          <div className="border-b border-l border-slate-600 p-2 text-center">
             <span className="text-xs font-bold text-blue-400 uppercase tracking-widest">Arriving ↓</span>
           </div>
-          <div className="border-b border-l border-white/10 p-2 text-center">
+          <div className="border-b border-l border-slate-600 p-2 text-center">
             <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest">Departing ↑</span>
           </div>
 
@@ -288,11 +288,11 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
 
             return (
               <React.Fragment key={hour}>
-                <div className="border-b border-white/5 px-2 py-1 text-[10px] text-slate-500 font-mono text-right">
+                <div className="border-b border-slate-600 px-2 py-1 text-[10px] text-slate-500 font-mono text-right">
                   {hour === 0 ? '12 AM' : hour < 12 ? `${hour} AM` : hour === 12 ? '12 PM' : `${hour - 12} PM`}
                 </div>
                 <div
-                  className="border-b border-l border-white/5 min-h-[48px] p-0.5"
+                  className="border-b border-l border-slate-600 min-h-[48px] p-0.5"
                   onDragOver={canEdit ? handleDragOver : undefined}
                   onDrop={canEdit ? (e) => handleDrop(e, currentDate, hour) : undefined}
                 >
@@ -301,7 +301,7 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
                   ))}
                 </div>
                 <div
-                  className="border-b border-l border-white/5 min-h-[48px] p-0.5"
+                  className="border-b border-l border-slate-600 min-h-[48px] p-0.5"
                   onDragOver={canEdit ? handleDragOver : undefined}
                   onDrop={canEdit ? (e) => handleDrop(e, currentDate, hour) : undefined}
                 >
@@ -320,7 +320,7 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
   // === RENDER: MONTH VIEW ===
   const renderMonthView = () => (
     <div className="flex-1 overflow-auto p-4">
-      <div className="grid grid-cols-7 gap-px bg-white/5 rounded-xl overflow-hidden">
+      <div className="grid grid-cols-7 gap-px bg-slate-600 rounded-xl overflow-hidden">
         {/* Day-of-week headers */}
         {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(d => (
           <div key={d} className="bg-slate-900 px-3 py-2 text-center text-[10px] text-slate-500 font-bold uppercase tracking-widest">
@@ -336,8 +336,8 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
             const dateKey = toDateKey(day);
 
             // Get actual RO events for this day
-            const dayArrivals = repairOrders.filter(ro => ro.arrivalDate && ro.arrivalDate.slice(0, 10) === dateKey);
-            const dayPickups = repairOrders.filter(ro => ro.estimatedPickupDate && ro.estimatedPickupDate.slice(0, 10) === dateKey);
+            const dayArrivals = repairOrders.filter(ro => ro.arrivalDate && toDateKey(new Date(ro.arrivalDate)) === dateKey);
+            const dayPickups = repairOrders.filter(ro => ro.estimatedPickupDate && toDateKey(new Date(ro.estimatedPickupDate)) === dateKey);
             const totalEvents = dayArrivals.length + dayPickups.length;
 
             return (
@@ -400,14 +400,14 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
   const renderDetailPanel = () => {
     if (!selectedRO) return null;
     return (
-      <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={() => setSelectedRO(null)}>
-        <div className="bg-slate-900 border border-white/10 rounded-2xl p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+      <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-2 sm:p-4" onClick={() => setSelectedRO(null)}>
+        <div className="bg-slate-900 border border-slate-600 rounded-2xl p-3 sm:p-6 w-full max-w-[calc(100vw-1rem)] sm:max-w-lg shadow-2xl max-h-[85vh] sm:max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
           {/* Customer + RO ID */}
           <h3 className="text-lg font-black text-slate-200 mb-0.5">{selectedRO.customerName}</h3>
           <p className="text-[10px] text-slate-500 font-mono mb-4">{selectedRO.id}</p>
 
           {/* Vessel Identity */}
-          <div className="bg-slate-800/50 rounded-lg p-3 mb-4 border border-white/5">
+          <div className="bg-slate-800/50 rounded-lg p-3 mb-4 border border-slate-600">
             <h4 className="text-[9px] text-slate-500 font-bold uppercase tracking-widest mb-2">Vessel</h4>
             <div className="grid grid-cols-2 gap-y-1.5 gap-x-4 text-sm">
               <div>
@@ -430,7 +430,7 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
           </div>
 
           {/* Engine Identity */}
-          <div className="bg-slate-800/50 rounded-lg p-3 mb-4 border border-white/5">
+          <div className="bg-slate-800/50 rounded-lg p-3 mb-4 border border-slate-600">
             <h4 className="text-[9px] text-slate-500 font-bold uppercase tracking-widest mb-2">Engine</h4>
             <div className="grid grid-cols-2 gap-y-1.5 gap-x-4 text-sm">
               <div>
@@ -460,18 +460,82 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
                 <span className="text-slate-300 font-bold">{selectedRO.jobCategory}</span>
               </div>
             )}
-            {selectedRO.arrivalDate && (
-              <div className="flex justify-between">
+            {selectedRO.arrivalDate ? (
+              <div className="flex justify-between items-center">
                 <span className="text-blue-400">Drop-off</span>
-                <span className="text-slate-300">{new Date(selectedRO.arrivalDate).toLocaleString()}</span>
+                {canEdit && onUpdateRO ? (
+                  <input
+                    type="datetime-local"
+                    value={new Date(new Date(selectedRO.arrivalDate).getTime() - new Date(selectedRO.arrivalDate).getTimezoneOffset() * 60000).toISOString().slice(0, 16)}
+                    onChange={e => {
+                      if (!e.target.value) return;
+                      const freshRO = repairOrders.find(r => r.id === selectedRO.id) || selectedRO;
+                      const newISO = new Date(e.target.value).toISOString();
+                      const updated = { ...freshRO, arrivalDate: newISO, scheduledDate: newISO };
+                      onUpdateRO(updated);
+                      setSelectedRO(updated);
+                    }}
+                    className="bg-slate-800/50 border border-slate-600 rounded-lg px-2 py-1 text-slate-300 text-xs focus:border-blue-400 outline-none"
+                  />
+                ) : (
+                  <span className="text-slate-300">{new Date(selectedRO.arrivalDate).toLocaleString()}</span>
+                )}
               </div>
-            )}
-            {selectedRO.estimatedPickupDate && (
-              <div className="flex justify-between">
+            ) : canEdit && onUpdateRO ? (
+              <div className="flex justify-between items-center">
+                <span className="text-blue-400/60">Drop-off</span>
+                <input
+                  type="datetime-local"
+                  value=""
+                  onChange={e => {
+                    if (!e.target.value) return;
+                    const freshRO = repairOrders.find(r => r.id === selectedRO.id) || selectedRO;
+                    const newISO = new Date(e.target.value).toISOString();
+                    const updated = { ...freshRO, arrivalDate: newISO, scheduledDate: newISO };
+                    onUpdateRO(updated);
+                    setSelectedRO(updated);
+                  }}
+                  className="bg-slate-800/50 border border-slate-600 rounded-lg px-2 py-1 text-slate-500 text-xs focus:border-blue-400 outline-none"
+                />
+              </div>
+            ) : null}
+            {selectedRO.estimatedPickupDate ? (
+              <div className="flex justify-between items-center">
                 <span className="text-emerald-400">Pick-up</span>
-                <span className="text-slate-300">{new Date(selectedRO.estimatedPickupDate).toLocaleString()}</span>
+                {canEdit && onUpdateRO ? (
+                  <input
+                    type="datetime-local"
+                    value={new Date(new Date(selectedRO.estimatedPickupDate).getTime() - new Date(selectedRO.estimatedPickupDate).getTimezoneOffset() * 60000).toISOString().slice(0, 16)}
+                    onChange={e => {
+                      if (!e.target.value) return;
+                      const freshRO = repairOrders.find(r => r.id === selectedRO.id) || selectedRO;
+                      const updated = { ...freshRO, estimatedPickupDate: new Date(e.target.value).toISOString() };
+                      onUpdateRO(updated);
+                      setSelectedRO(updated);
+                    }}
+                    className="bg-slate-800/50 border border-slate-600 rounded-lg px-2 py-1 text-slate-300 text-xs focus:border-emerald-400 outline-none"
+                  />
+                ) : (
+                  <span className="text-slate-300">{new Date(selectedRO.estimatedPickupDate).toLocaleString()}</span>
+                )}
               </div>
-            )}
+            ) : canEdit && onUpdateRO ? (
+              <div className="flex justify-between items-center">
+                <span className="text-emerald-400/60">Pick-up</span>
+                <input
+                  type="datetime-local"
+                  value=""
+                  onChange={e => {
+                    if (!e.target.value) return;
+                    const freshRO = repairOrders.find(r => r.id === selectedRO.id) || selectedRO;
+                    const updated = { ...freshRO, estimatedPickupDate: new Date(e.target.value).toISOString() };
+                    onUpdateRO(updated);
+                    setSelectedRO(updated);
+                  }}
+                  className="bg-slate-800/50 border border-slate-600 rounded-lg px-2 py-1 text-slate-500 text-xs focus:border-emerald-400 outline-none"
+                />
+              </div>
+            ) : null}
             <div className="flex justify-between">
               <span className="text-slate-500">Status</span>
               <span className="text-slate-300 font-bold uppercase text-xs">{selectedRO.status.replace('_', ' ')}</span>
@@ -487,7 +551,7 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
               <span className="text-slate-300">{selectedRO.directives.length}</span>
             </div>
             {selectedRO.directives.length > 0 && (
-              <div className="pl-3 border-l border-white/10 space-y-1">
+              <div className="pl-3 border-l border-slate-600 space-y-1">
                 {selectedRO.directives.map((d: any, i: number) => (
                   <p key={i} className="text-[10px] text-slate-400">
                     <span className="text-slate-500 font-mono mr-1">{String(i + 1).padStart(2, '0')}</span>
@@ -502,7 +566,7 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
               <span className="text-slate-300">{selectedRO.parts.length}</span>
             </div>
             {selectedRO.parts.length > 0 && (
-              <div className="pl-3 border-l border-white/10 space-y-1">
+              <div className="pl-3 border-l border-slate-600 space-y-1">
                 {selectedRO.parts.map((p: any, i: number) => (
                   <p key={i} className="text-[10px] text-slate-400">
                     <span className="text-slate-500 font-mono mr-1">{p.partNumber}</span>
@@ -522,7 +586,7 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
 
           {/* SM/Admin: Add Directive + Part inline */}
           {canEdit && onUpdateRO && (
-            <div className="mt-4 pt-4 border-t border-white/10 space-y-3">
+            <div className="mt-4 pt-4 border-t border-slate-600 space-y-3">
               {/* Add Directive */}
               <div>
                 <label className="block text-[9px] text-slate-500 font-bold uppercase tracking-widest mb-1">Add Directive</label>
@@ -544,7 +608,7 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
                       }
                     }}
                     placeholder="e.g. Check lower unit oil"
-                    className="flex-1 bg-slate-800/50 border border-white/10 rounded-lg px-3 py-1.5 text-slate-300 text-xs focus:border-teal-400 outline-none"
+                    className="flex-1 bg-slate-800/50 border border-slate-600 rounded-lg px-3 py-1.5 text-slate-300 text-xs focus:border-teal-400 outline-none"
                   />
                   <button
                     disabled={!newDirective.trim()}
@@ -600,7 +664,7 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
                       }
                     }}
                     placeholder="e.g. Zinc anode, Impeller kit"
-                    className="flex-1 bg-slate-800/50 border border-white/10 rounded-lg px-3 py-1.5 text-slate-300 text-xs focus:border-amber-400 outline-none"
+                    className="flex-1 bg-slate-800/50 border border-slate-600 rounded-lg px-3 py-1.5 text-slate-300 text-xs focus:border-amber-400 outline-none"
                   />
                   <button
                     disabled={!newPartDesc.trim()}
@@ -639,7 +703,7 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
 
           <button
             onClick={() => { setSelectedRO(null); setNewDirective(''); setNewPartDesc(''); }}
-            className="mt-4 w-full py-2 bg-slate-800 border border-white/10 rounded-lg text-sm text-slate-400 hover:bg-slate-700 transition-colors"
+            className="mt-4 w-full py-2 bg-slate-800 border border-slate-600 rounded-lg text-sm text-slate-400 hover:bg-slate-700 transition-colors"
           >
             Close
           </button>
@@ -652,13 +716,13 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
   return (
     <div className="flex flex-col h-full">
       {/* Header bar */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-slate-900/50">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-600 bg-slate-900/50">
         {/* Left: Navigation */}
         <div className="flex items-center gap-2">
           <button onClick={navigatePrev} className="p-1.5 rounded-lg hover:bg-slate-700/50 text-slate-400 hover:text-slate-200 transition-colors">
             <ChevronLeft size={18} />
           </button>
-          <button onClick={goToday} className="px-3 py-1 rounded-lg bg-slate-800 border border-white/10 text-xs font-bold text-slate-300 hover:bg-slate-700 transition-colors">
+          <button onClick={goToday} className="px-3 py-1 rounded-lg bg-slate-800 border border-slate-600 text-xs font-bold text-slate-300 hover:bg-slate-700 transition-colors">
             Today
           </button>
           <button onClick={navigateNext} className="p-1.5 rounded-lg hover:bg-slate-700/50 text-slate-400 hover:text-slate-200 transition-colors">
@@ -676,7 +740,7 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
         </div>
 
         {/* Right: View toggles */}
-        <div className="flex items-center gap-1 bg-slate-800/50 rounded-lg p-0.5 border border-white/5">
+        <div className="flex items-center gap-1 bg-slate-800/50 rounded-lg p-0.5 border border-slate-600">
           <button
             onClick={() => setViewMode('day')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-bold transition-all ${

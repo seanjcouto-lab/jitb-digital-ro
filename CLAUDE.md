@@ -129,11 +129,40 @@ All Playwright tests reference these button labels: `'Test SM'`, `'Test Tech'`, 
 - **Test suite: 122 passed, 0 failed, 8 skipped** — `tests/jaxtr.spec.ts`. Stable, deterministic. Runs in ~2.5 min parallel.
 - **Demo script: 4:30 timed walkthrough** — `tests/demo.spec.ts`, runs headed, 11 scenes. Run: `npx playwright test tests/demo.spec.ts --headed --project=chromium`
 - **`main` branch** — live on Vercel, manually tested, stable. Merged April 2 evening.
-- **`develop` branch** — all new work including Dock Scheduling Calendar. 2 commits ahead of main.
+- **`develop` branch** — all new work. 12 commits ahead of main (calendar + media + P1-P4 fixes).
 - Playwright MUST run before and after every change — no exceptions
 - All work on `develop` branch — PRs to `main` when stable
 
-### Completed this session (April 3 2026)
+### Completed this session (April 3 2026 — evening)
+
+- **P1: SM Board column internal scroll** — 5 card-list divs in ServiceManagerPage get `max-h-[75vh] overflow-y-auto`. Shows ~3 cards, rest scroll. Custom scrollbar from index.html auto-applies. Outer div keeps `overflow-visible` for FolderTab badge.
+- **P2: Part quantity auto-select** — `onFocus={e => e.target.select()}` added to all 4 quantity inputs (SM, ROGeneration, Tech, PM). Click input → "1" auto-selects → type new value immediately.
+- **P3: Calendar modal mobile responsive** — backdrop `p-2 sm:p-4`, modal `p-3 sm:p-6`, `max-w-[calc(100vw-1rem)] sm:max-w-lg`, `max-h-[85vh] sm:max-h-[90vh]`. Desktop unchanged via `sm:` breakpoints.
+- **P4: Calendar manual date/time edit** — `<input type="datetime-local">` replaces read-only date spans in calendar detail modal. SM/Admin see editable inputs; other roles see read-only text. Empty date inputs shown when no date set yet. onChange mirrors handleDrop pattern (freshRO lookup, onUpdateRO, setSelectedRO).
+- **Date off-by-one bug FIXED** — `calendarUtils.ts` and `DockCalendarPage.tsx` were using `.slice(0, 10)` on ISO strings to extract dates — that's UTC, not local. When a user in EDT picks 8pm April 6, it stores as midnight April 7 UTC, then `slice(0,10)` returns "2026-04-07". Fixed all 6 occurrences to use `toDateKey(new Date(val))` which uses local `getDate()`.
+- **Calendar gridlines visible** — All `border-white/5` (invisible) and `border-white/10` bumped to `border-slate-600` across DockCalendarPage. Dark background preserved, lines now clearly visible.
+- **White calendar attempted and reverted** — Sean requested white bg, looked bad against dark app shell. Reverted to dark + visible gridlines approach.
+- **Test suite stable at 122/0/8** through all changes — zero regressions
+
+### Sean's manual testing feedback (April 3)
+
+| # | Issue | Status | Priority |
+|---|-------|--------|----------|
+| P1 | SM Board columns need internal scroll | **DONE** (75vh) | High |
+| P2 | Part quantity input — "1" default hard to overwrite | **DONE** (onFocus select) | High |
+| P3 | Calendar modal mobile overflow | **DONE** (responsive breakpoints) | High |
+| P4 | Calendar manual date/time edit (not just drag) | **DONE** (datetime-local inputs) | High |
+| P5 | Month view grids disappear during drag | Open | Medium |
+| P6 | Invoice — add customer name + vessel + engine info | Open | Medium |
+| P7 | Tech minimize active job to see held/queued | Open | Medium |
+| P8 | Rename "Log Requisition" to clearer label | Open | Small |
+| P9 | Remove redundant serial from tech header | Open | Small |
+| P10 | Audio record icon wrong | Open | Small |
+| P11 | Calendar mobile/vertical overflow | Open | Medium |
+| P12 | Month view landscape optimization | Open | Medium |
+| P13 | Laptop file input opens gallery not camera | Open | Small |
+
+### Completed earlier this session (April 3 2026)
 
 - **Dock Scheduling Calendar — Phase 1 + Phase 2 built:**
   - `estimatedPickupDate` and `jobCategory` fields on RepairOrder, Dexie v10
@@ -222,6 +251,8 @@ All Playwright tests reference these button labels: `'Test SM'`, `'Test Tech'`, 
 - **Toolbar button titles use spaces not underscores**: `roleKey.replace('_', ' ')` generates "SERVICE MANAGER", "PARTS MANAGER", "INVENTORY MANAGER". Exception: DATABASE → "Vessel DNA".
 - **`loadFromSupabase` merges, does not wipe**: Local-only Dexie records survive Supabase hydration. But `initDb(null)` clears React state (not Dexie). Dev re-login re-runs `initDb` which re-hydrates from Supabase + Dexie.
 - **`addManualPartToRO()` does NOT change RO status**: It only adds a part with REQUIRED status. To move an RO to PARTS_PENDING, SM must click "Send to Parts" or tech must call `confirmMissingPart()`.
+- **Calendar UTC date off-by-one**: `.slice(0, 10)` on ISO strings extracts the UTC date, NOT local. In US Eastern timezone, 8pm local = midnight UTC next day. Always use `toDateKey(new Date(val))` (which calls local `getDate()`) instead of `isoString.slice(0, 10)`. Six occurrences fixed across `calendarUtils.ts` and `DockCalendarPage.tsx`.
+- **White backgrounds don't work in dark apps**: Sean requested white calendar bg, it clashed badly with the navy app shell. The real problem was invisible gridlines (`border-white/5` = 5% opacity). Fixed by boosting to `border-slate-600` while keeping dark backgrounds.
 
 ### Known remaining test failures
 
@@ -259,8 +290,8 @@ T112 — Offline/PWA test requiring service worker
 
 ### Next session queue (priority order)
 
-1. **Calendar color tuning** — Sean wants to adjust colors. Job category palette, card accents, teal highlights.
-2. **Merge `develop` → `main`** — calendar + test fixes ready for production push
+1. **Remaining feedback P5-P13** — see table above. P5/P6/P7/P11/P12 are medium priority.
+2. **Merge `develop` → `main`** — calendar + all fixes ready for production push
 3. **Dock capacity config** — Admin page: target capacity input, visual warnings on calendar
 4. **Job category admin UI** — Admin page: add/edit/delete categories with color picker (currently hardcoded defaults)
 5. **Demo polish** — add Parts Manager scene, add calendar walkthrough scene
@@ -271,11 +302,12 @@ T112 — Offline/PWA test requiring service worker
 ### Backlog
 
 - **Clear Supabase test data button** — DONE (dev-only purge on AdminPage)
+- **Calendar personal entries** — days off, meetings, etc. New data model (CalendarEvent separate from RO). Any role creates, SM sees all. Post-pilot.
 - **Nav sticky on all pages + role-specific icons**: Tech: Tech/DNA/Calendar | SM: Dock/NewRO/Parts/DNA/Calendar | PM: Parts/Inventory/DNA | Owner: all except dev tools
 - **Mobile button overlap** — buttons overlapping on small screens, needs audit and fix
 - **Customer directory** — master list view of all customers
 - **Customer CSV import** — bulk import customers from CSV
-- **Media audit** — trace where photos/video/audio from `EvidenceInputBlock` actually land (localStorage? IndexedDB? nowhere?)
+- **Media audit** — DONE (Phase 1-3A built: Dexie mediaStore, media:// protocol, useMediaUrl hook)
 - **Vessel DNA boat image** — confirm purpose of boat image field or remove it
 
 ---

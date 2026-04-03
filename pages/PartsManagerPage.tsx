@@ -380,6 +380,7 @@ const ROCard: React.FC<ROCardProps> = ({
                                         <input
                                             type="number"
                                             min={1}
+                                            onFocus={e => e.target.select()}
                                             value={part.quantity ?? 1}
                                             onChange={e => handleUpdatePartDetails(ro, index, { quantity: Math.max(1, Math.floor(parseInt(e.target.value) || 1)) })}
                                             className="w-full bg-slate-800 border border-white/5 rounded px-2 py-1 text-[10px] font-mono text-white text-center outline-none focus:border-amber-400"

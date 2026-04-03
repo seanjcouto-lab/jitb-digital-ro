@@ -72,7 +72,7 @@ export function groupROsByDate(
   for (const ro of ros) {
     const val = ro[dateField];
     if (!val) continue;
-    const key = val.slice(0, 10); // YYYY-MM-DD
+    const key = toDateKey(new Date(val)); // Local date, not UTC
     const arr = map.get(key) || [];
     arr.push(ro);
     map.set(key, arr);
@@ -155,8 +155,8 @@ export function getDayCounts(
   let pickups = 0;
 
   for (const ro of ros) {
-    if (ro.arrivalDate && ro.arrivalDate.slice(0, 10) === key) arrivals++;
-    if (ro.estimatedPickupDate && ro.estimatedPickupDate.slice(0, 10) === key) pickups++;
+    if (ro.arrivalDate && toDateKey(new Date(ro.arrivalDate)) === key) arrivals++;
+    if (ro.estimatedPickupDate && toDateKey(new Date(ro.estimatedPickupDate)) === key) pickups++;
   }
 
   return { arrivals, pickups };
