@@ -310,28 +310,52 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
           week.map((day, di) => {
             const today = isToday(day);
             const isCurrentMonth = day.getMonth() === currentDate.getMonth();
-            const counts = getDayCounts(repairOrders, day);
+            const dateKey = toDateKey(day);
+
+            // Get actual RO events for this day
+            const dayArrivals = repairOrders.filter(ro => ro.arrivalDate && ro.arrivalDate.slice(0, 10) === dateKey);
+            const dayPickups = repairOrders.filter(ro => ro.estimatedPickupDate && ro.estimatedPickupDate.slice(0, 10) === dateKey);
+            const totalEvents = dayArrivals.length + dayPickups.length;
 
             return (
               <div
                 key={`${wi}-${di}`}
-                className={`bg-slate-900/80 min-h-[80px] p-2 cursor-pointer hover:bg-slate-800/50 transition-colors ${
+                className={`bg-slate-900/80 min-h-[80px] p-1.5 transition-colors ${
                   !isCurrentMonth ? 'opacity-30' : ''
                 } ${today ? 'ring-1 ring-teal-400 ring-inset' : ''}`}
-                onClick={() => { setCurrentDate(day); setViewMode('day'); }}
               >
-                <div className={`text-sm font-bold mb-1 ${today ? 'text-teal-400' : 'text-slate-300'}`}>
+                <div
+                  className={`text-[11px] font-bold mb-1 cursor-pointer hover:text-teal-300 ${today ? 'text-teal-400' : 'text-slate-400'}`}
+                  onClick={() => { setCurrentDate(day); setViewMode('day'); }}
+                >
                   {day.getDate()}
                 </div>
                 <div className="flex flex-col gap-0.5">
-                  {counts.arrivals > 0 && (
-                    <span className="text-[9px] px-1 py-0.5 rounded bg-blue-500/15 text-blue-400 font-bold text-center">
-                      {counts.arrivals} drop-off{counts.arrivals > 1 ? 's' : ''}
-                    </span>
-                  )}
-                  {counts.pickups > 0 && (
-                    <span className="text-[9px] px-1 py-0.5 rounded bg-emerald-500/15 text-emerald-400 font-bold text-center">
-                      {counts.pickups} pick-up{counts.pickups > 1 ? 's' : ''}
+                  {/* Show individual event mini-cards (up to 4, then overflow count) */}
+                  {dayArrivals.slice(0, 3).map(ro => (
+                    <div
+                      key={`a-${ro.id}`}
+                      className="text-[8px] px-1 py-0.5 rounded bg-blue-500/15 text-blue-300 font-bold truncate cursor-pointer hover:bg-blue-500/25"
+                      onClick={() => setSelectedRO(ro)}
+                    >
+                      ↓ {ro.customerName}
+                    </div>
+                  ))}
+                  {dayPickups.slice(0, 3).map(ro => (
+                    <div
+                      key={`p-${ro.id}`}
+                      className="text-[8px] px-1 py-0.5 rounded bg-emerald-500/15 text-emerald-300 font-bold truncate cursor-pointer hover:bg-emerald-500/25"
+                      onClick={() => setSelectedRO(ro)}
+                    >
+                      ↑ {ro.customerName}
+                    </div>
+                  ))}
+                  {totalEvents > 6 && (
+                    <span
+                      className="text-[8px] text-slate-500 font-bold text-center cursor-pointer hover:text-slate-300"
+                      onClick={() => { setCurrentDate(day); setViewMode('day'); }}
+                    >
+                      +{totalEvents - 6} more
                     </span>
                   )}
                 </div>
@@ -438,7 +462,8 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
                 {selectedRO.directives.map((d: any, i: number) => (
                   <p key={i} className="text-[10px] text-slate-400">
                     <span className="text-slate-500 font-mono mr-1">{String(i + 1).padStart(2, '0')}</span>
-                    {d.description || d}
+                    {d.title || d.description || String(d)}
+                    {d.isCompleted && <span className="ml-1 text-emerald-400">✓</span>}
                   </p>
                 ))}
               </div>
