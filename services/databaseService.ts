@@ -11,6 +11,13 @@ export const databaseService = {
   },
 
   /**
+   * Get all vessel history records.
+   */
+  getAllVessels: async (): Promise<VesselHistory[]> => {
+    return await vesselService.getAllVessels();
+  },
+
+  /**
    * List all available IndexedDB databases.
    */
   getAvailableDatabases: async (): Promise<string[]> => {

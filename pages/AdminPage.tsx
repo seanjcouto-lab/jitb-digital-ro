@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { AppConfig, CollectionsStatus, LoggedInUser, UserRole, Part } from '../types';
+import { AppConfig, CollectionsStatus, LoggedInUser, UserRole, UserPrivilege, Part } from '../types';
 import { appConfigService } from '../services/appConfigService';
 import { repairOrderService } from '../services/repairOrderService';
 import { roStore } from '../data/roStore';
@@ -48,7 +48,22 @@ const TEST_RO_INPUT = {
 };
 
 const AdminPage: React.FC<AdminPageProps> = ({ config, setConfig, onExport, loggedInUser, masterInventory, setMasterInventory, shopId }) => {
-  if (!loggedInUser || loggedInUser.role !== UserRole.ADMIN) {
+  // All hooks must be called before any early return (React Rules of Hooks)
+  const [purgeStatus, setPurgeStatus] = useState<string | null>(null);
+  const [purgeConfirm, setPurgeConfirm] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [invPurgeConfirm, setInvPurgeConfirm] = useState<'catalog' | 'onhand' | 'all' | null>(null);
+  const [invPurgeStatus, setInvPurgeStatus] = useState<string | null>(null);
+
+  const invStats = useMemo(() => {
+    const catalog = (masterInventory || []).filter(p => p.source === 'catalog').length;
+    const onhand = (masterInventory || []).filter(p => p.source === 'onhand').length;
+    const untagged = (masterInventory || []).filter(p => !p.source).length;
+    return { total: (masterInventory || []).length, catalog, onhand, untagged };
+  }, [masterInventory]);
+
+  const hasDeveloperAccess = loggedInUser?.role === UserRole.ADMIN || loggedInUser?.privileges?.includes(UserPrivilege.DEVELOPER);
+  if (!loggedInUser || !hasDeveloperAccess) {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-center">
@@ -64,7 +79,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ config, setConfig, onExport, logg
         event.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 300);
   };
-  
+
   const handleColorChange = (colorKey: keyof AppConfig['themeColors'], value: string) => {
     setConfig(appConfigService.updateThemeColor(config, colorKey, value));
   };
@@ -85,20 +100,6 @@ const AdminPage: React.FC<AdminPageProps> = ({ config, setConfig, onExport, logg
       alert(`❌ RO Persistence Test FAILED\n${err?.message || 'Unknown error'}\nCheck console for details.`);
     }
   };
-
-  const [purgeStatus, setPurgeStatus] = useState<string | null>(null);
-  const [purgeConfirm, setPurgeConfirm] = useState(false);
-
-  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
-  const [invPurgeConfirm, setInvPurgeConfirm] = useState<'catalog' | 'onhand' | 'all' | null>(null);
-  const [invPurgeStatus, setInvPurgeStatus] = useState<string | null>(null);
-
-  const invStats = useMemo(() => {
-    const catalog = masterInventory.filter(p => p.source === 'catalog').length;
-    const onhand = masterInventory.filter(p => p.source === 'onhand').length;
-    const untagged = masterInventory.filter(p => !p.source).length;
-    return { total: masterInventory.length, catalog, onhand, untagged };
-  }, [masterInventory]);
 
   const handleInvPurge = async (source: 'catalog' | 'onhand' | 'all') => {
     if (invPurgeConfirm !== source) {

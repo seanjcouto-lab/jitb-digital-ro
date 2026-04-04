@@ -174,13 +174,13 @@ test('T09: Session restores after page reload', async ({ page }) => {
   await expect(dock.or(signIn)).toBeVisible({ timeout: 10000 });
 });
 
-test('T10: Admin route shows ACCESS DENIED for non-admin (SM persona)', async ({ page }) => {
-  // The admin page is only accessible via role switcher when auth_user_id matches Sean's UUID.
-  // Test SM has no auth_user_id, so clicking Admin in toolbar shows Access Denied.
+test('T10: Admin page accessible to SM with DEVELOPER privilege', async ({ page }) => {
+  // Admin page requires ADMIN role or DEVELOPER privilege.
+  // Test SM has DEVELOPER privilege, so Admin page renders config section.
   await loginSM(page);
   const adminBtn = page.locator('button[title="ADMIN"]');
   await adminBtn.click();
-  await expect(page.locator('text=Access Denied')).toBeVisible({ timeout: 10000 });
+  await expect(page.locator('text=White-Label Configuration')).toBeVisible({ timeout: 10000 });
 });
 
 // ─── RO CREATION (T11–T25) ───────────────────────────────────────────────────
@@ -1331,9 +1331,10 @@ test('T67: Parts page shows Awaiting Parts queue section', async ({ page }) => {
   await expect(fulfillment.first()).toBeVisible({ timeout: 8000 });
 });
 
-test('T68: Bulk import inventory button visible on Parts page', async ({ page }) => {
-  await loginParts(page);
-  const importBtn = page.locator('button:has-text("Import"), button:has-text("Bulk Import"), button:has-text("inventory")');
+test('T68: Bulk import inventory button visible on Admin page (not Parts page)', async ({ page }) => {
+  await loginSM(page);
+  await page.click('button[title="ADMIN"]');
+  const importBtn = page.locator('button:has-text("Import Inventory / Catalog")');
   await expect(importBtn.first()).toBeVisible({ timeout: 8000 });
 });
 

@@ -12,6 +12,7 @@ interface DatabasePageProps {
 const DatabasePage: React.FC<DatabasePageProps> = ({ allROs }) => {
   const [query, setQuery] = useState('');
   const [searchResults, setSearchResults] = useState<VesselHistory[]>([]);
+  const [allVessels, setAllVessels] = useState<VesselHistory[] | null>(null);
   const [selectedVessel, setSelectedVessel] = useState<VesselHistory | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [showInspector, setShowInspector] = useState(false);
@@ -72,6 +73,7 @@ const DatabasePage: React.FC<DatabasePageProps> = ({ allROs }) => {
       return;
     }
 
+    setAllVessels(null);
     setIsSearching(true);
     if (debounceTimeout.current) {
       clearTimeout(debounceTimeout.current);
@@ -79,12 +81,20 @@ const DatabasePage: React.FC<DatabasePageProps> = ({ allROs }) => {
 
     debounceTimeout.current = window.setTimeout(async () => {
       const results = await databaseService.searchVesselHistory(query);
-
       setSearchResults(results);
       setIsSearching(false);
     }, 300);
 
   }, [query]);
+
+  const handleViewAll = async () => {
+    setIsSearching(true);
+    const vessels = await databaseService.getAllVessels();
+    setAllVessels(vessels);
+    setQuery('');
+    setSearchResults([]);
+    setIsSearching(false);
+  };
 
   const handleInputFocus = (event: React.FocusEvent<HTMLInputElement>) => {
     setTimeout(() => {
@@ -239,16 +249,31 @@ const DatabasePage: React.FC<DatabasePageProps> = ({ allROs }) => {
             {isSearching && <div className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 border-2 border-slate-500 border-t-white rounded-full animate-spin"></div>}
           </div>
         </div>
+        {query.length < 2 && !allVessels && !isSearching && (
+          <div className="flex justify-center mb-6">
+            <button onClick={handleViewAll} className="px-8 py-3 bg-neon-seafoam/20 border border-neon-seafoam/40 text-neon-seafoam font-black text-sm uppercase tracking-widest rounded-xl hover:bg-neon-seafoam/30 hover:scale-105 active:scale-95 transition-all">
+              View All Vessels
+            </button>
+          </div>
+        )}
+
+        {allVessels && query.length < 2 && (
+          <div className="mb-4 flex justify-between items-center">
+            <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">{allVessels.length} vessel{allVessels.length !== 1 ? 's' : ''} on record</p>
+            <button onClick={() => setAllVessels(null)} className="text-[10px] text-slate-500 hover:text-white font-bold uppercase transition-colors">Clear</button>
+          </div>
+        )}
+
         <div className="space-y-4">
-          {searchResults.map(res => (
-            <div 
-              key={res.vesselHIN} 
-              onClick={() => setSelectedVessel(res)} 
+          {(query.length >= 2 ? searchResults : (allVessels || [])).map(res => (
+            <div
+              key={res.vesselHIN}
+              onClick={() => setSelectedVessel(res)}
               className="p-4 rounded-xl border transition-all cursor-pointer group flex justify-between items-center bg-white/5 border-white/5 hover:border-white/20"
             >
               <div>
-                <div className="flex items-center gap-3"><h4 className="font-bold text-slate-100">{res.customerName}</h4><span className="text-[10px] bg-slate-800 px-2 py-0.5 rounded text-slate-400 font-mono">{res.engineSerial}</span></div>
-                <p className="text-xs text-slate-500 uppercase font-bold tracking-tight mt-1">{res.boatMake} {res.boatModel} • {res.engineModel}</p>
+                <div className="flex items-center gap-3"><h4 className="font-bold text-slate-100">{res.customerName}</h4><span className="text-[10px] bg-slate-800 px-2 py-0.5 rounded text-slate-400 font-mono">{res.vesselHIN || 'No HIN'}</span></div>
+                <p className="text-xs text-slate-500 uppercase font-bold tracking-tight mt-1">{res.boatMake} {res.boatModel} {res.engineMake ? `• ${res.engineMake} ${res.engineModel}` : ''}</p>
               </div>
               <div className="text-right flex items-center gap-2">
                 <span className={`text-[10px] font-black uppercase ${res.status === 'INCOMPLETE' ? 'text-red-400' : 'text-neon-seafoam'}`}>{res.status}</span>
@@ -259,12 +284,6 @@ const DatabasePage: React.FC<DatabasePageProps> = ({ allROs }) => {
           {query.length > 2 && !isSearching && searchResults.length === 0 && (
             <div className="text-center py-10 border border-white/5 rounded-2xl bg-white/5">
               <p className="text-slate-500 italic text-sm mb-4 font-medium">Oracle finds no existing match for "{query}".</p>
-            </div>
-          )}
-          {query.length < 2 && !isSearching && (
-            <div className="text-center py-20 border-2 border-dashed border-white/5 rounded-2xl relative overflow-hidden">
-              <p className="text-slate-600 text-xs font-black uppercase tracking-[0.2em]">Awaiting Oracle Query...</p>
-              <div className="scanline-animation opacity-5"></div>
             </div>
           )}
         </div>

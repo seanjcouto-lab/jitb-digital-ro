@@ -26,6 +26,13 @@ export const vesselService = {
   },
 
   /**
+   * Get all vessel history records.
+   */
+  getAllVessels: async (): Promise<VesselHistory[]> => {
+    return await db.vesselDnaHistory.toArray();
+  },
+
+  /**
    * Get a specific vessel by HIN.
    */
   getVesselByHIN: async (hin: string): Promise<VesselHistory | undefined> => {
