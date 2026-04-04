@@ -622,7 +622,7 @@ const ServiceManagerPage: React.FC<ServiceManagerPageProps> = ({
   const [filterStatusGroup, setFilterStatusGroup] = useState<keyof typeof STATUS_GROUPS | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterTechId, setFilterTechId] = useState<string>('ALL');
-  const [searchExpanded, setSearchExpanded] = useState(false);
+  const [searchExpanded, setSearchExpanded] = useState(true);
 
   const handleVesselClick = (vessel: VesselHistory) => {
     setSearchQuery('');
@@ -886,16 +886,6 @@ const handleROGenerated = (newRO: RepairOrder) => {
           <section>
             {viewMode === 'SEARCH' && (
               <div>
-                {!searchExpanded ? (
-                  <button
-                    onClick={() => setSearchExpanded(true)}
-                    className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl glass border border-white/5 hover:border-white/10 transition-all group"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500 group-hover:text-slate-300 transition-colors"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                    <span className="text-[11px] font-bold uppercase tracking-widest text-slate-500 group-hover:text-slate-300 transition-colors">Customer Search</span>
-                    <span className="ml-auto text-[10px] text-slate-600">click to expand</span>
-                  </button>
-                ) : (
                   <div className="space-y-4">
                     <OracleSearchView
                       onVesselSelect={(vessel) => { setVesselActionMenu(vessel); }}
@@ -905,11 +895,7 @@ const handleROGenerated = (newRO: RepairOrder) => {
                       searchTerm={searchQuery}
                       onSearchChange={setSearchQuery}
                     />
-                    <button onClick={() => { setSearchExpanded(false); setSearchQuery(''); }} className="text-[10px] text-slate-600 hover:text-slate-400 transition-colors">
-                      ↑ collapse search
-                    </button>
                   </div>
-                )}
               </div>
             )}
             {viewMode === 'PROFILE_CREATE' && (<ProfileOnboardingForm initialData={activeProfile} onProfileComplete={handleProfileComplete} />)}

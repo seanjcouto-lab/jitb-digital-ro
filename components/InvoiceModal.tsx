@@ -89,7 +89,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, ov
             <div class="invoice-title">SERVICE INVOICE</div>
             <div class="invoice-meta">RO: ${ro.id}</div>
             <div class="invoice-meta">Date: ${new Date().toLocaleDateString()}</div>
-            <div class="invoice-meta">Technician: ${ro.technicianName || 'N/A'}</div>
+            <div class="invoice-meta">Service Date: ${ro.completedAt ? new Date(ro.completedAt).toLocaleDateString() : new Date().toLocaleDateString()}</div>
           </div>
         </div>
 
@@ -123,16 +123,16 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, ov
               ${evidenceSummary(d) ? `<div class="evidence-note">${evidenceSummary(d)}</div>` : ''}
             </div>
           `).join('')}
-          ${ro.laborDescription ? `<div class="tech-notes"><strong>Technician Notes:</strong> ${ro.laborDescription}</div>` : ''}
+          ${ro.laborDescription ? `<div class="tech-notes"><strong>Service Notes:</strong> ${ro.laborDescription}</div>` : ''}
         </div>
 
         <div class="section">
           <div class="section-title">Labor</div>
           <table>
-            <thead><tr><th>Technician</th><th>Hours</th><th>Rate</th><th class="text-right">Total</th></tr></thead>
+            <thead><tr><th>Description</th><th>Hours</th><th>Rate</th><th class="text-right">Total</th></tr></thead>
             <tbody>
               <tr>
-                <td>${ro.technicianName || 'N/A'}</td>
+                <td>Labor Time</td>
                 <td>${totalHours.toFixed(2)} hrs</td>
                 <td>$${effectiveRate.toFixed(2)}/hr</td>
                 <td class="text-right">$${laborTotal.toFixed(2)}</td>
@@ -249,8 +249,8 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, ov
             <div className="bg-slate-900/50 p-4 rounded-lg border border-white/5">
               <div className="grid grid-cols-3 gap-4 items-center">
                 <div>
-                    <span className="text-xs text-slate-400 block">Technician</span>
-                    <span className="font-bold text-white">{ro.technicianName}</span>
+                    <span className="text-xs text-slate-400 block">Description</span>
+                    <span className="font-bold text-white">Labor Time</span>
                 </div>
                 <div>
                     <span className="text-xs text-slate-400 block">Billable Hours</span>
@@ -270,7 +270,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, ov
                 </div>
               </div>
               <p className="text-xs text-slate-400 mt-3 border-t border-white/5 pt-3">
-                <span className="font-bold block text-slate-300 mb-1">Technician's Notes:</span>
+                <span className="font-bold block text-slate-300 mb-1">Service Notes:</span>
                 {ro.laborDescription || "No final notes provided."}
               </p>
             </div>
