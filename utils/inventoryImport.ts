@@ -23,9 +23,9 @@ export const SYNONYMS: Record<CanonicalField, string[]> = {
   description: ['des', 'desc', 'description', 'itemdescription', 'name', 'itemname'],
   category: ['class', 'category', 'cat', 'group', 'type'],
   binLocation: ['bin', 'location', 'binlocation', 'loc'],
-  msrp: ['listprice', 'msrp', 'retail', 'retailprice', 'sellprice', 'price'],
-  dealerPrice: ['repcost', 'dealerprice', 'dealer', 'jobber', 'wholesale'],
-  cost: ['avgcost', 'cost', 'unitcost', 'lastcost', 'standardcost'],
+  msrp: ['price', 'msrp', 'retail', 'retailprice', 'sellprice', 'listprice'],
+  dealerPrice: ['dealerprice', 'dealer', 'jobber', 'wholesale', 'repcost'],
+  cost: ['avgcost', 'cost', 'unitcost', 'lastcost', 'lstbuycost', 'standardcost'],
   quantityOnHand: ['onhand', 'qoh', 'qty', 'quantity', 'instock', 'stock'],
   reorderPoint: ['ohmin', 'min', 'minimum', 'reorder', 'reorderpoint', 'rop'],
   supersedesPart: ['supers', 'supersedes', 'superseded', 'replaces', 'replacement']
