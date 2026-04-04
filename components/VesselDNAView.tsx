@@ -158,7 +158,7 @@ const VesselDNAView: React.FC<VesselDNAViewProps> = ({ vessel, allROs, onClose }
                                   <p className="text-[10px] text-slate-300 leading-tight line-clamp-2">{pastRO.summary}</p>
                               </div>
                             )}
-                            {fullRO && <EvidenceGallery roId={pastRO.id} repairOrder={fullRO} compact />}
+                            {fullRO && <EvidenceGallery roId={pastRO.id} repairOrder={fullRO} />}
                         </div>
                       )
                   })}

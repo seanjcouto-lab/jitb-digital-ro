@@ -5,7 +5,6 @@ import { PartsManagerService } from '../services/partsManagerService';
 import { SERVICE_PACKAGES } from '../constants';
 import SectionHeader from '../components/SectionHeader';
 import { printRequisition } from '../utils/printRequisition';
-import InventoryImportModal from '../components/InventoryImportModal';
 import EvidenceGallery from '../components/EvidenceGallery';
 import NotUsedReasonModal from '../components/NotUsedReasonModal';
 import { EngineIdentityLine } from '../components/EngineIdentityLine';
@@ -434,18 +433,25 @@ const ROCard: React.FC<ROCardProps> = ({
                             </div>
                             <button onClick={() => handleAddButtonClick(ro)} disabled={!(partSearchQueries[ro.id] || '').trim()} className="px-6 py-3 bg-slate-800 border border-white/10 text-slate-300 hover:border-neon-steel hover:text-white transition-all rounded-lg font-black text-[10px] uppercase tracking-widest disabled:opacity-50">Add</button>
                         </div>
-                      {[ROStatus.AUTHORIZED, ROStatus.PARTS_PENDING].includes(ro.status) && 
+                      {[ROStatus.AUTHORIZED, ROStatus.PARTS_PENDING].includes(ro.status) &&
     <div className="border-t border-white/10 pt-4 space-y-2">
       <button onClick={() => handleFulfillmentComplete(ro)} disabled={!isFulfillable} className="w-full py-4 rounded-xl font-black uppercase tracking-widest text-sm transition-all shadow-2xl disabled:grayscale disabled:cursor-not-allowed bg-neon-seafoam text-slate-900 disabled:bg-slate-800 disabled:text-slate-500 hover:scale-105 active:scale-95">
        {ro.parts.some(p => p.status === PartStatus.SPECIAL_ORDER || p.status === PartStatus.MISSING) ? 'Save & Set as Parts Pending' : 'Fulfillment Complete'}
       </button>
-     
+
     </div>
 }
                         {[ROStatus.ACTIVE, ROStatus.READY_FOR_TECH, ROStatus.HOLD, ROStatus.PENDING_INVOICE].includes(ro.status) && (
-                            <div className="mt-4 p-4 rounded-xl bg-neon-seafoam/5 border border-neon-seafoam/20">
-                                <p className="text-[10px] font-black uppercase text-neon-seafoam mb-1">Post-Deployment Fulfillment Mode</p>
-                                <p className="text-[9px] text-slate-400">Marking arrivals as "Received" updates the technician's terminal locks instantly. No status change required.</p>
+                            <div className="mt-4 space-y-3">
+                                <div className="p-4 rounded-xl bg-neon-seafoam/5 border border-neon-seafoam/20">
+                                    <p className="text-[10px] font-black uppercase text-neon-seafoam mb-1">Post-Deployment Fulfillment Mode</p>
+                                    <p className="text-[9px] text-slate-400">Marking arrivals as "Received" updates the technician's terminal locks instantly. No status change required.</p>
+                                </div>
+                                {ro.parts.some(p => p.status === PartStatus.REQUIRED || p.status === PartStatus.IN_BOX || p.status === PartStatus.MISSING || p.status === PartStatus.SPECIAL_ORDER) && (
+                                    <button onClick={() => { setExpandedROId(null); }} disabled={ro.parts.some(p => p.status === PartStatus.REQUIRED)} className="w-full py-4 rounded-xl font-black uppercase tracking-widest text-sm transition-all shadow-2xl disabled:grayscale disabled:cursor-not-allowed bg-neon-seafoam text-slate-900 disabled:bg-slate-800 disabled:text-slate-500 hover:scale-105 active:scale-95">
+                                        {ro.parts.some(p => p.status === PartStatus.REQUIRED) ? 'Process All Parts First' : 'Parts Fulfilled — Done'}
+                                    </button>
+                                )}
                             </div>
                         )}
                       </div>
@@ -553,7 +559,6 @@ const PartsManagerPage: React.FC<PartsManagerPageProps> = ({
   const [partSearchQueries, setPartSearchQueries] = useState<Record<string, string>>({});
   const [expandedROId, setExpandedROId] = useState<string | null>(null);
   const [isClipboardModalOpen, setIsClipboardModalOpen] = useState(false);
-  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
   const [missingPartInfo, setMissingPartInfo] = useState<{ ro: RepairOrder; partIndex: number } | null>(null);
 
@@ -563,7 +568,7 @@ const PartsManagerPage: React.FC<PartsManagerPageProps> = ({
   const [specialOrderSession, setSpecialOrderSession] = useState<{ ro: RepairOrder; soParts: Part[] } | null>(null);
 
 
-const fulfillmentQueue = useMemo(() => repairOrders.filter(ro => ro.status === ROStatus.AUTHORIZED || ro.status === ROStatus.PARTS_PENDING || (ro.status === ROStatus.ACTIVE && ro.parts.some(p => p.status === PartStatus.REQUIRED && p.status !== PartStatus.ON_ORDER))), [repairOrders]);
+const fulfillmentQueue = useMemo(() => repairOrders.filter(ro => ro.status === ROStatus.AUTHORIZED || ro.status === ROStatus.PARTS_PENDING || (ro.status === ROStatus.ACTIVE && ro.parts.some(p => p.status === PartStatus.REQUIRED || p.status === PartStatus.IN_BOX || p.status === PartStatus.MISSING || p.status === PartStatus.SPECIAL_ORDER))), [repairOrders]);
 const pendingQueue = useMemo(() => repairOrders.filter(ro => [ROStatus.READY_FOR_TECH, ROStatus.HOLD, ROStatus.PARTS_PENDING, ROStatus.ACTIVE].includes(ro.status) && ro.parts.some(p => p.status === PartStatus.MISSING || p.status === PartStatus.SPECIAL_ORDER || p.status === PartStatus.ON_ORDER)), [repairOrders]);
   
 
@@ -746,11 +751,6 @@ if (allPartsProcessed && result.updatedRO.parts.length > 0 && ![ROStatus.ACTIVE,
     setNotUsedPartInfo(null);
   };
 
-  const handleImportComplete = async () => {
-    const freshInventory = await PartsManagerService.fetchMasterInventory();
-    setMasterInventory(freshInventory);
-  };
-
   const handleInputFocus = (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setTimeout(() => {
         event.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -775,9 +775,6 @@ if (allPartsProcessed && result.updatedRO.parts.length > 0 && ![ROStatus.ACTIVE,
               <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Fulfillment & Requisition Hub</p>
             </div>
             <div className="flex gap-4">
-                <button onClick={() => setIsImportModalOpen(true)} className="px-6 py-3 bg-slate-800 text-slate-300 font-bold rounded-lg text-xs uppercase hover:text-white border border-white/10 transition-all">
-                    Bulk Import Inventory
-                </button>
                 <button onClick={() => setIsClipboardModalOpen(true)} className="px-6 py-3 bg-neon-steel/20 text-neon-steel font-bold rounded-lg text-xs uppercase hover:scale-105 border border-neon-steel/30 transition-all">
                     View The Clipboard
                 </button>
@@ -833,7 +830,6 @@ if (allPartsProcessed && result.updatedRO.parts.length > 0 && ![ROStatus.ACTIVE,
       )}
       
       {isClipboardModalOpen && <ClipboardModal onClose={() => setIsClipboardModalOpen(false)} />}
-      {isImportModalOpen && <InventoryImportModal onClose={() => setIsImportModalOpen(false)} onImportComplete={handleImportComplete} shopId={shopId} />}
       
       {notUsedPartInfo && (
         <NotUsedReasonModal 

@@ -5,9 +5,9 @@ import { Part } from '../types';
  *
  * Format: positional text, one part per line, ~280 chars wide.
  * Columns (character positions):
- *   0-22:   Full part number (with prefix like "1-")
+ *   0-22:   L&S catalog number — used as partNumber (e.g. 50-00998, 114-042282W)
  *   23-45:  Alternate part number (TEL xxx)
- *   46-68:  Clean part number (no prefix)
+ *   46-68:  Manufacturer's own part number (e.g. 042282-W for Moeller)
  *   69-98:  Vendor/manufacturer name
  *   99-133: Description
  *   134-144: Category code
@@ -35,7 +35,7 @@ function parseFloat_(s: string): number {
 export function parseLandSeaCatalogLine(line: string, shopId: string): Part | null {
   if (line.length < 160) return null; // Too short to be a valid record
 
-  const partNumber = line.slice(46, 69).trim();
+  const partNumber = line.slice(0, 23).trim();  // L&S catalog number (e.g. 50-00998, 114-042282W)
   if (!partNumber) return null;
 
   const vendor = line.slice(69, 99).trim();

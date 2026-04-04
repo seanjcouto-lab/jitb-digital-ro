@@ -333,7 +333,7 @@ const App: React.FC = () => {
       case UserRole.DATABASE: return <DatabasePage allROs={repairOrders} />;
       case UserRole.METRICS: return <MetricsPage repairOrders={repairOrders} inventory={masterInventory} config={config} />;
       case UserRole.CALENDAR: return <DockCalendarPage repairOrders={repairOrders} loggedInUser={loggedInUser} onUpdateRO={updateRO} />;
-      case UserRole.ADMIN: return <AdminPage config={config} setConfig={setConfig} onExport={handleExportData} loggedInUser={loggedInUser} />;
+      case UserRole.ADMIN: return <AdminPage config={config} setConfig={setConfig} onExport={handleExportData} loggedInUser={loggedInUser} masterInventory={masterInventory} setMasterInventory={setMasterInventory} shopId={shopContextService.getActiveShopId()} />;
       default: return null;
     }
   };

@@ -1,16 +1,21 @@
-import React, { useState } from 'react';
-import { AppConfig, CollectionsStatus, LoggedInUser, UserRole } from '../types';
+import React, { useState, useMemo } from 'react';
+import { AppConfig, CollectionsStatus, LoggedInUser, UserRole, Part } from '../types';
 import { appConfigService } from '../services/appConfigService';
 import { repairOrderService } from '../services/repairOrderService';
 import { roStore } from '../data/roStore';
 import { supabase } from '../supabaseClient';
 import { db } from '../localDb';
+import InventoryImportModal from '../components/InventoryImportModal';
+import { PartsManagerService } from '../services/partsManagerService';
 
 interface AdminPageProps {
   config: AppConfig;
   setConfig: (cfg: AppConfig) => void;
   onExport: () => void;
   loggedInUser: LoggedInUser | null;
+  masterInventory: Part[];
+  setMasterInventory: React.Dispatch<React.SetStateAction<Part[]>>;
+  shopId: string;
 }
 
 const TEST_RO_INPUT = {
@@ -42,7 +47,7 @@ const TEST_RO_INPUT = {
   shopId: '00000000-0000-0000-0000-000000000001',
 };
 
-const AdminPage: React.FC<AdminPageProps> = ({ config, setConfig, onExport, loggedInUser }) => {
+const AdminPage: React.FC<AdminPageProps> = ({ config, setConfig, onExport, loggedInUser, masterInventory, setMasterInventory, shopId }) => {
   if (!loggedInUser || loggedInUser.role !== UserRole.ADMIN) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -83,6 +88,56 @@ const AdminPage: React.FC<AdminPageProps> = ({ config, setConfig, onExport, logg
 
   const [purgeStatus, setPurgeStatus] = useState<string | null>(null);
   const [purgeConfirm, setPurgeConfirm] = useState(false);
+
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [invPurgeConfirm, setInvPurgeConfirm] = useState<'catalog' | 'onhand' | 'all' | null>(null);
+  const [invPurgeStatus, setInvPurgeStatus] = useState<string | null>(null);
+
+  const invStats = useMemo(() => {
+    const catalog = masterInventory.filter(p => p.source === 'catalog').length;
+    const onhand = masterInventory.filter(p => p.source === 'onhand').length;
+    const untagged = masterInventory.filter(p => !p.source).length;
+    return { total: masterInventory.length, catalog, onhand, untagged };
+  }, [masterInventory]);
+
+  const handleInvPurge = async (source: 'catalog' | 'onhand' | 'all') => {
+    if (invPurgeConfirm !== source) {
+      setInvPurgeConfirm(source);
+      return;
+    }
+    setInvPurgeConfirm(null);
+    setInvPurgeStatus('Purging...');
+    try {
+      // Purge from Dexie
+      if (source === 'all') {
+        const count = await db.masterInventory.where('shopId').equals(shopId).count();
+        await db.masterInventory.where('shopId').equals(shopId).delete();
+        // Purge from Supabase
+        await supabase.from('master_inventory').delete().eq('shop_id', shopId);
+        setInvPurgeStatus(`Purged all ${count} inventory parts.`);
+      } else {
+        const parts = await db.masterInventory.where('shopId').equals(shopId).filter(p => p.source === source).toArray();
+        const partNumbers = parts.map(p => p.partNumber);
+        for (let i = 0; i < partNumbers.length; i += 100) {
+          const batch = partNumbers.slice(i, i + 100);
+          await db.masterInventory.bulkDelete(batch.map(pn => [shopId, pn]));
+        }
+        // Purge from Supabase
+        await supabase.from('master_inventory').delete().eq('shop_id', shopId).eq('source', source);
+        setInvPurgeStatus(`Purged ${parts.length} ${source} parts.`);
+      }
+      // Refresh state
+      const fresh = await PartsManagerService.fetchMasterInventory();
+      setMasterInventory(fresh);
+    } catch (err: any) {
+      setInvPurgeStatus(`Purge failed: ${err?.message || 'Unknown error'}`);
+    }
+  };
+
+  const handleImportComplete = async () => {
+    const fresh = await PartsManagerService.fetchMasterInventory();
+    setMasterInventory(fresh);
+  };
 
   const handlePurgeSupabase = async () => {
     if (!purgeConfirm) {
@@ -210,6 +265,80 @@ const AdminPage: React.FC<AdminPageProps> = ({ config, setConfig, onExport, logg
         </div>
       </div>
       
+      <div className="glass p-8 rounded-3xl border-white/10">
+        <h2 className="text-2xl font-black text-orange-400 uppercase tracking-tighter mb-6 text-center">Inventory Administration</h2>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <div className="bg-white/5 rounded-xl p-4 text-center">
+            <p className="text-2xl font-black text-white">{invStats.total.toLocaleString()}</p>
+            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Total Parts</p>
+          </div>
+          <div className="bg-white/5 rounded-xl p-4 text-center">
+            <p className="text-2xl font-black text-blue-400">{invStats.catalog.toLocaleString()}</p>
+            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Catalog</p>
+          </div>
+          <div className="bg-white/5 rounded-xl p-4 text-center">
+            <p className="text-2xl font-black text-neon-seafoam">{invStats.onhand.toLocaleString()}</p>
+            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">On-Hand</p>
+          </div>
+          <div className="bg-white/5 rounded-xl p-4 text-center">
+            <p className="text-2xl font-black text-slate-400">{invStats.untagged.toLocaleString()}</p>
+            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Untagged</p>
+          </div>
+        </div>
+
+        <div className="space-y-3 max-w-lg mx-auto">
+          <button onClick={() => setIsImportModalOpen(true)} className="w-full px-6 py-4 bg-orange-500/20 border border-orange-400/40 text-orange-300 hover:border-orange-400 hover:text-orange-100 transition-all rounded-xl font-black text-sm uppercase tracking-widest">
+            Import Inventory / Catalog
+          </button>
+
+          <div className="grid grid-cols-3 gap-3">
+            <button
+              onClick={() => handleInvPurge('catalog')}
+              disabled={invStats.catalog === 0}
+              className={`px-4 py-3 border transition-all rounded-lg font-bold text-[10px] uppercase tracking-widest disabled:opacity-30 disabled:cursor-not-allowed ${
+                invPurgeConfirm === 'catalog'
+                  ? 'bg-red-600 border-red-400 text-white animate-pulse'
+                  : 'bg-red-900/30 border-red-500/30 text-red-300 hover:border-red-400'
+              }`}
+            >
+              {invPurgeConfirm === 'catalog' ? 'Confirm' : 'Purge Catalog'}
+            </button>
+            <button
+              onClick={() => handleInvPurge('onhand')}
+              disabled={invStats.onhand === 0}
+              className={`px-4 py-3 border transition-all rounded-lg font-bold text-[10px] uppercase tracking-widest disabled:opacity-30 disabled:cursor-not-allowed ${
+                invPurgeConfirm === 'onhand'
+                  ? 'bg-red-600 border-red-400 text-white animate-pulse'
+                  : 'bg-red-900/30 border-red-500/30 text-red-300 hover:border-red-400'
+              }`}
+            >
+              {invPurgeConfirm === 'onhand' ? 'Confirm' : 'Purge On-Hand'}
+            </button>
+            <button
+              onClick={() => handleInvPurge('all')}
+              disabled={invStats.total === 0}
+              className={`px-4 py-3 border transition-all rounded-lg font-bold text-[10px] uppercase tracking-widest disabled:opacity-30 disabled:cursor-not-allowed ${
+                invPurgeConfirm === 'all'
+                  ? 'bg-red-600 border-red-400 text-white animate-pulse'
+                  : 'bg-red-900/30 border-red-500/30 text-red-300 hover:border-red-400'
+              }`}
+            >
+              {invPurgeConfirm === 'all' ? 'Confirm' : 'Purge All'}
+            </button>
+          </div>
+
+          {invPurgeStatus && (
+            <p className={`text-center text-[10px] font-bold ${invPurgeStatus.includes('failed') ? 'text-red-400' : 'text-green-400'}`}>
+              {invPurgeStatus}
+            </p>
+          )}
+          <p className="text-center text-[10px] text-slate-500">Purge removes parts from local database and Supabase. Re-import after purging.</p>
+        </div>
+      </div>
+
+      {isImportModalOpen && <InventoryImportModal onClose={() => setIsImportModalOpen(false)} onImportComplete={handleImportComplete} shopId={shopId} />}
+
       <div className="glass p-8 rounded-3xl border-white/10">
         <h2 className="text-2xl font-black neon-steel uppercase tracking-tighter mb-6 text-center">System Administration & Data</h2>
         <div className="flex justify-center">

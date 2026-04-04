@@ -222,8 +222,8 @@ export async function refreshSingleRO(roId: string): Promise<RepairOrder | null>
     const [partsRes, directivesRes, sessionsRes, paymentsRes, requestsRes] = await Promise.all([
       supabase.from('repair_order_parts').select('*').eq('repair_order_id', roId),
       supabase.from('repair_order_directives').select('*').eq('repair_order_id', roId),
-      supabase.from('repair_order_work_sessions').select('*').eq('repair_order_id', roId),
-      supabase.from('repair_order_payments').select('*').eq('repair_order_id', roId),
+      supabase.from('work_sessions').select('*').eq('repair_order_id', roId),
+      supabase.from('payments').select('*').eq('repair_order_id', roId),
       supabase.from('repair_order_requests').select('*').eq('repair_order_id', roId),
     ]);
 
