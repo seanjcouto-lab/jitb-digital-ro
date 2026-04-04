@@ -124,14 +124,39 @@ All Playwright tests reference these button labels: `'Test SM'`, `'Test Tech'`, 
 
 ---
 
-## CURRENT BUILD STATE (APRIL 3 2026)
+## CURRENT BUILD STATE (APRIL 4 2026)
 
-- **Test suite: 122 passed, 0 failed, 8 skipped** — `tests/jaxtr.spec.ts`. Stable, deterministic. Runs in ~2.5 min parallel.
+- **Test suite: 122 passed, 0 failed, 8 skipped** — `tests/jaxtr.spec.ts`. Stable, deterministic. Runs in ~3.5 min parallel.
 - **Demo script: 4:30 timed walkthrough** — `tests/demo.spec.ts`, runs headed, 11 scenes. Run: `npx playwright test tests/demo.spec.ts --headed --project=chromium`
-- **`main` branch** — live on Vercel, all P1-P13 feedback fixes deployed. Synced with develop as of April 3 evening.
-- **`develop` branch** — synced with main. All 13 feedback items resolved.
+- **`main` branch** — live on Vercel, fully synced with develop. All P1-P13 fixes + realtime sync + evidence media + inventory import deployed.
+- **`develop` branch** — synced with main at `50ebb7b`.
+- **Pilot tests A-J: ALL PASSED** (April 4 morning, tested by Sean on Vercel production)
 - Playwright MUST run before and after every change — no exceptions
 - All work on `develop` branch — PRs to `main` when stable
+
+### Completed this session (April 4 2026)
+
+- **Pilot tests A-J: ALL 10 PASSED** — Sean tested manually on Vercel production. Definition of done for pilot readiness met.
+- **Cross-device realtime sync** — Supabase Realtime subscription on `repair_orders` table. When one device updates an RO, all other devices see the change within seconds. `updatedAt` timestamp on every mutation for conflict resolution (most recent write wins). `refreshSingleRO()` fetches single RO + children for incremental merge.
+- **Customer search always visible** — removed the collapsed state and expand button from SM board. Search is always open.
+- **Invoice tech name removed** — "Technician" label replaced with "Labor Time" / "Description". "Technician Notes" → "Service Notes". Tech identity stays internal, not customer-facing.
+- **Evidence media Supabase Storage sync** — new `mediaSyncService.ts` uploads blobs to `evidence` bucket (path: shopId/roId/directiveId/filename). Auto-sync after every capture + on app init for pending records. 3-retry upload with failure tracking.
+- **EvidenceGallery component** — reusable thumbnail grid with auto-labels (RO#, directive, type, timestamp). Lightbox modal for full-size viewing. Compact mode for count badges. Visible on: Tech page, SM expanded cards, Calendar modal, Vessel DNA history, Invoice (print summary + preview gallery), Parts Manager (badge).
+- **Inventory import — dual mode:**
+  - **On-Hand Stock (CSV/Excel):** BitPro/DealerTrack format. Auto-detects PNUM, DES, PRICE, AVGCOST, ONHAND, BIN, OHMIN, SUPERS. `source='onhand'` tag.
+  - **Distributor Catalog (L&S text):** Fixed-width parser for Land & Sea price files. 51,521 parts across 50 files. Parses part#, vendor, description, category, list price, dealer cost, UPC. `source='catalog'` tag.
+  - Smart delete: on-hand import only replaces on-hand parts, catalog only replaces catalog.
+  - Part interface extended: `source`, `vendor`, `upc` fields.
+- **Supabase columns added:** `updated_at` on `repair_orders`, `source`/`vendor`/`upc` on `master_inventory`. Realtime publication enabled on `repair_orders`.
+- **Test suite stable at 122/0/8** through all changes — zero regressions
+
+### Critical lessons learned — April 4
+
+- **Calendar UTC date off-by-one**: `.slice(0, 10)` on ISO strings gives UTC date, not local. Fixed with `toDateKey(new Date(val))`. Six occurrences across calendarUtils + DockCalendarPage.
+- **White backgrounds don't work in dark apps**: Tried white calendar bg, clashed with navy shell. Real fix was boosting invisible gridlines from `white/5` to `slate-600`.
+- **localStorage config wipes on site data clear**: AppConfig stored in localStorage. When clearing IndexedDB for sync fix, also wipes rates/PIN. Future fix: store config in Supabase `shops` table.
+- **Supabase Realtime requires publication**: `ALTER PUBLICATION supabase_realtime ADD TABLE repair_orders` required before subscription works.
+- **`updated_at` column already existed**: The column was already on `repair_orders` (likely added by Supabase auto). Only needed the publication and code-side timestamp management.
 
 ### Completed this session (April 3 2026 — evening)
 
