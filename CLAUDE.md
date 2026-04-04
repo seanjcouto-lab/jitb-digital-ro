@@ -129,7 +129,7 @@ All Playwright tests reference these button labels: `'Test SM'`, `'Test Tech'`, 
 - **Test suite: 122 passed, 0 failed, 8 skipped** — `tests/jaxtr.spec.ts`. Stable, deterministic. Runs in ~3.5 min parallel.
 - **Demo script: 4:30 timed walkthrough** — `tests/demo.spec.ts`, runs headed, 11 scenes. Run: `npx playwright test tests/demo.spec.ts --headed --project=chromium`
 - **`main` branch** — live on Vercel, fully synced with develop. All P1-P13 fixes + realtime sync + evidence media + inventory import deployed.
-- **`develop` branch** — synced with main at `50ebb7b`.
+- **`develop` branch** — synced with main at `a838845`.
 - **Pilot tests A-J: ALL PASSED** (April 4 morning, tested by Sean on Vercel production)
 - Playwright MUST run before and after every change — no exceptions
 - All work on `develop` branch — PRs to `main` when stable
@@ -148,7 +148,16 @@ All Playwright tests reference these button labels: `'Test SM'`, `'Test Tech'`, 
   - Smart delete: on-hand import only replaces on-hand parts, catalog only replaces catalog.
   - Part interface extended: `source`, `vendor`, `upc` fields.
 - **Supabase columns added:** `updated_at` on `repair_orders`, `source`/`vendor`/`upc` on `master_inventory`. Realtime publication enabled on `repair_orders`.
+- **Inventory search improved** — prioritizes "starts with" over "contains", caps display at 200 rows, shows match count ("47 matches" / "3,241 parts").
+- **Number input spinners removed globally** — CSS hides webkit/moz spinner arrows on all `input[type="number"]` app-wide. Manual entry only.
+- **Import column detection fixed** — PRICE synonym prioritized over LISTPRICE for msrp. AVGCOST maps to cost. BitPro CSV auto-detects correctly now.
 - **Test suite stable at 122/0/8** through all changes — zero regressions
+
+### Known issues discovered — to fix next session
+
+- **Clipboard feature lost** — `ClipboardEntry` type, ClipboardModal, and `addToClipboard` calls were deleted during the April 1 persona overhaul / test suite rebuild. Existed in commits `15a4b2c` and `aba5110`. Needs restore from git history. The clipboard collected all parts marked USED by tech for reorder tracking.
+- **AppConfig in localStorage only** — rates/tax/PIN revert to defaults when site data is cleared. Needs migration to Supabase `shops` table.
+- **Verify Supabase child table sync** — `repair_order_parts`, `repair_order_directives`, `payments`, `work_sessions`, `repair_order_requests` tables exist in Supabase. Sync code is wired. Need to verify data is actually populating by creating a fresh RO.
 
 ### Critical lessons learned — April 4
 
@@ -324,14 +333,16 @@ T112 — Offline/PWA test requiring service worker
 
 ### Next session queue (priority order)
 
-1. **Pilot acceptance tests A-J** — Sean runs manually on Vercel production. All 10 must pass before shipping. Any failures get fixed immediately.
-2. ~~Remaining feedback P5-P13~~ — **ALL DONE** (see table above)
-3. **Dock capacity config** — Admin page: target capacity input, visual warnings on calendar
-4. **Job category admin UI** — Admin page: add/edit/delete categories with color picker (currently hardcoded defaults)
-5. **Demo polish** — add Parts Manager scene, add calendar walkthrough scene
-6. **Unskip parts workflow tests (T74-T78)** — parts plumbing confirmed working, tests need seeded inventory
-7. **In-app notifications** — bell icon, pick-up reminders, dock capacity alerts
-8. Left sidebar nav (post-pilot)
+1. **Restore clipboard feature** — ClipboardEntry type + ClipboardModal + addToClipboard calls lost in April 1 rebuild. Restore from git history (commits `15a4b2c`, `aba5110`). Collects parts marked USED by tech for reorder tracking.
+2. **Verify Supabase child table sync** — create fresh RO with parts + directives, confirm `repair_order_parts` and `repair_order_directives` tables populate.
+3. **AppConfig to Supabase** — migrate rates/tax/PIN from localStorage to `shops` table JSONB column. 5 min fix, prevents config loss on site data clear.
+4. **Customer import** — Sean has a customer list (PDF or similar). Needs bulk import into customer search/profiles.
+5. **Suzuki catalog import** — waiting for Sean to provide cleaner format (not PDF).
+6. **Parts page mobile refinement** — tighter layout on phone screens.
+7. **Dock capacity config** — Admin page: target capacity input, visual warnings on calendar
+8. **Job category admin UI** — Admin page: add/edit/delete categories with color picker
+9. **Demo polish** — add Parts Manager scene, add calendar walkthrough scene
+10. **In-app notifications** — bell icon, pick-up reminders, dock capacity alerts
 
 ### Backlog
 
@@ -340,9 +351,12 @@ T112 — Offline/PWA test requiring service worker
 - **Nav sticky on all pages + role-specific icons**: Tech: Tech/DNA/Calendar | SM: Dock/NewRO/Parts/DNA/Calendar | PM: Parts/Inventory/DNA | Owner: all except dev tools
 - **Mobile button overlap** — buttons overlapping on small screens, needs audit and fix
 - **Customer directory** — master list view of all customers
-- **Customer CSV import** — bulk import customers from CSV
-- **Media audit** — DONE (Phase 1-3A built: Dexie mediaStore, media:// protocol, useMediaUrl hook)
+- **Media audit** — DONE (Phases 1-3A + Supabase Storage sync + EvidenceGallery everywhere)
+- **Evidence Phase 3B** — evidence visible on SM expanded cards (DONE) + Vessel DNA (DONE as compact badge)
 - **Vessel DNA boat image** — confirm purpose of boat image field or remove it
+- **Unskip parts workflow tests (T74-T78)** — need seeded inventory (now available via import)
+- Left sidebar nav (post-pilot)
+- **Inventory Module V1** — ledger, purchase orders, receiving, POS (post-pilot)
 
 ---
 
