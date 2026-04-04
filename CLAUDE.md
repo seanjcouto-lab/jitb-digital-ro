@@ -128,8 +128,8 @@ All Playwright tests reference these button labels: `'Test SM'`, `'Test Tech'`, 
 
 - **Test suite: 122 passed, 0 failed, 8 skipped** — `tests/jaxtr.spec.ts`. Stable, deterministic. Runs in ~2.5 min parallel.
 - **Demo script: 4:30 timed walkthrough** — `tests/demo.spec.ts`, runs headed, 11 scenes. Run: `npx playwright test tests/demo.spec.ts --headed --project=chromium`
-- **`main` branch** — live on Vercel, manually tested, stable. Merged April 2 evening.
-- **`develop` branch** — all new work. 12 commits ahead of main (calendar + media + P1-P4 fixes).
+- **`main` branch** — live on Vercel, all P1-P13 feedback fixes deployed. Synced with develop as of April 3 evening.
+- **`develop` branch** — synced with main. All 13 feedback items resolved.
 - Playwright MUST run before and after every change — no exceptions
 - All work on `develop` branch — PRs to `main` when stable
 
@@ -139,28 +139,37 @@ All Playwright tests reference these button labels: `'Test SM'`, `'Test Tech'`, 
 - **P2: Part quantity auto-select** — `onFocus={e => e.target.select()}` added to all 4 quantity inputs (SM, ROGeneration, Tech, PM). Click input → "1" auto-selects → type new value immediately.
 - **P3: Calendar modal mobile responsive** — backdrop `p-2 sm:p-4`, modal `p-3 sm:p-6`, `max-w-[calc(100vw-1rem)] sm:max-w-lg`, `max-h-[85vh] sm:max-h-[90vh]`. Desktop unchanged via `sm:` breakpoints.
 - **P4: Calendar manual date/time edit** — `<input type="datetime-local">` replaces read-only date spans in calendar detail modal. SM/Admin see editable inputs; other roles see read-only text. Empty date inputs shown when no date set yet. onChange mirrors handleDrop pattern (freshRO lookup, onUpdateRO, setSelectedRO).
+- **P5: Month view drag grid fix** — Removed `transition-colors` from month cells that caused grid flicker during drag-and-drop re-renders.
+- **P6: Invoice customer/vessel/engine identity** — Added "Customer & Vessel" section to invoice modal UI (customer, vessel, engine make/model/year/HP/hours, HIN). Added engine row to print template.
+- **P7: Tech minimize active job** — `isActiveBayMinimized` state toggle. Minimize button (─ icon) on Active Bay Deck header. When minimized, shows pulsing "Active: CustomerName — Return to Job →" banner above queue/held list.
+- **P8: Renamed "Log Requisitions" → "Add Work & Parts"** — TechnicianPage, jaxtr.spec.ts, demo.spec.ts all updated.
+- **P9: Removed redundant engineSerial from tech header** — EngineIdentityLine in Active Bay Deck no longer passes engineSerial (still shows make/model/year/HP/hours).
+- **P10: Audio record icon fixed** — Replaced malformed SVG path in EvidenceInputBlock with correct microphone icon (matches the recording modal).
+- **P11: Calendar mobile/vertical overflow** — Header wraps on mobile with `flex-wrap`, dock count hidden below 640px (`hidden sm:flex`), reduced grid min-widths and time column widths on small screens.
+- **P12: Month view landscape optimization** — Month cells `min-h-[56px] sm:min-h-[80px]` and tighter padding on mobile for landscape fit.
+- **P13: Laptop file input opens file picker not camera** — `capture="environment"` now conditional via `'ontouchstart' in window` check. Touch devices get camera, laptops get normal file browser.
 - **Date off-by-one bug FIXED** — `calendarUtils.ts` and `DockCalendarPage.tsx` were using `.slice(0, 10)` on ISO strings to extract dates — that's UTC, not local. When a user in EDT picks 8pm April 6, it stores as midnight April 7 UTC, then `slice(0,10)` returns "2026-04-07". Fixed all 6 occurrences to use `toDateKey(new Date(val))` which uses local `getDate()`.
 - **Calendar gridlines visible** — All `border-white/5` (invisible) and `border-white/10` bumped to `border-slate-600` across DockCalendarPage. Dark background preserved, lines now clearly visible.
 - **White calendar attempted and reverted** — Sean requested white bg, looked bad against dark app shell. Reverted to dark + visible gridlines approach.
 - **Test suite stable at 122/0/8** through all changes — zero regressions
 
-### Sean's manual testing feedback (April 3)
+### Sean's manual testing feedback (April 3) — ALL RESOLVED
 
-| # | Issue | Status | Priority |
-|---|-------|--------|----------|
-| P1 | SM Board columns need internal scroll | **DONE** (75vh) | High |
-| P2 | Part quantity input — "1" default hard to overwrite | **DONE** (onFocus select) | High |
-| P3 | Calendar modal mobile overflow | **DONE** (responsive breakpoints) | High |
-| P4 | Calendar manual date/time edit (not just drag) | **DONE** (datetime-local inputs) | High |
-| P5 | Month view grids disappear during drag | Open | Medium |
-| P6 | Invoice — add customer name + vessel + engine info | Open | Medium |
-| P7 | Tech minimize active job to see held/queued | Open | Medium |
-| P8 | Rename "Log Requisition" to clearer label | Open | Small |
-| P9 | Remove redundant serial from tech header | Open | Small |
-| P10 | Audio record icon wrong | Open | Small |
-| P11 | Calendar mobile/vertical overflow | Open | Medium |
-| P12 | Month view landscape optimization | Open | Medium |
-| P13 | Laptop file input opens gallery not camera | Open | Small |
+| # | Issue | Status | Fix |
+|---|-------|--------|-----|
+| P1 | SM Board columns need internal scroll | **DONE** | 75vh max-height + overflow-y-auto on 5 card-list divs |
+| P2 | Part quantity input — "1" default hard to overwrite | **DONE** | onFocus select on all 4 qty inputs |
+| P3 | Calendar modal mobile overflow | **DONE** | Responsive breakpoints (p-2/p-3/max-w/max-h) |
+| P4 | Calendar manual date/time edit (not just drag) | **DONE** | datetime-local inputs, SM/Admin only |
+| P5 | Month view grids disappear during drag | **DONE** | Removed transition-colors from month cells |
+| P6 | Invoice — add customer name + vessel + engine info | **DONE** | Customer & Vessel section in modal + print |
+| P7 | Tech minimize active job to see held/queued | **DONE** | Minimize button + Return to Job banner |
+| P8 | Rename "Log Requisition" to clearer label | **DONE** | → "Add Work & Parts" |
+| P9 | Remove redundant serial from tech header | **DONE** | Dropped engineSerial from header EngineIdentityLine |
+| P10 | Audio record icon wrong | **DONE** | Correct microphone SVG in EvidenceInputBlock |
+| P11 | Calendar mobile/vertical overflow | **DONE** | Responsive header, reduced grid min-widths |
+| P12 | Month view landscape optimization | **DONE** | Shorter cells on mobile (56px vs 80px) |
+| P13 | Laptop file input opens gallery not camera | **DONE** | Conditional capture attr (touch only) |
 
 ### Completed earlier this session (April 3 2026)
 
@@ -290,8 +299,8 @@ T112 — Offline/PWA test requiring service worker
 
 ### Next session queue (priority order)
 
-1. **Remaining feedback P5-P13** — see table above. P5/P6/P7/P11/P12 are medium priority.
-2. **Merge `develop` → `main`** — calendar + all fixes ready for production push
+1. **Pilot acceptance tests A-J** — Sean runs manually on Vercel production. All 10 must pass before shipping. Any failures get fixed immediately.
+2. ~~Remaining feedback P5-P13~~ — **ALL DONE** (see table above)
 3. **Dock capacity config** — Admin page: target capacity input, visual warnings on calendar
 4. **Job category admin UI** — Admin page: add/edit/delete categories with color picker (currently hardcoded defaults)
 5. **Demo polish** — add Parts Manager scene, add calendar walkthrough scene
