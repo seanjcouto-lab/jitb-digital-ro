@@ -5,6 +5,7 @@ import { mediaService } from '../services/mediaService';
 import SectionHeader from '../components/SectionHeader';
 import EvidenceInputBlock from '../components/EvidenceInputBlock';
 import { EngineIdentityLine } from '../components/EngineIdentityLine';
+import EvidenceGallery from '../components/EvidenceGallery';
 
 interface TechnicianPageProps {
   repairOrder?: RepairOrder;
@@ -614,11 +615,7 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs 
                                     <button onClick={() => handleUploadEvidence(directive.id, 'video')} className="p-2.5 bg-slate-800 rounded-lg hover:bg-slate-700 transition-colors" title="Add Video evidence"><svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.55a1 1 0 011.45.89v2.22a1 1 0 01-1.45.89L15 12l-4.55a1 1 0 01-1.45-.89V9.11a1 1 0 011.45-.89L15 10z"></path></svg></button>
                                     <button onClick={() => handleOpenAudioRecorder(directive.id)} className="p-2.5 bg-slate-800 rounded-lg hover:bg-slate-700 transition-colors" title="Add Audio note"><svg className="w-5 h-5 text-slate-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 3a3 3 0 016 0v5a3 3 0 01-6 0V3zm2 5a1 1 0 011-1h.01a1 1 0 110 2H8a1 1 0 01-1-1zm-1 3a1 1 0 00-1 1v1a3 3 0 003 3h1a3 3 0 003-3v-1a1 1 0 10-2 0v1a1 1 0 01-1 1h-1a1 1 0 01-1-1v-1a1 1 0 00-1-1z" clipRule="evenodd" /></svg></button>
                                 </div>
-                                <div className="flex gap-2">
-                                    {directive.evidence?.map((ev, i) => (
-                                        <a key={i} href={ev.url} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-neon-seafoam/10 border border-neon-seafoam/30 rounded-lg flex items-center justify-center hover:bg-neon-seafoam/20 transition-all">{ev.type === 'video' ? <svg className="w-5 h-5 text-neon-seafoam" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd"></path></svg> : ev.type === 'photo' ? <svg className="w-5 h-5 text-neon-seafoam" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd"></path></svg> : <svg className="w-5 h-5 text-neon-seafoam" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217z" clipRule="evenodd"></path></svg>}</a>
-                                    ))}
-                                </div>
+                                <EvidenceGallery roId={repairOrder.id} directiveId={directive.id} repairOrder={repairOrder} />
                             </div>
                         </div>
                     )}

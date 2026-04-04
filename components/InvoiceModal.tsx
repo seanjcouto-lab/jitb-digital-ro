@@ -1,6 +1,8 @@
 
-import React, { useState } from 'react';
-import { RepairOrder } from '../types';
+import React, { useState, useEffect } from 'react';
+import { RepairOrder, MediaRecord } from '../types';
+import { mediaService } from '../services/mediaService';
+import EvidenceGallery, { getEvidenceSummaryText } from './EvidenceGallery';
 
 interface InvoiceModalProps {
   ro: RepairOrder;
@@ -23,6 +25,11 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, ov
   const [editedRate, setEditedRate] = useState<number | null>(null);
   const [editedPartPrices, setEditedPartPrices] = useState<Record<number, number>>({});
   const [discount, setDiscount] = useState<number>(0);
+  const [evidenceRecords, setEvidenceRecords] = useState<MediaRecord[]>([]);
+
+  useEffect(() => {
+    mediaService.getMediaForRO(ro.id).then(setEvidenceRecords);
+  }, [ro.id]);
 
   const handlePinSubmit = () => {
     if (pinEntry === overridePin) {
@@ -168,6 +175,8 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, ov
           <div class="totals-row grand"><span>TOTAL DUE:</span><span>$${grandTotal.toFixed(2)}</span></div>
         </div>
 
+        ${evidenceRecords.length > 0 ? `<div class="section"><div class="section-title">Documentation</div><p style="font-size:12px;color:#666;">${getEvidenceSummaryText(evidenceRecords)} — available digitally upon request.</p></div>` : ''}
+
         <div class="payment-terms">
           <p>Payment Due Upon Receipt</p>
           <small>No payment, no release of vessel or equipment.</small>
@@ -242,6 +251,9 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, ov
               </div>
             </div>
           </section>
+
+          {/* Evidence */}
+          <EvidenceGallery roId={ro.id} repairOrder={ro} />
 
           {/* Labor Section */}
           <section>

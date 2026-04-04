@@ -6,6 +6,7 @@ import { SERVICE_PACKAGES } from '../constants';
 import SectionHeader from '../components/SectionHeader';
 import { printRequisition } from '../utils/printRequisition';
 import InventoryImportModal from '../components/InventoryImportModal';
+import EvidenceGallery from '../components/EvidenceGallery';
 import NotUsedReasonModal from '../components/NotUsedReasonModal';
 import { EngineIdentityLine } from '../components/EngineIdentityLine';
 
@@ -62,6 +63,7 @@ const handlePrint = () => {
                             <p className="font-mono font-bold">{ro.id}</p>
                             <p className="font-bold text-slate-500 uppercase text-[10px] mt-1">Vessel Name</p>
                             <p className="font-bold">{ro.vesselName || 'N/A'}</p>
+                            <div className="mt-2"><EvidenceGallery roId={ro.id} repairOrder={ro} compact /></div>
                         </div>
                         <div className="text-right">
                             <p className="font-bold text-slate-500 uppercase text-[10px]">Date Processed</p>

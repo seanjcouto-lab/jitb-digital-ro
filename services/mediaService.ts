@@ -1,5 +1,6 @@
 import { db } from '../localDb';
 import { MediaRecord } from '../types';
+import { syncPendingMedia } from './mediaSyncService';
 
 /**
  * Media persistence service — stores evidence (photos, video, audio) in IndexedDB.
@@ -59,6 +60,8 @@ export const mediaService = {
     };
 
     await db.mediaStore.add(record);
+    // Fire background sync — don't await, don't block
+    syncPendingMedia().catch(() => {});
     return id;
   },
 

@@ -16,6 +16,7 @@ import {
   getHour,
 } from '../utils/calendarUtils';
 import CalendarEventCard from '../components/CalendarEventCard';
+import EvidenceGallery from '../components/EvidenceGallery';
 
 interface DockCalendarPageProps {
   repairOrders: RepairOrder[];
@@ -700,6 +701,9 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
               </div>
             </div>
           )}
+
+          {/* Evidence */}
+          <EvidenceGallery roId={selectedRO.id} repairOrder={selectedRO} />
 
           <button
             onClick={() => { setSelectedRO(null); setNewDirective(''); setNewPartDesc(''); }}

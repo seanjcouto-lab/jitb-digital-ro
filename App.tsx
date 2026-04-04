@@ -3,6 +3,7 @@ import { UserRole, RepairOrder, ROStatus, AppConfig, Part, InventoryAlert, Logge
 import { TECHNICIANS } from './constants';
 import { seedDatabase } from './localDb';
 import { roStore, loadFromSupabase, refreshSingleRO } from './data/roStore';
+import { syncPendingMedia } from './services/mediaSyncService';
 import { vesselService } from './services/vesselService';
 import { inventoryStore } from './data/inventoryStore';
 import { repairOrderService } from './services/repairOrderService';
@@ -73,6 +74,8 @@ const App: React.FC = () => {
     ]);
     setRepairOrders(initialROs);
     setMasterInventory(initialInventory);
+    // Sync any pending media from previous sessions
+    syncPendingMedia().catch(() => {});
   };
 
   useEffect(() => {

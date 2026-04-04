@@ -2,6 +2,7 @@ import React from 'react';
 import { VesselHistory, RepairOrder } from '../types';
 import SectionHeader from './SectionHeader';
 import { EngineIdentityLine } from './EngineIdentityLine';
+import EvidenceGallery from './EvidenceGallery';
 
 interface VesselDNAViewProps {
   vessel: VesselHistory;
@@ -157,6 +158,7 @@ const VesselDNAView: React.FC<VesselDNAViewProps> = ({ vessel, allROs, onClose }
                                   <p className="text-[10px] text-slate-300 leading-tight line-clamp-2">{pastRO.summary}</p>
                               </div>
                             )}
+                            {fullRO && <EvidenceGallery roId={pastRO.id} repairOrder={fullRO} compact />}
                         </div>
                       )
                   })}

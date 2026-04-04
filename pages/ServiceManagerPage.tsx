@@ -6,6 +6,7 @@ import { MOCK_NEW_CUSTOMER } from '../seedData';
 import InvoiceModal from '../components/InvoiceModal';
 import VesselDNAView from '../components/VesselDNAView';
 
+import EvidenceGallery from '../components/EvidenceGallery';
 import OracleSearchView from '../components/OracleSearchView';
 import ProfileOnboardingForm from '../components/ProfileOnboardingForm';
 import ROGenerationView from '../components/ROGenerationView';
@@ -407,6 +408,9 @@ const RODetail = ({
           <p className="text-slate-300 whitespace-pre-wrap bg-slate-900/50 p-2 rounded-md border border-white/5">{ro.customerNotes}</p>
         </div>
       )}
+
+      {/* Evidence gallery */}
+      <EvidenceGallery roId={ro.id} repairOrder={ro} />
     </div>
   );
 };
