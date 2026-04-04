@@ -7,8 +7,25 @@ import { syncInventoryToSupabase } from '../utils/supabaseSync';
 export const inventoryService = {
   getFilteredInventory: (inventory: Part[], query: string): Part[] => {
     if (!query) return inventory;
-    const q = query.toLowerCase();
-    return inventory.filter(p => p.description.toLowerCase().includes(q) || p.partNumber.toLowerCase().includes(q));
+    const q = query.toLowerCase().trim();
+    if (!q) return inventory;
+
+    // Separate into "starts with" (higher priority) and "contains" matches
+    const startsWith: Part[] = [];
+    const contains: Part[] = [];
+
+    for (const p of inventory) {
+      const pn = p.partNumber.toLowerCase();
+      const desc = p.description.toLowerCase();
+
+      if (pn.startsWith(q) || desc.startsWith(q)) {
+        startsWith.push(p);
+      } else if (pn.includes(q) || desc.includes(q)) {
+        contains.push(p);
+      }
+    }
+
+    return [...startsWith, ...contains];
   },
 
   getLowStockItems: (inventory: Part[]): Part[] => {

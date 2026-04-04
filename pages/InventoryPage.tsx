@@ -13,9 +13,13 @@ interface InventoryPageProps {
 const InventoryPage: React.FC<InventoryPageProps> = ({ inventory, setInventory, alerts }) => {
   const [query, setQuery] = useState('');
 
-  const filteredInventory = useMemo(() => {
+  const MAX_DISPLAY = 200;
+
+  const allFiltered = useMemo(() => {
     return inventoryService.getFilteredInventory(inventory, query);
   }, [inventory, query]);
+
+  const filteredInventory = allFiltered.slice(0, MAX_DISPLAY);
 
   const lowStockItems = useMemo(() => {
     return inventoryService.getLowStockItems(inventory);
@@ -38,14 +42,19 @@ const InventoryPage: React.FC<InventoryPageProps> = ({ inventory, setInventory, 
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 glass rounded-2xl p-6 border-white/5">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-bold neon-steel uppercase tracking-tighter">Master Inventory</h3>
-            <input 
+          <div className="flex flex-wrap justify-between items-center gap-2 mb-4">
+            <div className="flex items-center gap-3">
+              <h3 className="text-lg font-bold neon-steel uppercase tracking-tighter">Master Inventory</h3>
+              <span className="text-[10px] text-slate-500 font-mono">
+                {query ? `${allFiltered.length.toLocaleString()} match${allFiltered.length !== 1 ? 'es' : ''}${allFiltered.length > MAX_DISPLAY ? ` (showing ${MAX_DISPLAY})` : ''}` : `${inventory.length.toLocaleString()} parts`}
+              </span>
+            </div>
+            <input
               value={query}
               onChange={e => setQuery(e.target.value)}
               onFocus={handleInputFocus}
-              placeholder="Search inventory..."
-              className="bg-slate-900/80 border border-white/10 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:border-neon-steel transition-colors"
+              placeholder="Search by part # or description..."
+              className="bg-slate-900/80 border border-white/10 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:border-neon-steel transition-colors w-64"
             />
           </div>
           <div className="max-h-[65vh] overflow-y-auto pr-2">
