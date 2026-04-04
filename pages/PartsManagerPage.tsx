@@ -769,32 +769,32 @@ if (allPartsProcessed && result.updatedRO.parts.length > 0 && ![ROStatus.ACTIVE,
       <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
         
 
-        <div className="flex justify-between items-end border-b border-white/5 pb-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 border-b border-white/5 pb-4">
             <div>
-              <h2 className="text-3xl font-black neon-seafoam uppercase tracking-tighter">Parts Command</h2>
-              <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Fulfillment & Requisition Hub</p>
+              <h2 className="text-xl sm:text-3xl font-black neon-seafoam uppercase tracking-tighter">Parts Command</h2>
+              <p className="text-[10px] sm:text-xs text-slate-500 font-bold uppercase tracking-widest">Fulfillment & Requisition Hub</p>
             </div>
-            <div className="flex gap-4">
-                <button onClick={() => setIsClipboardModalOpen(true)} className="px-6 py-3 bg-neon-steel/20 text-neon-steel font-bold rounded-lg text-xs uppercase hover:scale-105 border border-neon-steel/30 transition-all">
-                    View The Clipboard
+            <div className="flex gap-2 sm:gap-4 w-full sm:w-auto">
+                <button onClick={() => setIsClipboardModalOpen(true)} className="flex-1 sm:flex-none px-3 sm:px-6 py-2 sm:py-3 bg-neon-steel/20 text-neon-steel font-bold rounded-lg text-[10px] sm:text-xs uppercase hover:scale-105 border border-neon-steel/30 transition-all">
+                    View Clipboard
                 </button>
             </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8">
             <div>
-                <h2 className="text-2xl font-bold neon-steel uppercase tracking-tighter mb-4">Fulfillment Queue <span className="text-slate-500 text-lg">({fulfillmentQueue.length})</span></h2>
+                <h2 className="text-lg sm:text-2xl font-bold neon-steel uppercase tracking-tighter mb-3 sm:mb-4">Fulfillment Queue <span className="text-slate-500 text-sm sm:text-lg">({fulfillmentQueue.length})</span></h2>
                 <div className="space-y-4">
-                    {fulfillmentQueue.length === 0 && <div className="glass p-12 text-center rounded-2xl border-white/5"><p className="text-slate-500 text-sm">No new staged jobs requiring parts.</p></div>}
+                    {fulfillmentQueue.length === 0 && <div className="glass p-6 sm:p-12 text-center rounded-2xl border-white/5"><p className="text-slate-500 text-sm">No new staged jobs requiring parts.</p></div>}
                     {fulfillmentQueue.map(ro => <ROCard key={ro.id} ro={ro} {...cardProps} />)}
                 </div>
             </div>
 
             <div className="space-y-8">
                 <div>
-                    <h2 className="text-2xl font-bold text-yellow-400 uppercase tracking-tighter mb-4">Awaiting Parts <span className="text-slate-500 text-lg">({pendingQueue.length})</span></h2>
+                    <h2 className="text-lg sm:text-2xl font-bold text-yellow-400 uppercase tracking-tighter mb-3 sm:mb-4">Awaiting Parts <span className="text-slate-500 text-sm sm:text-lg">({pendingQueue.length})</span></h2>
                     <div className="space-y-4">
-                       {pendingQueue.length === 0 && <div className="glass p-12 text-center rounded-2xl border-white/5"><p className="text-slate-500 text-sm">No jobs with missing or special order parts.</p></div>}
+                       {pendingQueue.length === 0 && <div className="glass p-6 sm:p-12 text-center rounded-2xl border-white/5"><p className="text-slate-500 text-sm">No jobs with missing or special order parts.</p></div>}
                         {pendingQueue.map(ro => <ROCard key={ro.id} ro={ro} {...cardProps} />)}
                     </div>
                 </div>
@@ -804,7 +804,7 @@ if (allPartsProcessed && result.updatedRO.parts.length > 0 && ![ROStatus.ACTIVE,
         </div>
 
         <div className="mt-12 pt-8 border-t border-white/5">
-            <h2 className="text-2xl font-bold text-slate-400 uppercase tracking-tighter mb-4">Returns Queue <span className="text-slate-500 text-lg">({returnsQueue.length})</span></h2>
+            <h2 className="text-lg sm:text-2xl font-bold text-slate-400 uppercase tracking-tighter mb-3 sm:mb-4">Returns Queue <span className="text-slate-500 text-sm sm:text-lg">({returnsQueue.length})</span></h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
                 {returnsQueue.length === 0 && <div className="md:col-span-2 glass p-20 text-center rounded-2xl border-white/5"><p className="text-slate-500 text-sm">No jobs are awaiting part returns.</p></div>}
                 {returnsQueue.map(ro => <ReturnsROCard key={ro.id} ro={ro} onReturnPart={handleReturnPartToStock} onMarkNotUsed={handleMarkNotUsed} />)}
