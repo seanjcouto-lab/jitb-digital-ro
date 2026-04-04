@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { UserRole, RepairOrder, ROStatus, AppConfig, Part, InventoryAlert, LoggedInUser } from './types';
 import { TECHNICIANS } from './constants';
 import { seedDatabase } from './localDb';
-import { roStore, loadFromSupabase } from './data/roStore';
+import { roStore, loadFromSupabase, refreshSingleRO } from './data/roStore';
 import { vesselService } from './services/vesselService';
 import { inventoryStore } from './data/inventoryStore';
 import { repairOrderService } from './services/repairOrderService';
@@ -97,8 +97,43 @@ const App: React.FC = () => {
       }
     });
 
+    // Supabase Realtime: listen for RO changes from other devices
+    const shopId = shopContextService.getActiveShopId();
+    const realtimeChannel = supabase
+      .channel('ro-realtime-sync')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'repair_orders',
+        filter: `shop_id=eq.${shopId}`,
+      }, async (payload) => {
+        const roId = (payload.new as any)?.id || (payload.old as any)?.id;
+        if (!roId) return;
+
+        if (payload.eventType === 'DELETE') {
+          setRepairOrders(prev => prev.filter(ro => ro.id !== roId));
+          return;
+        }
+
+        // INSERT or UPDATE — fetch full RO + children and merge
+        const merged = await refreshSingleRO(roId);
+        if (merged) {
+          setRepairOrders(prev => {
+            const idx = prev.findIndex(ro => ro.id === merged.id);
+            if (idx >= 0) {
+              const updated = [...prev];
+              updated[idx] = merged;
+              return updated;
+            }
+            return [...prev, merged];
+          });
+        }
+      })
+      .subscribe();
+
     return () => {
       subscription.unsubscribe();
+      supabase.removeChannel(realtimeChannel);
     };
   }, []);
 

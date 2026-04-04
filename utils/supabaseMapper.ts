@@ -47,6 +47,7 @@ export function mapROToSupabase(ro: RepairOrder) {
       arrival_date: ro.arrivalDate ?? null,
       estimated_pickup_date: ro.estimatedPickupDate ?? null,
       job_category: ro.jobCategory ?? null,
+      updated_at: ro.updatedAt ? new Date(ro.updatedAt).toISOString() : new Date().toISOString(),
     },
     parts: (ro.parts ?? []).map(p => ({
       repair_order_id: ro.id,
