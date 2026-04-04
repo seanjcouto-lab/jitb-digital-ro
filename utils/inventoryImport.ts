@@ -23,7 +23,7 @@ export const SYNONYMS: Record<CanonicalField, string[]> = {
   description: ['des', 'desc', 'description', 'itemdescription', 'name', 'itemname'],
   category: ['class', 'category', 'cat', 'group', 'type'],
   binLocation: ['bin', 'location', 'binlocation', 'loc'],
-  msrp: ['listprice', 'msrp', 'retail', 'retailprice', 'sellprice'],
+  msrp: ['listprice', 'msrp', 'retail', 'retailprice', 'sellprice', 'price'],
   dealerPrice: ['repcost', 'dealerprice', 'dealer', 'jobber', 'wholesale'],
   cost: ['avgcost', 'cost', 'unitcost', 'lastcost', 'standardcost'],
   quantityOnHand: ['onhand', 'qoh', 'qty', 'quantity', 'instock', 'stock'],
@@ -138,6 +138,7 @@ export function transformRows(rows: any[], mapping: Record<string, string>, shop
       reorderPoint: Number(row[mapping.reorderPoint]) || 0,
       supersedesPart: row[mapping.supersedesPart] ? String(row[mapping.supersedesPart]) : null,
       shopId,
+      source: 'onhand' as const,
     };
 
     partsMap.set(part.partNumber, part);
@@ -197,10 +198,18 @@ export async function importInventoryFromFile(file: File): Promise<{ rows: any[]
   });
 }
 
-export async function commitInventoryImport(rows: any[], mapping: Record<string, string>, shopId: string): Promise<void> {
+export async function commitInventoryImport(rows: any[], mapping: Record<string, string>, shopId: string, source: 'onhand' | 'catalog' = 'onhand'): Promise<void> {
   const parts = transformRows(rows, mapping, shopId);
+  parts.forEach(p => p.source = source);
   await db.transaction('rw', db.masterInventory, async () => {
-    await db.masterInventory.where('shopId').equals(shopId).delete();
+    // Only delete parts of the same source type — preserve other sources
+    const existing = await db.masterInventory
+      .where('shopId').equals(shopId)
+      .filter(p => (p.source || 'onhand') === source)
+      .toArray();
+    for (const p of existing) {
+      await db.masterInventory.delete([shopId, p.partNumber]);
+    }
     await db.masterInventory.bulkPut(parts);
   });
 }

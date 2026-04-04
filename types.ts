@@ -95,6 +95,9 @@ export interface Part {
   notUsedNotes?: string;
   notUsedTimestamp?: number;
   shopId: string;
+  source?: 'onhand' | 'catalog' | 'suzuki';  // Import source — on-hand stock vs distributor catalog
+  vendor?: string;                             // Vendor/manufacturer name from catalog
+  upc?: string;                                // UPC/barcode from catalog
 }
 
 export interface Directive {

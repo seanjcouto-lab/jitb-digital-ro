@@ -174,6 +174,9 @@ export async function syncInventoryToSupabase(part: Part): Promise<void> {
     quantity_on_hand: part.quantityOnHand,
     reorder_point:    part.reorderPoint,
     supersedes_part:  part.supersedesPart ?? null,
+    source:           part.source ?? 'onhand',
+    vendor:           part.vendor ?? null,
+    upc:              part.upc ?? null,
   })
   if (error) {
     console.error('Supabase inventory sync failed:', error.message)
