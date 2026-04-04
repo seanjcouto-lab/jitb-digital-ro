@@ -526,8 +526,8 @@ const TechnicianPage: React.FC<TechnicianPageProps> = ({ repairOrder, haltedROs 
 
   return (
     <>
-      <input type="file" accept="image/*" capture="environment" ref={photoInputRef} className="hidden" onChange={(e) => handleFileChange(e, 'photo')} />
-      <input type="file" accept="video/*" capture="environment" ref={videoInputRef} className="hidden" onChange={(e) => handleFileChange(e, 'video')} />
+      <input type="file" accept="image/*" {...('ontouchstart' in window ? { capture: 'environment' } : {})} ref={photoInputRef} className="hidden" onChange={(e) => handleFileChange(e, 'photo')} />
+      <input type="file" accept="video/*" {...('ontouchstart' in window ? { capture: 'environment' } : {})} ref={videoInputRef} className="hidden" onChange={(e) => handleFileChange(e, 'video')} />
 
       <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
         <div className="flex justify-between items-center bg-slate-900/80 p-6 rounded-2xl border border-white/5">

@@ -174,7 +174,7 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
   // === RENDER: WEEK VIEW ===
   const renderWeekView = () => (
     <div className="flex-1 overflow-auto">
-      <div className="grid grid-cols-[60px_repeat(7,1fr)] min-w-[900px]">
+      <div className="grid grid-cols-[40px_repeat(7,1fr)] sm:grid-cols-[60px_repeat(7,1fr)] min-w-[600px] sm:min-w-[900px]">
         {/* Column headers */}
         <div className="sticky top-0 z-10 bg-slate-900/95 border-b border-slate-600 p-2" />
         {weekDays.map((day, i) => {
@@ -272,7 +272,7 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
         </div>
 
         {/* Two-column: Arriving | Departing */}
-        <div className="grid grid-cols-[60px_1fr_1fr] min-w-[600px]">
+        <div className="grid grid-cols-[40px_1fr_1fr] sm:grid-cols-[60px_1fr_1fr] min-w-[360px] sm:min-w-[600px]">
           <div className="border-b border-slate-600 p-2" />
           <div className="border-b border-l border-slate-600 p-2 text-center">
             <span className="text-xs font-bold text-blue-400 uppercase tracking-widest">Arriving ↓</span>
@@ -343,7 +343,7 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
             return (
               <div
                 key={`${wi}-${di}`}
-                className={`bg-slate-900/80 min-h-[80px] p-1.5 ${
+                className={`bg-slate-900/80 min-h-[56px] sm:min-h-[80px] p-1 sm:p-1.5 ${
                   !isCurrentMonth ? 'opacity-30' : ''
                 } ${today ? 'ring-1 ring-teal-400 ring-inset' : ''} ${dragData ? 'hover:bg-slate-700/30' : ''}`}
                 onDragOver={canEdit ? handleDragOver : undefined}
@@ -716,23 +716,23 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
   return (
     <div className="flex flex-col h-full">
       {/* Header bar */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-600 bg-slate-900/50">
+      <div className="flex flex-wrap items-center justify-between gap-2 px-3 sm:px-4 py-2 sm:py-3 border-b border-slate-600 bg-slate-900/50">
         {/* Left: Navigation */}
-        <div className="flex items-center gap-2">
-          <button onClick={navigatePrev} className="p-1.5 rounded-lg hover:bg-slate-700/50 text-slate-400 hover:text-slate-200 transition-colors">
-            <ChevronLeft size={18} />
+        <div className="flex items-center gap-1 sm:gap-2">
+          <button onClick={navigatePrev} className="p-1 sm:p-1.5 rounded-lg hover:bg-slate-700/50 text-slate-400 hover:text-slate-200 transition-colors">
+            <ChevronLeft size={16} />
           </button>
-          <button onClick={goToday} className="px-3 py-1 rounded-lg bg-slate-800 border border-slate-600 text-xs font-bold text-slate-300 hover:bg-slate-700 transition-colors">
+          <button onClick={goToday} className="px-2 sm:px-3 py-1 rounded-lg bg-slate-800 border border-slate-600 text-[10px] sm:text-xs font-bold text-slate-300 hover:bg-slate-700 transition-colors">
             Today
           </button>
-          <button onClick={navigateNext} className="p-1.5 rounded-lg hover:bg-slate-700/50 text-slate-400 hover:text-slate-200 transition-colors">
-            <ChevronRight size={18} />
+          <button onClick={navigateNext} className="p-1 sm:p-1.5 rounded-lg hover:bg-slate-700/50 text-slate-400 hover:text-slate-200 transition-colors">
+            <ChevronRight size={16} />
           </button>
-          <h2 className="text-sm font-bold text-slate-200 ml-2">{headerLabel}</h2>
+          <h2 className="text-xs sm:text-sm font-bold text-slate-200 ml-1 sm:ml-2">{headerLabel}</h2>
         </div>
 
-        {/* Center: Dock status */}
-        <div className="flex items-center gap-2">
+        {/* Center: Dock status — hidden on mobile */}
+        <div className="hidden sm:flex items-center gap-2">
           <span className="text-xs text-slate-500">⚓</span>
           <span className="text-sm font-bold text-slate-300">
             {boatsOnDock.length} boats on dock
@@ -740,7 +740,7 @@ const DockCalendarPage: React.FC<DockCalendarPageProps> = ({
         </div>
 
         {/* Right: View toggles */}
-        <div className="flex items-center gap-1 bg-slate-800/50 rounded-lg p-0.5 border border-slate-600">
+        <div className="flex items-center gap-0.5 sm:gap-1 bg-slate-800/50 rounded-lg p-0.5 border border-slate-600">
           <button
             onClick={() => setViewMode('day')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-bold transition-all ${
