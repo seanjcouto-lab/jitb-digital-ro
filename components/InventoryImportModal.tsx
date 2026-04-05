@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { importInventoryFromFile, commitInventoryImport, CanonicalField } from '../utils/inventoryImport';
 import { parseCatalogFiles } from '../utils/catalogImport';
 import { db } from '../localDb';
-import { syncInventoryToSupabase } from '../utils/supabaseSync';
+import { syncInventoryBulkToSupabase } from '../utils/supabaseSync';
 import { Part } from '../types';
 import InventoryColumnMapper from './InventoryColumnMapper';
 
@@ -48,6 +48,10 @@ const InventoryImportModal: React.FC<InventoryImportModalProps> = ({ onClose, on
       setStep('IMPORTING');
       setProgress('Indexing on-hand stock...');
       await commitInventoryImport(fileData.rows, fileData.mapping, shopId, 'onhand');
+      // Bulk sync on-hand parts to Supabase
+      setProgress('Syncing to cloud...');
+      const onhandParts = await db.masterInventory.where('shopId').equals(shopId).filter(p => p.source === 'onhand').toArray();
+      await syncInventoryBulkToSupabase(onhandParts);
       onImportComplete();
       onClose();
     } catch (err) {
@@ -95,14 +99,10 @@ const InventoryImportModal: React.FC<InventoryImportModalProps> = ({ onClose, on
         await db.masterInventory.bulkPut(catalogData.parts);
       });
 
-      // Background sync to Supabase (fire-and-forget, batched)
+      // Bulk sync to Supabase (500 parts per API call instead of 1-by-1)
       setProgress('Syncing to cloud...');
-      const batchSize = 50;
-      for (let i = 0; i < catalogData.parts.length; i += batchSize) {
-        const batch = catalogData.parts.slice(i, i + batchSize);
-        await Promise.all(batch.map(p => syncInventoryToSupabase(p).catch(() => {})));
-        setProgress(`Syncing to cloud... ${Math.min(i + batchSize, catalogData.parts.length).toLocaleString()} / ${catalogData.parts.length.toLocaleString()}`);
-      }
+      const { synced, failed } = await syncInventoryBulkToSupabase(catalogData.parts);
+      setProgress(`Cloud sync: ${synced.toLocaleString()} synced${failed > 0 ? `, ${failed.toLocaleString()} failed` : ''}`);
 
       onImportComplete();
       onClose();

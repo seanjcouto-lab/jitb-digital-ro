@@ -185,6 +185,44 @@ export async function syncInventoryToSupabase(part: Part): Promise<void> {
   }
 }
 
+/** Bulk upsert inventory parts to Supabase. One API call per batch instead of per-part. */
+export async function syncInventoryBulkToSupabase(parts: Part[]): Promise<{ synced: number; failed: number }> {
+  const BATCH_SIZE = 500
+  let synced = 0
+  let failed = 0
+
+  for (let i = 0; i < parts.length; i += BATCH_SIZE) {
+    const batch = parts.slice(i, i + BATCH_SIZE)
+    const rows = batch.map(part => ({
+      shop_id:          part.shopId || shopContextService.getActiveShopId(),
+      part_number:      part.partNumber,
+      description:      part.description,
+      category:         part.category,
+      bin_location:     part.binLocation,
+      msrp:             part.msrp,
+      dealer_price:     part.dealerPrice,
+      cost:             part.cost,
+      quantity_on_hand: part.quantityOnHand,
+      reorder_point:    part.reorderPoint,
+      supersedes_part:  part.supersedesPart ?? null,
+      source:           part.source ?? 'onhand',
+      vendor:           part.vendor ?? null,
+      upc:              part.upc ?? null,
+    }))
+
+    const { error } = await supabase.from('master_inventory').upsert(rows)
+    if (error) {
+      console.error(`Supabase inventory bulk sync failed (batch ${i}-${i + batch.length}):`, error.message)
+      failed += batch.length
+    } else {
+      synced += batch.length
+    }
+  }
+
+  console.log(`Supabase inventory bulk sync: ${synced} synced, ${failed} failed`)
+  return { synced, failed }
+}
+
 export async function syncCompanyToSupabase(company: Company): Promise<void> {
   const { error } = await supabase.from('companies').upsert({
     company_id:   company.companyId,

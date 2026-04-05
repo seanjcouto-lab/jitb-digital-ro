@@ -1682,11 +1682,11 @@ test('T97: Vessel DNA search field visible', async ({ page }) => {
   await expect(searchInput.first()).toBeVisible({ timeout: 8000 });
 });
 
-test('T98: DB Inspector button visible on DNA page', async ({ page }) => {
+test('T98: DB Inspector button visible on Admin page', async ({ page }) => {
   await loginSM(page);
-  await page.locator('button[title="Vessel DNA"]').click();
+  await page.locator('button[title="ADMIN"]').click();
   await page.waitForTimeout(1000);
-  const dbBtn = page.locator('text=DB Inspector').or(page.locator('text=Inspector'));
+  const dbBtn = page.locator('text=IndexedDB Inspector').or(page.locator('text=DB Inspector'));
   await expect(dbBtn.first()).toBeVisible({ timeout: 8000 });
 });
 
