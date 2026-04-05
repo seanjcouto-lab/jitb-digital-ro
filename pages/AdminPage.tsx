@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { AppConfig, CollectionsStatus, LoggedInUser, UserRole, UserPrivilege, Part } from '../types';
 import { appConfigService } from '../services/appConfigService';
 import { repairOrderService } from '../services/repairOrderService';
@@ -7,6 +7,8 @@ import { supabase } from '../supabaseClient';
 import { db } from '../localDb';
 import InventoryImportModal from '../components/InventoryImportModal';
 import { PartsManagerService } from '../services/partsManagerService';
+import { databaseService } from '../services/databaseService';
+import { DbMetadata } from '../utils/indexedDbInspector';
 
 interface AdminPageProps {
   config: AppConfig;
@@ -54,6 +56,49 @@ const AdminPage: React.FC<AdminPageProps> = ({ config, setConfig, onExport, logg
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [invPurgeConfirm, setInvPurgeConfirm] = useState<'catalog' | 'onhand' | 'all' | null>(null);
   const [invPurgeStatus, setInvPurgeStatus] = useState<string | null>(null);
+  const [showInspector, setShowInspector] = useState(false);
+  const [dbMetadata, setDbMetadata] = useState<DbMetadata | null>(null);
+  const [isLoadingInspector, setIsLoadingInspector] = useState(false);
+
+  const loadInspectorData = async () => {
+    setIsLoadingInspector(true);
+    try {
+      const dbs = await databaseService.getAvailableDatabases();
+      const targetDb = dbs.includes('sccDatabase') ? 'sccDatabase' : (dbs[0] || 'sccDatabase');
+      const meta = await databaseService.getDatabaseMetadata(targetDb);
+      setDbMetadata(meta);
+    } catch (error) {
+      console.error('Failed to load inspector data:', error);
+    } finally {
+      setIsLoadingInspector(false);
+    }
+  };
+
+  useEffect(() => {
+    if (showInspector) loadInspectorData();
+  }, [showInspector]);
+
+  const handleExportSchema = () => {
+    if (!dbMetadata) return;
+    navigator.clipboard.writeText(JSON.stringify(dbMetadata, null, 2));
+    alert('Schema snapshot copied to clipboard!');
+  };
+
+  const handleExportStore = async (storeName: string) => {
+    if (!dbMetadata) return;
+    try {
+      const data = await databaseService.exportStoreData(dbMetadata.name, storeName);
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${storeName}_export.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      alert('Failed to export store data.');
+    }
+  };
 
   const invStats = useMemo(() => {
     const catalog = (masterInventory || []).filter(p => p.source === 'catalog').length;
@@ -351,11 +396,94 @@ const AdminPage: React.FC<AdminPageProps> = ({ config, setConfig, onExport, logg
               <p className="text-center text-[10px] text-slate-500 mt-2">Downloads a local JSON file of all current repair orders, inventory, and configuration.</p>
 
               <div className="border-t border-white/10 pt-4 mt-4">
-                <h3 className="text-sm font-bold text-yellow-400 mb-2 text-center">⚠ Diagnostic Tools (Temporary)</h3>
+                <h3 className="text-sm font-bold text-yellow-400 mb-2 text-center">Diagnostic Tools</h3>
                 <button onClick={handlePersistenceTest} className="w-full text-center px-6 py-3 bg-yellow-900/40 border border-yellow-500/40 text-yellow-300 hover:border-yellow-400 hover:text-yellow-100 transition-all rounded-lg font-bold text-xs uppercase tracking-widest">
                   Run RO Persistence Test
                 </button>
                 <p className="text-center text-[10px] text-slate-500 mt-2">Creates a test RO and verifies the full persistence chain. Check browser console for step-by-step results.</p>
+
+                <button
+                  onClick={() => setShowInspector(!showInspector)}
+                  className={`w-full text-center px-6 py-3 mt-3 border transition-all rounded-lg font-bold text-xs uppercase tracking-widest ${
+                    showInspector
+                      ? 'bg-neon-seafoam text-slate-900 border-neon-seafoam'
+                      : 'bg-yellow-900/40 border-yellow-500/40 text-yellow-300 hover:border-yellow-400 hover:text-yellow-100'
+                  }`}
+                >
+                  {showInspector ? 'Close DB Inspector' : 'IndexedDB Inspector'}
+                </button>
+                <p className="text-center text-[10px] text-slate-500 mt-2">Inspect local database tables, indexes, record counts, and sample data.</p>
+
+                {showInspector && (
+                  <div className="mt-4 space-y-4 animate-in fade-in duration-300">
+                    <div className="flex justify-center gap-3">
+                      <button onClick={loadInspectorData} className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-[10px] font-bold uppercase tracking-widest transition-all">
+                        Refresh
+                      </button>
+                      <button onClick={handleExportSchema} className="px-3 py-1.5 bg-neon-seafoam/20 hover:bg-neon-seafoam/30 text-neon-seafoam rounded text-[10px] font-bold uppercase tracking-widest transition-all border border-neon-seafoam/30">
+                        Export Schema
+                      </button>
+                    </div>
+
+                    {isLoadingInspector ? (
+                      <div className="py-10 text-center">
+                        <div className="inline-block h-8 w-8 border-4 border-slate-700 border-t-neon-seafoam rounded-full animate-spin mb-4"></div>
+                        <p className="text-slate-500 font-mono text-xs">Scanning IndexedDB...</p>
+                      </div>
+                    ) : dbMetadata ? (
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-3 gap-3">
+                          <div className="bg-slate-900/50 p-3 rounded-xl border border-white/5 text-center">
+                            <p className="text-[9px] text-slate-500 uppercase font-black">Database</p>
+                            <p className="text-sm font-mono text-neon-seafoam">{dbMetadata.name}</p>
+                          </div>
+                          <div className="bg-slate-900/50 p-3 rounded-xl border border-white/5 text-center">
+                            <p className="text-[9px] text-slate-500 uppercase font-black">Version</p>
+                            <p className="text-sm font-mono text-white">{dbMetadata.version}</p>
+                          </div>
+                          <div className="bg-slate-900/50 p-3 rounded-xl border border-white/5 text-center">
+                            <p className="text-[9px] text-slate-500 uppercase font-black">Stores</p>
+                            <p className="text-sm font-mono text-white">{dbMetadata.stores.length}</p>
+                          </div>
+                        </div>
+
+                        {dbMetadata.stores.map(store => (
+                          <div key={store.name} className="border border-white/5 rounded-xl overflow-hidden bg-slate-900/30">
+                            <div className="bg-white/5 p-3 flex justify-between items-center">
+                              <div>
+                                <h4 className="font-black text-white text-sm uppercase tracking-tight">{store.name}</h4>
+                                <p className="text-[9px] text-slate-500 font-mono">
+                                  KeyPath: {JSON.stringify(store.keyPath)} | Records: {store.count}
+                                </p>
+                              </div>
+                              <button onClick={() => handleExportStore(store.name)} className="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded text-[9px] font-bold uppercase transition-all">
+                                Export
+                              </button>
+                            </div>
+                            <div className="p-3 space-y-3">
+                              {store.indexes.length > 0 && (
+                                <div className="flex flex-wrap gap-1">
+                                  {store.indexes.map(idx => (
+                                    <span key={idx.name} className="px-1.5 py-0.5 bg-slate-800 rounded text-[9px] text-slate-300 font-mono border border-white/5">
+                                      {idx.name} {idx.unique ? '[U]' : ''}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                              <div className="bg-black/40 p-3 rounded-lg overflow-x-auto max-h-40">
+                                <pre className="text-[9px] text-slate-400 font-mono leading-relaxed">
+                                  {JSON.stringify(store.sample, null, 2)}
+                                </pre>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-center text-slate-500 text-xs italic py-4">No database metadata found.</p>
+                    )}
+                  </div>
+                )}
 
                 {import.meta.env.DEV && (
                   <div className="border-t border-red-500/30 pt-4 mt-4">

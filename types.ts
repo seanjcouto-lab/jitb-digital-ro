@@ -120,7 +120,7 @@ export interface MediaRecord {
   shopId: string;
   type: 'photo' | 'video' | 'audio';
   mimeType: string;              // e.g. 'image/jpeg', 'video/webm', 'audio/webm'
-  blob: Blob;                    // actual media data — stored natively in IndexedDB
+  blob: Blob | null;              // actual media data — null for records hydrated from Supabase
   fileName: string;              // e.g. 'abc123.jpg'
   createdAt: number;             // timestamp
   syncStatus: 'pending' | 'synced' | 'failed';

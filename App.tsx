@@ -4,6 +4,7 @@ import { TECHNICIANS } from './constants';
 import { seedDatabase } from './localDb';
 import { roStore, loadFromSupabase, refreshSingleRO } from './data/roStore';
 import { syncPendingMedia } from './services/mediaSyncService';
+import { mediaService } from './services/mediaService';
 import { vesselService } from './services/vesselService';
 import { inventoryStore } from './data/inventoryStore';
 import { repairOrderService } from './services/repairOrderService';
@@ -68,6 +69,7 @@ const App: React.FC = () => {
     await loadFromSupabase(shopId);
     await vesselService.loadVesselsFromSupabase(shopId);
     await inventoryStore.loadFromSupabase(shopId);
+    await mediaService.loadFromSupabase(shopId);
     const [initialROs, initialInventory] = await Promise.all([
       roStore.getAll(shopId),
       inventoryStore.getAll(shopId)

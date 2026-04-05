@@ -1,5 +1,6 @@
 import { supabase } from '../supabaseClient';
 import { mediaService } from './mediaService';
+import { syncMediaRecordToSupabase } from '../utils/supabaseSync';
 
 const BUCKET = 'evidence';
 const MAX_RETRIES = 3;
@@ -48,6 +49,13 @@ export async function syncPendingMedia(): Promise<void> {
 
           if (urlData?.publicUrl) {
             await mediaService.markSynced(record.id, urlData.publicUrl);
+            // Push metadata to directive_evidence table for cross-device discovery
+            const synced = await mediaService.getMedia(record.id);
+            if (synced) {
+              syncMediaRecordToSupabase(synced).catch(err =>
+                console.warn('[mediaSyncService] Metadata sync failed:', err)
+              );
+            }
             console.log(`[mediaSyncService] Synced: ${record.type} → ${path}`);
             uploaded = true;
             break;

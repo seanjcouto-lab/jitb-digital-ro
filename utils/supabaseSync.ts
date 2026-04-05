@@ -1,6 +1,6 @@
 import { supabase } from '../supabaseClient'
 import { mapROToSupabase } from './supabaseMapper'
-import { RepairOrder, VesselHistory, Part, Company, Contact, Vessel, Engine } from '../types'
+import { RepairOrder, VesselHistory, Part, Company, Contact, Vessel, Engine, MediaRecord } from '../types'
 import { shopContextService } from '../services/shopContextService'
 
 export async function syncROToSupabase(ro: RepairOrder): Promise<void> {
@@ -257,5 +257,24 @@ export async function syncEngineToSupabase(engine: Engine): Promise<void> {
     console.error('Supabase engine sync failed:', error.message)
   } else {
     console.log('Supabase engine sync OK:', engine.engineId)
+  }
+}
+
+export async function syncMediaRecordToSupabase(record: MediaRecord): Promise<void> {
+  const { error } = await supabase.from('directive_evidence').upsert({
+    id:             record.id,
+    directive_id:   record.directiveId,
+    evidence_type:  record.type,
+    url:            record.supabaseUrl,
+    created_at:     new Date(record.createdAt).toISOString(),
+    ro_id:          record.roId,
+    shop_id:        record.shopId,
+    mime_type:      record.mimeType,
+    file_name:      record.fileName,
+  })
+  if (error) {
+    console.error('Supabase media record sync failed:', error.message)
+  } else {
+    console.log('Supabase media record sync OK:', record.id)
   }
 }

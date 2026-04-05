@@ -1,6 +1,7 @@
 import { db } from '../localDb';
 import { MediaRecord } from '../types';
 import { syncPendingMedia } from './mediaSyncService';
+import { supabase } from '../supabaseClient';
 
 /**
  * Media persistence service — stores evidence (photos, video, audio) in IndexedDB.
@@ -163,5 +164,48 @@ export const mediaService = {
    */
   getPendingCount: async (): Promise<number> => {
     return db.mediaStore.where('syncStatus').equals('pending').count();
+  },
+
+  /**
+   * Hydrate media records from Supabase directive_evidence table.
+   * Populates local Dexie mediaStore so all devices can discover evidence.
+   * Only adds records that don't already exist locally (no overwrite).
+   */
+  loadFromSupabase: async (shopId: string): Promise<void> => {
+    try {
+      const { data: rows, error } = await supabase
+        .from('directive_evidence')
+        .select('*')
+        .eq('shop_id', shopId);
+
+      if (error) { console.warn('Supabase media records fetch failed:', error.message); return; }
+      if (!rows || rows.length === 0) return;
+
+      let hydrated = 0;
+      for (const row of rows) {
+        const existing = await db.mediaStore.get(row.id);
+        if (!existing) {
+          await db.mediaStore.put({
+            id:           row.id,
+            roId:         row.ro_id,
+            directiveId:  row.directive_id,
+            shopId:       row.shop_id,
+            type:         row.evidence_type as 'photo' | 'video' | 'audio',
+            mimeType:     row.mime_type ?? 'application/octet-stream',
+            blob:         null,
+            fileName:     row.file_name ?? `${row.id}.bin`,
+            createdAt:    row.created_at ? new Date(row.created_at).getTime() : Date.now(),
+            syncStatus:   'synced',
+            supabaseUrl:  row.url,
+          });
+          hydrated++;
+        }
+      }
+      if (hydrated > 0) {
+        console.log(`Hydrated ${hydrated} media records from Supabase`);
+      }
+    } catch (err) {
+      console.warn('Error in mediaService.loadFromSupabase:', err);
+    }
   },
 };
