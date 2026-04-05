@@ -2,7 +2,7 @@
 
 This is the single source of truth for all Claude Code sessions on this project.
 If behavior differs from this document, this document is correct. The implementation is wrong.
-Last updated: April 4, 2026
+Last updated: April 5, 2026
 
 ---
 
@@ -124,15 +124,47 @@ All Playwright tests reference these button labels: `'Test SM'`, `'Test Tech'`, 
 
 ---
 
-## CURRENT BUILD STATE (APRIL 4 2026)
+## CURRENT BUILD STATE (APRIL 5 2026)
 
 - **Test suite: 122 passed, 0 failed, 8 skipped** — `tests/jaxtr.spec.ts`. Stable, deterministic. Runs in ~4 min parallel.
 - **Demo script: 4:30 timed walkthrough** — `tests/demo.spec.ts`, runs headed, 11 scenes. Run: `npx playwright test tests/demo.spec.ts --headed --project=chromium`
-- **`main` branch** — live on Vercel. All fixes through April 4 evening deployed.
-- **`develop` branch** — synced with main at `cfa37cc`.
+- **`main` branch** — live on Vercel. Last deployed at `cfa37cc` (April 4 evening).
+- **`develop` branch** — ahead of main at `2990a4f` (4 commits ahead). **Sean has NOT approved push to main yet.**
 - **Pilot tests A-J: ALL PASSED** (April 4 morning, tested by Sean on Vercel production)
+- **Pilot-ready.** All production-critical items resolved. Scaling plan approved.
 - Playwright MUST run before and after every change — no exceptions
 - **Git flow: develop first, test local, then main. Never push both simultaneously.** Sean approves before main push.
+
+### Completed this session (April 5 2026)
+
+- **Evidence cross-device sync** — `directive_evidence` Supabase table now receives metadata (ro_id, shop_id, mime_type, file_name) after blob upload to Storage. `mediaService.loadFromSupabase(shopId)` hydrates MediaRecords on init. Other devices discover evidence via Supabase metadata, render from Storage public URLs. `MediaRecord.blob` type changed to `Blob | null` for hydrated records.
+- **DB Inspector moved to Admin page** — removed from Vessel DNA page (customer-facing), added to Admin page Diagnostic Tools section (DEVELOPER-gated). T98 test updated to check Admin page.
+- **Inventory bulk sync** — new `syncInventoryBulkToSupabase()` upserts 500 parts per API call (was 1-by-1). Both catalog and CSV import paths now use bulk sync. 50K+ parts sync reliably instead of timing out.
+- **AppConfig persists to Supabase** — `shops.config` JSONB column stores full AppConfig. `loadConfigFromSupabase(shopId)` hydrates on init, `saveConfigToSupabase()` fire-and-forget on every change. Rates, tax, PIN, theme, company name survive site data clears and sync cross-device.
+- **Supabase child table sync verified** — 11 ROs with 12 parts, 13 directives, 12 sessions, 12 payments, 6 requests confirmed populating. All 5 child table names match between write (syncROToSupabase) and read (loadFromSupabase) paths.
+- **Multi-tenant scaling plan designed and approved** — 7-phase plan from onboarding story. Full plan at `.claude/plans/imperative-imagining-allen.md`. Phases 1-3 (users table, production nav, dynamic techs) are critical path.
+
+### Supabase columns added (April 5 2026)
+
+- `shops.config` — JSONB DEFAULT '{}' (AppConfig persistence)
+- `directive_evidence.ro_id` — TEXT (evidence cross-device discovery)
+- `directive_evidence.shop_id` — UUID (shop-scoped evidence)
+- `directive_evidence.mime_type` — TEXT (media type tracking)
+- `directive_evidence.file_name` — TEXT (file identification)
+
+### Critical lessons learned — April 5
+
+- **Ghost Vite processes block port 3000**: When Vite doesn't shut down cleanly (Ctrl+C in terminal), the old process keeps listening on port 3000. New Vite starts, binds the port, but serves empty 404 responses. Fix: `netstat -ano | grep :3000` to find PIDs, `taskkill //F //PID <pid>` to kill them. Always verify only one process on port 3000.
+- **Stale worktrees inside project directory cause confusion**: Git worktrees in `.claude/worktrees/` contain old copies of source files. On Windows+OneDrive, these folders get locked and can't be deleted. They don't affect Vite module resolution (Vite resolves by exact import path, not by scanning), but they create visual confusion when exploring the project. Clean up worktrees when sessions end.
+- **Service worker caches old bundles in dev**: The PWA service worker (`sw.js`) registers on localhost:3000 and caches the app shell. After code changes, the service worker may serve stale JS. Fix: DevTools → Application → Service Workers → Unregister, then hard refresh. Consider disabling SW registration in dev mode.
+- **Don't clear Vite cache as a debugging step**: Deleting `node_modules/.vite` was not the root cause and added confusion. The real problem was a ghost Vite process. Diagnose before acting.
+- **Inventory bulk sync N+1 pattern**: Syncing 50K parts one-by-one with individual `upsert()` calls is the same N+1 anti-pattern as the loadFromSupabase fix from April 2. Supabase `.upsert()` accepts arrays — always batch. 500 per call is reliable.
+
+### Known issues — resolved this session
+
+- ~~AppConfig in localStorage only~~ — **FIXED**: persists to `shops.config` JSONB
+- ~~Verify Supabase child table sync~~ — **VERIFIED**: all 5 child tables populating correctly
+- ~~Reimport L&S catalog~~ — **DONE** by Sean via Admin panel
 
 ### Completed this session (April 4 2026 — evening)
 
@@ -173,11 +205,9 @@ All Playwright tests reference these button labels: `'Test SM'`, `'Test Tech'`, 
 - **Import column detection fixed** — PRICE synonym prioritized over LISTPRICE for msrp. AVGCOST maps to cost. BitPro CSV auto-detects correctly now.
 - **Test suite stable at 122/0/8** through all changes — zero regressions
 
-### Known issues — to fix next session
+### Known issues — none blocking
 
-- **AppConfig in localStorage only** — rates/tax/PIN revert to defaults when site data is cleared. Needs migration to Supabase `shops` table JSONB column.
-- **Verify Supabase child table sync** — `repair_order_parts`, `repair_order_directives`, `payments`, `work_sessions`, `repair_order_requests` tables exist in Supabase. Sync code is wired. Need to verify data is actually populating by creating a fresh RO.
-- **Reimport L&S catalog** — old catalog imported with wrong part numbers (manufacturer number instead of L&S catalog number). Parser fixed. Sean needs to purge catalog via Admin panel and reimport.
+All production-critical issues resolved as of April 5. Remaining work is scaling/architecture (see next session queue).
 
 ### Critical lessons learned — April 4
 
@@ -351,23 +381,43 @@ T112 — Offline/PWA test requiring service worker
 - SM board folder tab column counters, collapsible customer search
 - Calendar Phase 1: scheduledDate + arrivalDate fields
 
-### Next session queue (priority order)
+### Next session queue — Multi-Tenant Scaling (approved April 5)
 
-**Immediate / production-critical:**
-1. **Verify Supabase child table sync** — create fresh RO with parts + directives, confirm child tables populate.
-2. **AppConfig to Supabase** — migrate rates/tax/PIN from localStorage to `shops` table JSONB column.
+Full plan: `.claude/plans/imperative-imagining-allen.md`
 
-**Architecture / scaling ("make it real"):**
-3. **Dev toolbar cleanup** — move all dev/test features to Admin page. Production users never see role-switching toolbar.
-4. **Production nav** — role-based page access per user. Default templates: Tech (Tech/DNA), PM (Parts/Inventory/DNA), SM (Dock/NewRO/Parts/DNA/Calendar/Billing), Owner (all except dev tools), Developer (everything).
-5. **Customer entity** — proper `customers` Dexie table + Supabase sync. ROs reference `customerId` instead of embedded strings.
-6. **Customer directory page** — browse, search, edit customer records. View RO history per customer.
-7. **Customer import** — CSV/PDF bulk upload, admin/developer-only onboarding tool.
-8. **Staff management on Admin page** — add/edit/deactivate staff per shop, assign page access per person.
-9. **Shop switcher** — DEVELOPER tool to switch between shops being managed.
-10. **Company onboarding wizard** — DEVELOPER tool: create shop → configure → invite staff → import data.
-11. **Subscription module gating** — `subscription_features` JSONB on `shops` table. `hasFeature()` utility. Toolbar/route-level gating.
-12. **Multi-tenant login flow** — dynamic shopId from Supabase auth instead of hardcoded DEFAULT_SHOP_ID.
+**Phase 1: Users table becomes source of truth** (critical path)
+- Add `pages TEXT[]` and `tech_id TEXT` columns to `users` Supabase table
+- `resolveAppUser()` fetches pages + tech_id → maps to LoggedInUser
+- `canAccessRole()` checks user.pages array instead of single-role match
+- Files: `supabaseAuthService.ts`, `types.ts`, `authService.ts`
+
+**Phase 2: Production nav** (critical path)
+- Regular users see bottom nav with only their assigned pages
+- Dev/Admin keep full toolbar + impersonation
+- File: `App.tsx`
+
+**Phase 3: Dynamic technicians** (critical path)
+- Replace hardcoded TECHNICIANS array with shop-scoped query to `users` table
+- Real techs auto-identify via techId from auth — skip bay picker
+- Files: `App.tsx`, `ServiceManagerPage.tsx`, `constants.ts`
+
+**Phase 4: Staff management UI**
+- Admin page: staff roster, add/edit/deactivate, role templates, page access checkboxes
+- Files: `pages/AdminPage.tsx`, new `services/staffService.ts`
+
+**Phase 5: Shop switcher** (DEVELOPER only)
+- Dropdown in header, re-runs initDb on switch, re-subscribes Realtime
+- Files: `App.tsx`, `components/Header.tsx`, `services/shopContextService.ts`
+
+**Phase 6: Data gaps**
+- vesselDnaHistory needs shopId (Dexie v12 + type change)
+- Legacy auth cleanup (remove PASSWORD_MAP)
+- Companies/contacts/vessels/engines need loadFromSupabase hydration
+
+**Phase 7: Company onboarding wizard**
+- Guided flow: create shop → import inventory → add staff → go live
+
+**After Phase 3, a second shop can go live. Phases 4-7 make it efficient.**
 
 **Feature backlog:**
 13. **Suzuki catalog import** — waiting for Sean to provide cleaner format (not PDF).
@@ -398,7 +448,9 @@ T112 — Offline/PWA test requiring service worker
 - Inventory page: read-only table, search, low stock alerts, discrepancy log, CSV/Excel import
 - Vessel DNA history viewer with "View All" vessel directory + full evidence gallery (photos/videos/audio viewable)
 - PWA: service worker (`public/sw.js`), manifest (`public/manifest.json`), offline app shell
-- Supabase sync: `repair_orders`, `master_inventory`, `vessel_dna_history`
+- Supabase sync: `repair_orders` + 5 child tables, `master_inventory` (bulk 500/batch), `vessel_dna_history`, `directive_evidence` (media metadata)
+- AppConfig persistence: `shops.config` JSONB — rates, tax, PIN, theme, company name survive site data clears
+- Evidence cross-device sync: blobs to Supabase Storage, metadata to `directive_evidence` table, hydrated on init
 - `subscription_status` field on `shops` table (TEXT NOT NULL DEFAULT 'active') — **active gating in App.tsx**: `active`, `pilot`, `trial`, `grace` allowed; anything else shows "Account Not Active" screen; `null` passes through
 - `quantity` field on `Part` interface — threads through RO creation, PM display, Tech display, invoice math (unit price × quantity)
 - Signature canvas on RO creation (initialized via `requestAnimationFrame` to handle modal layout timing)
@@ -502,6 +554,9 @@ The previous relay model (Claude outside → Sean → CC) was retired after it c
 - **Never push develop and main simultaneously** — Sean explicitly corrected this April 4 evening. Develop first, test locally, Sean approves, then push to main. Pushing both at once skips the testing gate.
 - **refreshSingleRO table name mismatch** — `repair_order_work_sessions` and `repair_order_payments` don't exist. Correct names: `work_sessions` and `payments`. `loadFromSupabase` used correct names so initial load worked, but Realtime cross-device sync silently failed. Always verify table names match between read and write paths.
 - **React hooks before early returns** — AdminPage had `useState`/`useMemo` after an access-denied early return. Hooks must be called in same order every render. Move all hooks above any conditional returns.
+- **Ghost Vite processes on port 3000** — old Vite process survives Ctrl+C, new instance starts but serves empty 404s. Two processes on same port. Wasted 30+ minutes chasing "cache" and "service worker" red herrings. Always check `netstat -ano | grep :3000` first when localhost returns 404. Kill duplicates with `taskkill //F //PID`.
+- **Don't clear Vite cache as a first resort** — deleting `node_modules/.vite` was not the problem and added confusion. Diagnose the actual issue (ghost process) before taking destructive cache actions.
+- **Inventory bulk sync was an N+1 repeat** — 50K parts synced 1-by-1 with individual `upsert()` calls. Same anti-pattern as the April 2 loadFromSupabase fix. Supabase `.upsert()` accepts arrays. Always batch (500/call is reliable).
 
 ---
 
