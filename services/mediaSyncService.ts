@@ -6,6 +6,7 @@ const BUCKET = 'evidence';
 const MAX_RETRIES = 3;
 
 let isSyncing = false;
+let hasBackfilled = false;
 
 /**
  * Upload all pending media blobs to Supabase Storage.
@@ -74,5 +75,38 @@ export async function syncPendingMedia(): Promise<void> {
     console.warn('[mediaSyncService] syncPendingMedia error:', err);
   } finally {
     isSyncing = false;
+  }
+}
+
+/**
+ * One-time backfill: push metadata to directive_evidence for any locally synced
+ * records that were uploaded to Storage before the metadata sync code existed.
+ * Idempotent (upsert) — safe to call on every init.
+ */
+export async function backfillMediaMetadata(): Promise<void> {
+  if (hasBackfilled) return;
+  hasBackfilled = true;
+
+  try {
+    const { db } = await import('../localDb');
+    const synced = await db.mediaStore.where('syncStatus').equals('synced').toArray();
+    const withUrl = synced.filter(r => r.supabaseUrl);
+    if (withUrl.length === 0) return;
+
+    console.log(`[mediaSyncService] Backfilling ${withUrl.length} media metadata records...`);
+    let pushed = 0;
+    for (const record of withUrl) {
+      try {
+        await syncMediaRecordToSupabase(record);
+        pushed++;
+      } catch (err) {
+        console.warn(`[mediaSyncService] Backfill failed for ${record.id}:`, err);
+      }
+    }
+    if (pushed > 0) {
+      console.log(`[mediaSyncService] Backfilled ${pushed} media metadata records to directive_evidence`);
+    }
+  } catch (err) {
+    console.warn('[mediaSyncService] backfillMediaMetadata error:', err);
   }
 }

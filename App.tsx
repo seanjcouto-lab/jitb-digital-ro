@@ -3,7 +3,7 @@ import { UserRole, RepairOrder, ROStatus, AppConfig, Part, InventoryAlert, Logge
 import { TECHNICIANS } from './constants';
 import { seedDatabase } from './localDb';
 import { roStore, loadFromSupabase, refreshSingleRO } from './data/roStore';
-import { syncPendingMedia } from './services/mediaSyncService';
+import { syncPendingMedia, backfillMediaMetadata } from './services/mediaSyncService';
 import { mediaService } from './services/mediaService';
 import { vesselService } from './services/vesselService';
 import { inventoryStore } from './data/inventoryStore';
@@ -84,6 +84,8 @@ const App: React.FC = () => {
     }
     // Sync any pending media from previous sessions
     syncPendingMedia().catch(() => {});
+    // Backfill metadata for records synced before cross-device code existed
+    backfillMediaMetadata().catch(() => {});
   };
 
   useEffect(() => {
