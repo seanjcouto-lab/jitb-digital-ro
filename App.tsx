@@ -76,6 +76,12 @@ const App: React.FC = () => {
     ]);
     setRepairOrders(initialROs);
     setMasterInventory(initialInventory);
+    // Hydrate config from Supabase (overwrites localStorage if cloud has data)
+    const cloudConfig = await appConfigService.loadConfigFromSupabase(shopId);
+    if (cloudConfig) {
+      setConfig(cloudConfig);
+      appConfigService.saveConfig(cloudConfig);
+    }
     // Sync any pending media from previous sessions
     syncPendingMedia().catch(() => {});
   };
@@ -186,6 +192,9 @@ const App: React.FC = () => {
 
   useEffect(() => {
     appConfigService.saveConfig(config);
+    if (loggedInUser) {
+      appConfigService.saveConfigToSupabase(shopContextService.getActiveShopId(), config);
+    }
   }, [config]);
 
   useEffect(() => {

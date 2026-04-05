@@ -1,5 +1,6 @@
 import { AppConfig } from '../types';
 import { DEFAULT_HOURLY_RATE } from '../constants';
+import { supabase } from '../supabaseClient';
 
 const CONFIG_STORAGE_KEY = 'scc_app_config';
 
@@ -61,5 +62,32 @@ updateTaxRate(config: AppConfig, taxRate: number): AppConfig {
         [colorKey]: value
       }
     };
+  },
+
+  async loadConfigFromSupabase(shopId: string): Promise<AppConfig | null> {
+    try {
+      const { data, error } = await supabase
+        .from('shops')
+        .select('config')
+        .eq('id', shopId)
+        .single();
+
+      if (error || !data?.config) return null;
+      return { ...appConfigService.getDefaultConfig(), ...data.config };
+    } catch {
+      return null;
+    }
+  },
+
+  saveConfigToSupabase(shopId: string, config: AppConfig): void {
+    supabase
+      .from('shops')
+      .update({ config })
+      .eq('id', shopId)
+      .then(({ error }) => {
+        if (error) console.warn('Supabase config sync failed:', error.message);
+        else console.log('Supabase config sync OK');
+      })
+      .catch(() => {});
   }
 };
