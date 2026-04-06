@@ -50,7 +50,9 @@ export async function syncPendingMedia(): Promise<void> {
 
           if (urlData?.publicUrl) {
             await mediaService.markSynced(record.id, urlData.publicUrl);
-            // Push metadata to directive_evidence table for cross-device discovery
+            // Replace media:// URL on directive/RO with permanent URL
+            await replaceMediaUrlOnDirective(record, urlData.publicUrl);
+            // Also push to directive_evidence for backward compat
             const synced = await mediaService.getMedia(record.id);
             if (synced) {
               syncMediaRecordToSupabase(synced).catch(err =>
@@ -75,6 +77,61 @@ export async function syncPendingMedia(): Promise<void> {
     console.warn('[mediaSyncService] syncPendingMedia error:', err);
   } finally {
     isSyncing = false;
+  }
+}
+
+/**
+ * After blob upload, replace the media:// URL on the directive (or RO-level evidence)
+ * with the permanent Supabase Storage URL. This makes evidence travel with the RO
+ * through the existing sync pipeline — no separate discovery needed.
+ */
+async function replaceMediaUrlOnDirective(record: { id: string; roId: string; directiveId: string | null }, permanentUrl: string): Promise<void> {
+  try {
+    const { db } = await import('../localDb');
+    const ro = await db.repairOrders.get(record.roId);
+    if (!ro) return;
+
+    const mediaRef = `media://${record.id}`;
+    let changed = false;
+
+    if (record.directiveId) {
+      // Replace on specific directive
+      const updatedDirectives = ro.directives?.map(d => {
+        if (d.id === record.directiveId && d.evidence) {
+          const updatedEvidence = d.evidence.map(e =>
+            e.url === mediaRef ? { ...e, url: permanentUrl } : e
+          );
+          if (JSON.stringify(updatedEvidence) !== JSON.stringify(d.evidence)) {
+            changed = true;
+            return { ...d, evidence: updatedEvidence };
+          }
+        }
+        return d;
+      });
+      if (changed) ro.directives = updatedDirectives!;
+    } else {
+      // Replace on RO-level evidence
+      if (ro.evidence) {
+        const updatedEvidence = ro.evidence.map(e =>
+          e.url === mediaRef ? { ...e, url: permanentUrl } : e
+        );
+        if (JSON.stringify(updatedEvidence) !== JSON.stringify(ro.evidence)) {
+          changed = true;
+          ro.evidence = updatedEvidence;
+        }
+      }
+    }
+
+    if (changed) {
+      ro.updatedAt = Date.now();
+      await db.repairOrders.put(ro);
+      // Fire-and-forget sync — permanent URL now travels with the RO
+      const { syncROToSupabase } = await import('../utils/supabaseSync');
+      syncROToSupabase(ro).catch(() => {});
+      console.log(`[mediaSyncService] Replaced media:// URL on directive for ${record.id}`);
+    }
+  } catch (err) {
+    console.warn('[mediaSyncService] replaceMediaUrlOnDirective error:', err);
   }
 }
 

@@ -4,6 +4,12 @@ import { shopContextService } from '../services/shopContextService';
 import { syncROToSupabase } from '../utils/supabaseSync';
 import { supabase } from '../supabaseClient';
 
+function parseEvidence(raw: any): { type: 'photo' | 'video' | 'audio'; url: string }[] {
+  if (!raw) return [];
+  try { return Array.isArray(raw) ? raw : typeof raw === 'string' ? JSON.parse(raw) : []; }
+  catch { return []; }
+}
+
 export async function loadFromSupabase(shopId: string): Promise<void> {
   try {
     const { data: rows, error } = await supabase
@@ -134,6 +140,7 @@ export async function loadFromSupabase(shopId: string): Promise<void> {
         arrivalDate: row.arrival_date ?? existing?.arrivalDate ?? null,
         estimatedPickupDate: row.estimated_pickup_date ?? existing?.estimatedPickupDate ?? null,
         jobCategory: row.job_category ?? existing?.jobCategory ?? null,
+        evidence: parseEvidence(row.evidence_urls),
         updatedAt: supabaseUpdatedAt || localUpdatedAt || Date.now(),
 
         parts: partsRes.error
@@ -171,6 +178,7 @@ export async function loadFromSupabase(shopId: string): Promise<void> {
                 ? new Date(d.completion_timestamp).getTime()
                 : null,
               isApproved: d.is_approved ?? false,
+              evidence: parseEvidence(d.evidence_urls),
             })),
         workSessions: workSessionsRes.error
           ? (existing?.workSessions ?? [])
@@ -280,6 +288,7 @@ export async function refreshSingleRO(roId: string): Promise<RepairOrder | null>
       arrivalDate: row.arrival_date ?? existing?.arrivalDate ?? null,
       estimatedPickupDate: row.estimated_pickup_date ?? existing?.estimatedPickupDate ?? null,
       jobCategory: row.job_category ?? existing?.jobCategory ?? null,
+      evidence: parseEvidence(row.evidence_urls),
       updatedAt: supabaseUpdatedAt || Date.now(),
       parts: partsRes.error ? (existing?.parts ?? []) : (partsRes.data ?? []).map((p: any) => ({
         id: p.id, partNumber: p.part_number, description: p.description, category: p.category,
@@ -295,6 +304,7 @@ export async function refreshSingleRO(roId: string): Promise<RepairOrder | null>
         id: d.id, title: d.title, isCompleted: d.is_completed,
         completionTimestamp: d.completion_timestamp ? new Date(d.completion_timestamp).getTime() : null,
         isApproved: d.is_approved ?? false,
+        evidence: parseEvidence(d.evidence_urls),
       })),
       workSessions: sessionsRes.error ? (existing?.workSessions ?? []) : (sessionsRes.data ?? []).map((s: any) => ({
         startTime: new Date(s.start_time).getTime(),

@@ -1,7 +1,6 @@
 
-import React, { useState, useEffect } from 'react';
-import { RepairOrder, MediaRecord } from '../types';
-import { mediaService } from '../services/mediaService';
+import React, { useState, useEffect, useMemo } from 'react';
+import { RepairOrder } from '../types';
 import EvidenceGallery, { getEvidenceSummaryText } from './EvidenceGallery';
 
 interface InvoiceModalProps {
@@ -25,11 +24,13 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, ov
   const [editedRate, setEditedRate] = useState<number | null>(null);
   const [editedPartPrices, setEditedPartPrices] = useState<Record<number, number>>({});
   const [discount, setDiscount] = useState<number>(0);
-  const [evidenceRecords, setEvidenceRecords] = useState<MediaRecord[]>([]);
-
-  useEffect(() => {
-    mediaService.getMediaForRO(ro.id).then(setEvidenceRecords);
-  }, [ro.id]);
+  // Derive evidence items from RO data — no async mediaStore query
+  const evidenceItems = useMemo(() => {
+    const all: { type: string }[] = [];
+    (ro.directives ?? []).forEach(d => (d.evidence ?? []).forEach(e => all.push(e)));
+    (ro.evidence ?? []).forEach(e => all.push(e));
+    return all;
+  }, [ro]);
 
   const handlePinSubmit = () => {
     if (pinEntry === overridePin) {
@@ -175,7 +176,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ ro, hourlyRate, taxRate, ov
           <div class="totals-row grand"><span>TOTAL DUE:</span><span>$${grandTotal.toFixed(2)}</span></div>
         </div>
 
-        ${evidenceRecords.length > 0 ? `<div class="section"><div class="section-title">Documentation</div><p style="font-size:12px;color:#666;">${getEvidenceSummaryText(evidenceRecords)} — available digitally upon request.</p></div>` : ''}
+        ${evidenceItems.length > 0 ? `<div class="section"><div class="section-title">Documentation</div><p style="font-size:12px;color:#666;">${getEvidenceSummaryText(evidenceItems)} — available digitally upon request.</p></div>` : ''}
 
         <div class="payment-terms">
           <p>Payment Due Upon Receipt</p>

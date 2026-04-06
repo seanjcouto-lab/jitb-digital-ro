@@ -48,6 +48,7 @@ export function mapROToSupabase(ro: RepairOrder) {
       estimated_pickup_date: ro.estimatedPickupDate ?? null,
       job_category: ro.jobCategory ?? null,
       updated_at: ro.updatedAt ? new Date(ro.updatedAt).toISOString() : new Date().toISOString(),
+      evidence_urls: JSON.stringify(ro.evidence ?? []),
     },
     parts: (ro.parts ?? []).map(p => ({
       repair_order_id: ro.id,
@@ -82,6 +83,7 @@ export function mapROToSupabase(ro: RepairOrder) {
         : null,
       is_approved: d.isApproved ?? false,
       sort_order: index,
+      evidence_urls: JSON.stringify(d.evidence ?? []),
     })),
     workSessions: (ro.workSessions ?? []).map(ws => ({
       repair_order_id: ro.id,

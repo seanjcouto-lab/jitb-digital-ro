@@ -21,8 +21,12 @@ export const TechnicianService = {
     capturedMediaUrl: string
   ): { updatedRO?: RepairOrder; laborNoteUpdate?: string } => {
     if (evidenceModal.directiveId === null) {
-      const noteText = `\n[Attached ${evidenceModal.mode}: ${capturedMediaUrl}]`;
-      return { laborNoteUpdate: noteText };
+      // RO-level evidence — store on the RO itself so it travels through the sync pipeline
+      const updatedRO = {
+        ...repairOrder,
+        evidence: [...(repairOrder.evidence ?? []), { type: evidenceModal.mode, url: capturedMediaUrl }],
+      };
+      return { updatedRO };
     }
 
     const updatedRO = repairOrderService.addEvidenceToDirective(

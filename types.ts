@@ -259,6 +259,7 @@ export interface RepairOrder {
   arrivalDate?: string | null;     // ISO date string — when the boat physically arrives on yard
   estimatedPickupDate?: string | null; // ISO date string — when customer picks up the boat (set at billing)
   jobCategory?: string | null;     // Job type category name (from shop's configured list)
+  evidence?: { type: 'photo' | 'video' | 'audio'; url: string }[]; // RO-level evidence (intake attachments, general media)
   updatedAt?: number;              // epoch ms — set on every local mutation, used for cross-device sync conflict resolution
 }
 
